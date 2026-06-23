@@ -11,11 +11,12 @@ import Security from './pages/Security';
 import Deposit from './pages/Deposit';
 import Withdraw from './pages/Withdraw';
 import TransactionLogs from './pages/TransactionLogs';
+import Affiliate from './pages/Affiliate';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { supabase } from './supabase';
 import { Toaster } from 'react-hot-toast';
-import PortalSwitcher from '../../src/components/PortalSwitcher';
+import PortalSwitcher from './components/PortalSwitcher';
 import { LoadingProvider } from './components/GlobalLoader';
 
 
@@ -211,6 +212,10 @@ export default function App() {
                       <Route 
                         path="security" 
                         element={<Security />} 
+                      />
+                      <Route 
+                        path="affiliate" 
+                        element={<Affiliate />} 
                       />
                       <Route 
                         path="deposit" 

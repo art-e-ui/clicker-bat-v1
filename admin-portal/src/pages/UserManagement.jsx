@@ -25,33 +25,38 @@ export default function UserManagement() {
 
       if (!error && data) {
         const session = JSON.parse(localStorage.getItem('cb_admin_session') || '{}');
-        let mapped = data.map(u => ({
-          id: u.id,
-          username: u.username,
-          email: u.email,
-          phone: u.phone,
-          password_plain: u.password_plain || '',
-          nickname: u.nickname || '',
-          level: u.level || 1,
-          online: u.online || 'Offline',
-          balance: parseFloat(u.balance || 0),
-          frozen: parseFloat(u.frozen || 0),
-          earnings: parseFloat(u.earnings || 0),
-          commissions: parseFloat(u.commissions || 0),
-          withdrawals: parseFloat(u.withdrawals || 0),
-          topup: parseFloat(u.topup || 0),
-          usdt_address: u.usdt_address || '',
-          bank_name: u.bank_name || '',
-          bank_account: u.bank_account || '',
-          bank_holder: u.bank_holder || '',
-          withdraw: u.withdraw || 'Enable',
-          inviteCode: u.invite_code || '',
-          inviter: u.inviter || '',
-          referred_by_staff_id: u.referred_by_staff_id || '',
-          member_of_admin_id: u.member_of_admin_id || '',
-          ip: u.ip || '',
-          regTime: new Date(u.reg_time).toLocaleDateString(),
-        }));
+        let mapped = data.map(u => {
+          const referer = data.find(r => r.id === u.invited_by_user_id);
+          return {
+            id: u.id,
+            username: u.username,
+            email: u.email,
+            phone: u.phone,
+            password_plain: u.password_plain || '',
+            nickname: u.nickname || '',
+            level: u.level || 1,
+            online: u.online || 'Offline',
+            balance: parseFloat(u.balance || 0),
+            frozen: parseFloat(u.frozen || 0),
+            earnings: parseFloat(u.earnings || 0),
+            commissions: parseFloat(u.commissions || 0),
+            withdrawals: parseFloat(u.withdrawals || 0),
+            topup: parseFloat(u.topup || 0),
+            usdt_address: u.usdt_address || '',
+            bank_name: u.bank_name || '',
+            bank_account: u.bank_account || '',
+            bank_holder: u.bank_holder || '',
+            withdraw: u.withdraw || 'Enable',
+            inviteCode: u.invite_code || '',
+            inviter: u.inviter || '',
+            referred_by_staff_id: u.referred_by_staff_id || '',
+            member_of_admin_id: u.member_of_admin_id || '',
+            ip: u.ip || '',
+            regTime: new Date(u.reg_time).toLocaleDateString(),
+            invited_by_user_id: u.invited_by_user_id || '',
+            referred_by_username: referer ? referer.username : '',
+          };
+        });
 
         // Role-based filter
         if (session.role === 'Admin') {
@@ -90,7 +95,7 @@ export default function UserManagement() {
     setFilteredUsers(result);
   }, [users, searchQuery, filterOnline]);
 
-  const openEdit = (user) => {
+   const openEdit = (user) => {
     setEditUser(user);
     setEditFields({
       username: user.username,
@@ -105,6 +110,7 @@ export default function UserManagement() {
       bank_holder: user.bank_holder,
       withdraw: user.withdraw,
       level: user.level.toString(),
+      invited_by_user_id: user.invited_by_user_id || '',
     });
   };
 
@@ -125,6 +131,7 @@ export default function UserManagement() {
         bank_holder: editFields.bank_holder.trim(),
         withdraw: editFields.withdraw,
         level: parseInt(editFields.level) || 1,
+        invited_by_user_id: editFields.invited_by_user_id ? editFields.invited_by_user_id.trim() : null,
       };
 
       const { error } = await supabase
@@ -215,6 +222,7 @@ export default function UserManagement() {
             <tr>
               <th style={{ width: 120 }}>Account</th>
               <th style={{ width: 160 }}>Contact Info</th>
+              <th style={{ width: 150 }}>Referral Bond</th>
               <th style={{ width: 160 }}>Balances</th>
               <th style={{ width: 180 }}>Withdrawal Address</th>
               <th style={{ width: 120 }}>Stats</th>
@@ -225,7 +233,7 @@ export default function UserManagement() {
           <tbody>
             {filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center', padding: '30px', color: 'var(--text-admin-light)' }}>
+                <td colSpan="8" style={{ textAlign: 'center', padding: '30px', color: 'var(--text-admin-light)' }}>
                   No users found.
                 </td>
               </tr>
@@ -250,6 +258,20 @@ export default function UserManagement() {
                       <div className="info-row"><span className="info-label">Phone:</span><span className="info-value">{u.phone}</span></div>
                       <div className="info-row"><span className="info-label">IP:</span><span className="info-value">{u.ip}</span></div>
                       <div className="info-row"><span className="info-label">Inviter:</span><span className="info-value">{u.inviter || '—'}</span></div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="info-block">
+                      <div className="info-row">
+                        <span className="info-label">Bound To:</span>
+                        <span className="info-value" style={u.referred_by_username ? { fontWeight: 700, color: '#10b981' } : { color: 'var(--text-admin-light)' }}>
+                          {u.referred_by_username ? `👤 ${u.referred_by_username}` : 'Unbound'}
+                        </span>
+                      </div>
+                      <div className="info-row" style={{ marginTop: 4 }}>
+                        <span className="info-label">Invite Code:</span>
+                        <span className="info-value" style={{ fontWeight: 600, fontFamily: 'monospace' }}>{u.inviteCode}</span>
+                      </div>
                     </div>
                   </td>
                   <td>
@@ -393,6 +415,10 @@ export default function UserManagement() {
                     <option value="Enable">Enable</option>
                     <option value="Disable">Disable</option>
                   </select>
+                </div>
+                <div className="form-group-sla">
+                  <label>Referrer (User ID)</label>
+                  <input type="text" value={editFields.invited_by_user_id} onChange={e => setEditFields(f => ({ ...f, invited_by_user_id: e.target.value }))} className="input-sla-field" placeholder="Referrer's ID (e.g. ID-12345)" id="edit-referrer-id" />
                 </div>
               </div>
 

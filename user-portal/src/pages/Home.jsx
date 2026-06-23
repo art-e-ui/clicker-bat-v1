@@ -161,7 +161,7 @@ export default function Home({ currentTheme, balance, username }) {
             <span className="grid-label">Withdraw</span>
           </div>
 
-          <div className="grid-item-container" onClick={() => navigate('/profile')} id="btn-quick-invite">
+          <div className="grid-item-container" onClick={() => navigate('/affiliate')} id="btn-quick-invite">
             <div className="icon-circle">
               {/* Gift Icon */}
               <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

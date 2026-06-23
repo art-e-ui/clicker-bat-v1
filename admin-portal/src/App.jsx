@@ -13,7 +13,7 @@ import SupportChat from './pages/SupportChat';
 import Login from './pages/Login';
 import { supabase } from './supabase';
 import { Toaster } from 'react-hot-toast';
-import PortalSwitcher from '../../src/components/PortalSwitcher';
+import PortalSwitcher from './components/PortalSwitcher';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
