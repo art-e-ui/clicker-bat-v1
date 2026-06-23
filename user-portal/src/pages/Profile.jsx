@@ -140,7 +140,7 @@ export default function Profile({ balance, username, setUsername, setBalance, se
   // Determine display UID
   // First user 'Juxev' displays ID-24031
   const displayUid = (username.toLowerCase() === 'juxev') ? 'ID-24031' : (clientProfile?.id || 'ID-24031');
-  const promoCode = clientProfile?.inviteCode || 'OZ5NLS';
+  const promoCode = clientProfile?.invite_code || 'OZ5NLS';
 
   const menuItems = [
     { 
