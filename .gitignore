@@ -1,0 +1,9 @@
+user-portal/node_modules
+user-portal/dist
+user-portal/.env
+admin-portal/node_modules
+admin-portal/dist
+admin-portal/.env
+.idea
+.vscode
+*.log
