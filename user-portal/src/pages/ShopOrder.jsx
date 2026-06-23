@@ -128,7 +128,9 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
     return () => clearInterval(interval);
   }, [orders]);
 
-  const remainingCount = Math.max(0, totalTasks - orderCompleteCount - undoneCount);
+  const remainingCount = activeTaskState 
+    ? Math.max(0, totalTasks - orderCompleteCount) 
+    : Math.max(0, totalTasks - orderCompleteCount - undoneCount);
   const freezeBalance = orders.filter(o => o.status === 'Frozen').reduce((acc, curr) => acc + parseFloat(curr.price), 0).toFixed(2);
 
   const mockMatchPool = [
@@ -144,7 +146,7 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
       toast("You have completed all tasks for today!");
       return;
     }
-    if (undoneCount > 0) {
+    if (undoneCount > 0 && !activeTaskState) {
       toast("You have an outstanding pending order. Please complete it first!");
       navigate('/orders');
       return;

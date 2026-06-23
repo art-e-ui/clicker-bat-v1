@@ -193,7 +193,7 @@ export default function Register() {
         rate: '$/1.0000',
         acceptance: 'Allowed',
         online: 'Online',
-        balance: 100.00,
+        balance: 0.00,
         frozen: 0.00,
         topup: 0.00,
         spent_today: 0.00,
@@ -232,14 +232,14 @@ export default function Register() {
 
       // Log user session in
       localStorage.setItem('cb_username', computedUsername);
-      localStorage.setItem('cb_balance', '100.00');
+      localStorage.setItem('cb_balance', '0.00');
       localStorage.setItem('cb_user_session', JSON.stringify({
         id: newUserId,
         username: computedUsername,
         referredBy: matchingStaff.staff_id || matchingStaff.staffId
       }));
 
-      setFormSuccess(`Account created successfully under staff ${matchingStaff.staff_id || matchingStaff.staffId}! Signup bonus of $100.00 credited.`);
+      setFormSuccess(`Account created successfully under staff ${matchingStaff.staff_id || matchingStaff.staffId}!`);
       setTimeout(() => {
         navigate('/home');
       }, 2000);
