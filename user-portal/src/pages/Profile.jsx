@@ -70,7 +70,14 @@ export default function Profile({ balance, username, setUsername, setBalance, se
     setShowSignOutConfirm(true);
   };
 
-  const executeSignOut = () => {
+  const executeSignOut = async () => {
+    try {
+      if (username) {
+        await supabase.from('cb_users').update({ online: 'Offline' }).eq('username', username);
+      }
+    } catch (err) {
+      console.error('Error setting status to Offline:', err);
+    }
     localStorage.removeItem('cb_user_session');
     localStorage.removeItem('cb_username');
     localStorage.removeItem('cb_balance');
@@ -82,7 +89,12 @@ export default function Profile({ balance, username, setUsername, setBalance, se
     setShowResetConfirm(true);
   };
 
-  const executeEndSession = () => {
+  const executeEndSession = async () => {
+    try {
+      if (username) {
+        await supabase.from('cb_users').update({ online: 'Offline' }).eq('username', username);
+      }
+    } catch (err) {}
     localStorage.clear();
     setShowResetConfirm(false);
     toast("All sessions and hierarchy states have been reset!");

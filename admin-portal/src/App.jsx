@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Users, Briefcase, TrendingUp } from 'lucide-react';
+import { DollarSign, Users, Briefcase, TrendingUp, Activity } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import UserManagement from './pages/UserManagement';
@@ -22,7 +22,8 @@ export default function App() {
     payoutRequests: 0,
     totalDeposits: 0,
     newUsers: 0,
-    matchedTasks: 0
+    matchedTasks: 0,
+    onlineUsers: 0
   });
 
   // Load session to guard tabs
@@ -70,11 +71,18 @@ export default function App() {
         .select('*', { count: 'exact', head: true })
         .eq('status', 'Success');
 
+      // 5. Total active online users count
+      const { count: onlineCount, error: onlineError } = await supabase
+        .from('cb_users')
+        .select('*', { count: 'exact', head: true })
+        .eq('online', 'Online');
+
       setStats({
         payoutRequests: payoutSum,
         totalDeposits: depositSum,
         newUsers: usersCount || 0,
-        matchedTasks: ordersCount || 0
+        matchedTasks: ordersCount || 0,
+        onlineUsers: onlineCount || 0
       });
     } catch (err) {
       console.error("Error fetching dashboard stats:", err);
@@ -187,6 +195,17 @@ export default function App() {
                   <span className="stat-label">Matched Tasks</span>
                 </div>
                 <div className="stat-val">{stats.matchedTasks.toLocaleString()}</div>
+              </div>
+
+              {/* Card 5: Active Orange */}
+              <div className="stat-box-card" style={{ backgroundColor: '#f0932b', color: '#fff' }}>
+                <div className="stat-header">
+                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+                    <Activity size={24} />
+                  </div>
+                  <span className="stat-label">Online Users</span>
+                </div>
+                <div className="stat-val">{stats.onlineUsers.toLocaleString()}</div>
               </div>
 
             </div>

@@ -101,6 +101,16 @@ export default function App() {
   const addPendingDeposit = () => {};
   const addPendingWithdraw = () => {};
 
+  // Set user online status on session restore
+  useEffect(() => {
+    if (username) {
+      supabase.from('cb_users').update({ online: 'Online' }).eq('username', username)
+        .then(({ error }) => {
+          if (error) console.error("Error setting online status:", error);
+        });
+    }
+  }, [username]);
+
   // Periodically sync user profile and orders from Supabase database
   useEffect(() => {
     if (!username) return;

@@ -137,6 +137,8 @@ export default function Login() {
         }
 
         // Successful login: Sync session parameters in localStorage
+        await supabase.from('cb_users').update({ online: 'Online' }).eq('id', user.id);
+        
         localStorage.setItem('cb_username', user.username);
         localStorage.setItem('cb_balance', user.balance.toString());
         localStorage.setItem('cb_user_session', JSON.stringify({

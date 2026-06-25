@@ -95,6 +95,9 @@ export default function Deposit({ addPendingDeposit }) {
       } catch (err) {
         console.error('Error uploading receipt screenshot:', err);
         toast.error('Error uploading receipt: ' + err.message);
+        setFileName('');
+        setFileUrl('');
+        e.target.value = '';
       } finally {
         setUploading(false);
       }
@@ -107,8 +110,8 @@ export default function Deposit({ addPendingDeposit }) {
       toast('Please enter a valid deposit amount.');
       return;
     }
-    if (!fileName) {
-      toast('Please upload a deposit receipt screenshot.');
+    if (!fileUrl) {
+      toast('Please upload a deposit receipt screenshot and wait for it to finish uploading.');
       return;
     }
 
@@ -348,7 +351,7 @@ export default function Deposit({ addPendingDeposit }) {
             </div>
             {fileUrl && (
               <div className="screenshot-preview-box">
-                <img src={fileUrl} alt="Receipt Preview" className="receipt-preview-img" referrerPolicy="no-referrer" />
+                <img src={fileUrl} alt="Receipt Preview" className="receipt-preview-img" />
               </div>
             )}
           </div>

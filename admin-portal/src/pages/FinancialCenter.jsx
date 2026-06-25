@@ -614,7 +614,6 @@ export default function FinancialCenter() {
               <img 
                 src={selectedItem.screenshotUrl} 
                 alt="Receipt Slip" 
-                referrerPolicy="no-referrer"
                 style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: 6, border: '1px solid var(--border-color)', display: 'block', margin: '0 auto' }} 
               />
             </div>
