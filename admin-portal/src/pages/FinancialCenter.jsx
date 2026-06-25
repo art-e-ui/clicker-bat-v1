@@ -614,7 +614,8 @@ export default function FinancialCenter() {
               <img 
                 src={selectedItem.screenshotUrl} 
                 alt="Receipt Slip" 
-                style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: 6, border: '1px solid var(--border-color)' }} 
+                referrerPolicy="no-referrer"
+                style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: 6, border: '1px solid var(--border-color)', display: 'block', margin: '0 auto' }} 
               />
             </div>
             <div className="modal-footer" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
@@ -648,7 +649,7 @@ export default function FinancialCenter() {
             <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 12 }}>
               <button 
                 className="action-btn" 
-                style={{ background: '#f1f5f9', color: 'var(--text-admin-muted)' }}
+                style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-admin-muted)' }}
                 onClick={() => { setSelectedItem(null); setActionType(''); }}
               >
                 Cancel
@@ -763,8 +764,8 @@ export default function FinancialCenter() {
         }
 
         .badge-node {
-          background-color: #f1f5f9;
-          color: #475569;
+          background-color: var(--bg-surface-hover);
+          color: var(--text-admin-muted);
           font-weight: 600;
         }
 

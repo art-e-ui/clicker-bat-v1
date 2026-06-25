@@ -11,7 +11,7 @@ export default function Orders({ balance, orders, setOrders, updateBalance }) {
   const [selectedOrderDetails, setSelectedOrderDetails] = useState(null);
   const { showLoading, hideLoading, performAsync } = useLoading();
 
-  const tabs = ['All', 'Pending', 'Success', 'Frozen'];
+  const tabs = ['All', 'Success', 'Frozen'];
 
   useEffect(() => {
     showLoading('orders');
@@ -22,7 +22,9 @@ export default function Orders({ balance, orders, setOrders, updateBalance }) {
   }, []);
 
   const filteredOrders = orders.filter(order => {
-    if (activeTab === 'All') return true;
+    if (activeTab === 'All') {
+      return order.status.toLowerCase() !== 'pending';
+    }
     return order.status.toLowerCase() === activeTab.toLowerCase();
   });
 

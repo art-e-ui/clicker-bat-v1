@@ -524,9 +524,9 @@ export default function UserManagement() {
         }
 
         .modal-content-card {
-          background-color: #ffffff;
+          background-color: var(--bg-admin-card);
           border-radius: 16px;
-          border: 1px solid rgba(0, 0, 0, 0.08);
+          border: 1px solid var(--border-color);
           width: 90%;
           padding: 24px;
           box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -544,7 +544,7 @@ export default function UserManagement() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-bottom: 1px solid #f1f5f9;
+          border-bottom: 1px solid var(--border-color);
           padding-bottom: 12px;
           margin-bottom: 16px;
         }
@@ -552,15 +552,15 @@ export default function UserManagement() {
         .modal-header h3 {
           font-size: 15px;
           font-weight: 700;
-          color: #0d172a;
+          color: var(--text-admin-main);
           margin: 0;
         }
 
         .modal-close-btn {
-          background: #f1f5f9;
+          background: var(--bg-surface-hover);
           border: none;
           font-size: 12px;
-          color: #64748b;
+          color: var(--text-admin-light);
           cursor: pointer;
           width: 28px;
           height: 28px;
@@ -572,8 +572,8 @@ export default function UserManagement() {
         }
 
         .modal-close-btn:hover {
-          background: #e2e8f0;
-          color: #0f172a;
+          background: var(--border-color);
+          color: var(--text-admin-main);
         }
 
         .modal-body {
@@ -586,7 +586,7 @@ export default function UserManagement() {
           display: flex;
           justify-content: flex-end;
           gap: 12px;
-          border-top: 1px solid #f1f5f9;
+          border-top: 1px solid var(--border-color);
           padding-top: 16px;
           margin-top: 8px;
         }
@@ -600,7 +600,7 @@ export default function UserManagement() {
         .form-group-sla label {
           font-size: 10px;
           font-weight: 700;
-          color: #64748b;
+          color: var(--text-admin-muted);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -608,17 +608,17 @@ export default function UserManagement() {
         .input-sla-field {
           height: 38px;
           border-radius: 8px;
-          border: 1px solid #cbd5e1;
+          border: 1px solid var(--border-color);
           padding: 0 12px;
           font-size: 13px;
-          color: #0f172a;
-          background-color: #f8fafc;
+          color: var(--text-admin-main);
+          background-color: var(--bg-surface);
           outline: none;
           transition: all 0.15s ease;
         }
 
         .input-sla-field:focus {
-          background-color: #ffffff;
+          background-color: var(--bg-admin-card);
           border-color: var(--color-primary);
           box-shadow: 0 0 0 3px rgba(53, 28, 150, 0.12);
         }

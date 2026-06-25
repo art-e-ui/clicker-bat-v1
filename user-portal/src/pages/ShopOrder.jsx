@@ -365,10 +365,6 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
                 <span className="stats-card-num">{remainingCount}</span>
                 <span className="stats-card-lbl">Remaining</span>
               </div>
-              <div className="stats-card-col">
-                <span className="stats-card-num">{undoneCount}</span>
-                <span className="stats-card-lbl">Pending</span>
-              </div>
             </div>
           </div>
 
@@ -580,7 +576,7 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
 
         .stats-card-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           text-align: center;
         }
 

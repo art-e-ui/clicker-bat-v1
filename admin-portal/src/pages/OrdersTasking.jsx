@@ -15,6 +15,7 @@ export default function OrdersTasking() {
   const [orderCount, setOrderCount] = useState('5');
   const [profitPercent, setProfitPercent] = useState('5');
   const [showModal, setShowModal] = useState(false);
+  const [newAssignOrders, setNewAssignOrders] = useState([]);
 
   // Edit Worksheet Orders states
   const [showEditOrdersModal, setShowEditOrdersModal] = useState(false);
@@ -166,83 +167,109 @@ export default function OrdersTasking() {
     );
 
     if (activeTask) {
-      toast(`User ${user.username} already has an active task in progress (${activeTask.status});. Please complete or cancel it before assigning a new one.`);
+      toast.error(`User ${user.username} already has an active task in progress (${activeTask.status}). Please complete or cancel it before assigning a new one.`);
       return;
     }
 
     setSelectedUser(user);
-    setTotalAmount('1000');
-    setOrderCount('5');
-    setProfitPercent('5');
+    // Initialize with 1 empty manual order
+    setNewAssignOrders([
+      { title: '', image: '', price: '100', profit: '10', status: 'Pending' }
+    ]);
     setShowModal(true);
+  };
+
+  const handleOrderCountChange = (valStr) => {
+    let count = parseInt(valStr || '0');
+    if (isNaN(count)) count = 0;
+    if (count < 1) count = 1;
+    if (count > 40) count = 40;
+
+    setNewAssignOrders((prev) => {
+      const next = [...prev];
+      if (count > next.length) {
+        for (let i = next.length; i < count; i++) {
+          next.push({ title: '', image: '', price: '100', profit: '10', status: 'Pending' });
+        }
+      } else if (count < next.length) {
+        return next.slice(0, count);
+      }
+      return next;
+    });
+  };
+
+  const handleAddOrder = () => {
+    setNewAssignOrders((prev) => [
+      ...prev,
+      { title: '', image: '', price: '100', profit: '10', status: 'Pending' }
+    ]);
+  };
+
+  const handleRemoveOrder = (idx) => {
+    setNewAssignOrders((prev) => {
+      if (prev.length <= 1) {
+        toast.error("A task must have at least one order.");
+        return prev;
+      }
+      return prev.filter((_, i) => i !== idx);
+    });
   };
 
   const handleConfirmAssignment = async (e) => {
     e.preventDefault();
     if (!selectedUser) return;
 
-    const amt = parseFloat(totalAmount);
-    const count = parseInt(orderCount);
-    const pct = parseFloat(profitPercent);
-
-    if (isNaN(amt) || amt <= 0 || isNaN(count) || count <= 0 || isNaN(pct) || pct <= 0) {
-      toast("Please enter valid positive numbers for all fields.");
+    if (newAssignOrders.length === 0) {
+      toast.error("Please add at least one order to the task.");
       return;
     }
 
-    // Fetch real products from Supabase
-    let activeProducts = PRODUCT_CATALOG;
-    const { data: dbProducts } = await supabase.from('cb_products').select('*');
-    if (dbProducts && dbProducts.length > 0) {
-      activeProducts = dbProducts;
-    }
-
-    // Pre-allocate orders inside the task with randomized pricing
-    const orders = [];
-    let weights = [];
-    let totalWeight = 0;
-    for (let i = 0; i < count; i++) {
-      let w = Math.random() * 0.8 + 0.2; // random weight between 0.2 and 1.0
-      weights.push(w);
-      totalWeight += w;
-    }
-
-    let sumPrices = 0;
-    for (let i = 0; i < count; i++) {
-      const prod = activeProducts[Math.floor(Math.random() * activeProducts.length)];
-      
-      let orderPrice = 0;
-      if (i === count - 1) {
-        orderPrice = parseFloat((amt - sumPrices).toFixed(2));
-      } else {
-        orderPrice = parseFloat(((weights[i] / totalWeight) * amt).toFixed(2));
-        sumPrices += orderPrice;
+    // Validate all manual orders
+    for (let idx = 0; idx < newAssignOrders.length; idx++) {
+      const o = newAssignOrders[idx];
+      if (!o.title) {
+        toast.error(`Order #${idx + 1} has no product selected/configured.`);
+        return;
       }
-      
-      const profitPerOrder = parseFloat((orderPrice * (pct / 100)).toFixed(2));
-      const newId = Date.now() + i;
-
-      orders.push({
-        id: newId,
-        title: prod.title,
-        image: prod.image_url || prod.image, // Supports both old mock data format and new DB format
-        price: orderPrice,
-        profit: profitPerOrder,
-        status: 'Pending'
-      });
+      const priceVal = parseFloat(o.price);
+      const profitVal = parseFloat(o.profit);
+      if (isNaN(priceVal) || priceVal <= 0) {
+        toast.error(`Order #${idx + 1} must have a valid positive price.`);
+        return;
+      }
+      if (isNaN(profitVal) || profitVal < 0) {
+        toast.error(`Order #${idx + 1} must have a valid positive commission.`);
+        return;
+      }
     }
+
+    // Compute totals
+    const totalAmountSum = newAssignOrders.reduce((sum, o) => sum + parseFloat(o.price || 0), 0);
+    const totalProfitSum = newAssignOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0);
+    const orderCountVal = newAssignOrders.length;
+    const computedProfitPercent = totalAmountSum > 0 ? parseFloat(((totalProfitSum / totalAmountSum) * 100).toFixed(2)) : 0;
+
+    // Generate unique order IDs
+    const ordersWithIds = newAssignOrders.map((o, idx) => ({
+      id: Date.now() + idx,
+      title: o.title,
+      image: o.image || null,
+      price: parseFloat(o.price),
+      profit: parseFloat(o.profit),
+      status: 'Pending'
+    }));
 
     const newTask = {
       id: 'TSK-' + Math.floor(10000 + Math.random() * 90000),
       user_id: selectedUser.id,
       username: selectedUser.username,
-      total_amount: amt,
-      order_count: count,
-      profit_percent: pct,
+      total_amount: totalAmountSum,
+      order_count: orderCountVal,
+      profit_percent: computedProfitPercent,
       status: 'Pending',
       created_at: new Date().toISOString(),
       assigned_by: session.name,
-      orders,
+      orders: ordersWithIds,
       referred_by_staff_id: selectedUser.referred_by_staff_id || null,
       member_of_admin_id: selectedUser.member_of_admin_id || null
     };
@@ -257,9 +284,9 @@ export default function OrdersTasking() {
         return;
       }
 
-      // NEW: Pre-populate cb_orders so the user sees them immediately in the Pending tab
-      const dbOrders = orders.map((o, idx) => ({
-        id: o.id, // Explicitly pass the ID to fix the null value constraint error
+      // Pre-populate cb_orders so the user sees them immediately in the Pending tab
+      const dbOrders = ordersWithIds.map((o, idx) => ({
+        id: o.id,
         username: selectedUser.username,
         timestamp: new Date().toISOString(),
         status: 'Pending',
@@ -283,7 +310,7 @@ export default function OrdersTasking() {
 
       setShowModal(false);
       setSelectedUser(null);
-      toast.success(`Successfully assigned task ${newTask.id} to user ${newTask.username}!`);
+      toast.success(`Successfully assigned task ${newTask.id} with ${orderCountVal} manual orders to user ${newTask.username}!`);
       fetchUsersAndTasks();
     } catch (err) {
       toast.error("Failed to assign task: " + err.message);
@@ -539,84 +566,259 @@ export default function OrdersTasking() {
       {/* Assign Task Modal */}
       {showModal && selectedUser && (
         <div className="modal-overlay">
-          <div className="modal-content-card" style={{ maxWidth: 500 }}>
-            <div className="modal-header">
-              <h3>Assign Matching Task to {selectedUser.username}</h3>
+          <div className="modal-content-card" style={{ maxWidth: 650, width: '95%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="modal-header" style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-color)', marginBottom: 12 }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-admin-main)' }}>
+                  Assign Manual Worksheet to {selectedUser.username}
+                </h3>
+                <p style={{ margin: '4px 0 0 0', fontSize: 11, color: 'var(--text-admin-light)' }}>
+                  Configure each matched order manually. Both the product title, price, and commission can be customized.
+                </p>
+              </div>
               <button className="modal-close-btn" onClick={() => { setShowModal(false); setSelectedUser(null); }}>✕</button>
             </div>
-            <form onSubmit={handleConfirmAssignment}>
-              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div className="form-group-sla">
-                  <label>Total Task Order Value ($)</label>
-                  <input 
-                    type="number"
-                    value={totalAmount}
-                    onChange={(e) => setTotalAmount(e.target.value)}
-                    required
-                    className="input-sla-field"
-                    placeholder="e.g. 1000"
-                  />
-                  <span style={{ fontSize: 9, color: 'var(--text-admin-light)' }}>
-                    * Sum of order amounts for all matched orders in this single task.
-                  </span>
-                </div>
 
-                <div className="form-group-sla">
-                  <label>Count of Orders in Task</label>
-                  <input 
-                    type="number"
-                    value={orderCount}
-                    onChange={(e) => setOrderCount(e.target.value)}
-                    required
-                    className="input-sla-field"
-                    placeholder="e.g. 5"
-                    min="1"
-                    max="40"
-                  />
-                  <span style={{ fontSize: 9, color: 'var(--text-admin-light)' }}>
-                    * Total matched orders user must complete before finalizing task.
-                  </span>
-                </div>
-
-                <div className="form-group-sla">
-                  <label>Profit Commission Yield (%)</label>
-                  <input 
-                    type="number"
-                    step="0.1"
-                    value={profitPercent}
-                    onChange={(e) => setProfitPercent(e.target.value)}
-                    required
-                    className="input-sla-field"
-                    placeholder="e.g. 5"
-                  />
-                  <span style={{ fontSize: 9, color: 'var(--text-admin-light)' }}>
-                    * Percentage of profit collected by the client on each order.
-                  </span>
-                </div>
-
-                {/* Computation Preview Block */}
-                <div style={{ backgroundColor: '#f8fafc', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <h4 style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-muted)', textTransform: 'uppercase' }}>Real-time Allocation Preview</h4>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                    <span>Price per Matched Order:</span>
-                    <b>$ {avgAmt}</b>
+            <form onSubmit={handleConfirmAssignment} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+              <div className="modal-body" style={{ flex: 1, overflowY: 'auto', paddingRight: 6, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                
+                {/* Control Header */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'end', backgroundColor: 'var(--bg-surface-hover)', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)' }}>
+                  <div className="form-group-sla" style={{ margin: 0 }}>
+                    <label style={{ fontWeight: 700 }}>Number of Orders in Task</label>
+                    <input 
+                      type="number"
+                      value={newAssignOrders.length}
+                      onChange={(e) => handleOrderCountChange(e.target.value)}
+                      required
+                      className="input-sla-field"
+                      min="1"
+                      max="40"
+                      style={{ height: 36 }}
+                    />
+                    <span style={{ fontSize: 9, color: 'var(--text-admin-light)', marginTop: 4, display: 'block' }}>
+                      * Adjust the number of orders dynamically.
+                    </span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                    <span>Profit Margin per Order:</span>
-                    <b style={{ color: 'var(--color-green)' }}>$ {profPerOrd}</b>
+                  <button 
+                    type="button" 
+                    className="action-btn btn-view" 
+                    onClick={handleAddOrder}
+                    style={{ height: 36, display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}
+                  >
+                    ➕ Add Order Row
+                  </button>
+                </div>
+
+                {/* Orders List Container */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {newAssignOrders.map((order, idx) => (
+                    <div 
+                      key={idx} 
+                      style={{ 
+                        border: '1px solid var(--border-color)', 
+                        borderRadius: 8, 
+                        padding: 12, 
+                        backgroundColor: 'var(--bg-admin-card)',
+                        position: 'relative'
+                      }}
+                    >
+                      {/* Order Row Header */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-admin-muted)', textTransform: 'uppercase' }}>
+                          Order #{idx + 1}
+                        </span>
+                        {newAssignOrders.length > 1 && (
+                          <button 
+                            type="button" 
+                            onClick={() => handleRemoveOrder(idx)}
+                            style={{ 
+                              background: 'none', 
+                              border: 'none', 
+                              color: '#ef4444', 
+                              fontSize: 11, 
+                              cursor: 'pointer', 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: 2 
+                            }}
+                          >
+                            ✕ Remove
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Dropdown for products to select */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                            Select Product Catalog
+                          </label>
+                          <select
+                            onChange={(e) => {
+                              if (e.target.value !== "") {
+                                const prod = products[parseInt(e.target.value)];
+                                const updated = [...newAssignOrders];
+                                updated[idx] = {
+                                  ...updated[idx],
+                                  title: prod.title,
+                                  image: prod.image,
+                                  price: String(prod.price),
+                                  profit: String(prod.profit || (prod.price * 0.1).toFixed(2))
+                                };
+                                setNewAssignOrders(updated);
+                              }
+                            }}
+                            style={{ 
+                              fontSize: 11, 
+                              padding: '6px', 
+                              borderRadius: 4, 
+                              border: '1px solid var(--border-color)', 
+                              backgroundColor: 'var(--bg-surface-hover)',
+                              color: 'var(--text-admin-main)',
+                              outline: 'none',
+                              width: '100%'
+                            }}
+                            defaultValue=""
+                          >
+                            <option value="">-- Choose a product to auto-fill title, image, price & profit --</option>
+                            {products.map((p, pIdx) => (
+                              <option key={pIdx} value={pIdx}>
+                                {p.title.length > 60 ? p.title.substring(0, 60) + '...' : p.title} (${p.price})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Custom fields & Image Preview */}
+                        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                          {order.image && (
+                            <img 
+                              src={order.image} 
+                              alt="Product" 
+                              referrerPolicy="no-referrer"
+                              style={{ 
+                                width: 44, 
+                                height: 44, 
+                                objectFit: 'contain', 
+                                border: '1px solid var(--border-color)', 
+                                borderRadius: 4, 
+                                backgroundColor: 'var(--bg-surface-hover)', 
+                                padding: 2,
+                                marginTop: 18
+                              }} 
+                            />
+                          )}
+                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                              Product Title / Name
+                            </label>
+                            <input 
+                              type="text"
+                              value={order.title}
+                              onChange={(e) => {
+                                const updated = [...newAssignOrders];
+                                updated[idx].title = e.target.value;
+                                setNewAssignOrders(updated);
+                              }}
+                              required
+                              placeholder="e.g. barkTHINS Snacking Chocolate"
+                              style={{ 
+                                width: '100%', 
+                                height: 34, 
+                                borderRadius: 4, 
+                                border: '1px solid var(--border-color)', 
+                                padding: '0 8px', 
+                                fontSize: 12 
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Price and Profit */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                              Price ($)
+                            </label>
+                            <input 
+                              type="number"
+                              step="0.01"
+                              value={order.price}
+                              onChange={(e) => {
+                                const updated = [...newAssignOrders];
+                                updated[idx].price = e.target.value;
+                                setNewAssignOrders(updated);
+                              }}
+                              required
+                              placeholder="0.00"
+                              style={{ 
+                                width: '100%', 
+                                height: 34, 
+                                borderRadius: 4, 
+                                border: '1px solid var(--border-color)', 
+                                padding: '0 8px', 
+                                fontSize: 12 
+                              }}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                              Commission / Profit ($)
+                            </label>
+                            <input 
+                              type="number"
+                              step="0.01"
+                              value={order.profit}
+                              onChange={(e) => {
+                                const updated = [...newAssignOrders];
+                                updated[idx].profit = e.target.value;
+                                setNewAssignOrders(updated);
+                              }}
+                              required
+                              placeholder="0.00"
+                              style={{ 
+                                width: '100%', 
+                                height: 34, 
+                                borderRadius: 4, 
+                                border: '1px solid var(--border-color)', 
+                                padding: '0 8px', 
+                                fontSize: 12 
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Computation Summary block */}
+                <div style={{ backgroundColor: 'var(--color-success-bg)', padding: 12, borderRadius: 6, border: '1px solid var(--color-success)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <h4 style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-success)', textTransform: 'uppercase', margin: 0 }}>
+                    Manual Worksheet Summary
+                  </h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-admin-main)' }}>
+                    <span>Total Orders:</span>
+                    <b>{newAssignOrders.length}</b>
                   </div>
-                  <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '4px 0' }} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700 }}>
-                    <span>Total Task Earnings (Commission):</span>
-                    <span style={{ color: 'var(--color-primary)' }}>$ {totalProf}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-admin-main)' }}>
+                    <span>Computed Total Price ($):</span>
+                    <b>${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.price || 0), 0).toFixed(2)}</b>
+                  </div>
+                  <hr style={{ border: 'none', borderTop: '1px solid var(--color-success)', margin: '4px 0', opacity: 0.3 }} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: 'var(--color-success)' }}>
+                    <span>Total User Profit / Commission:</span>
+                    <span>${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
-              <div className="modal-footer" style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+
+              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-color)', paddingTop: 12, marginTop: 12, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
                 <button 
                   type="button" 
                   className="action-btn"
-                  style={{ background: '#f1f5f9', color: 'var(--text-admin-muted)' }}
+                  style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-admin-muted)' }}
                   onClick={() => { setShowModal(false); setSelectedUser(null); }}
                 >
                   Cancel
@@ -648,7 +850,7 @@ export default function OrdersTasking() {
 
             <form onSubmit={handleSaveEditedOrders} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
               <div className="modal-body" style={{ flex: 1, overflowY: 'auto', paddingRight: 6, display: 'flex', flexDirection: 'column', gap: 18 }}>
-                <div style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', padding: 10, borderRadius: 6, fontSize: 11, color: '#1e40af', lineHeight: 1.4 }}>
+                <div style={{ backgroundColor: 'var(--color-warning-bg)', border: '1px solid var(--color-warning)', padding: 10, borderRadius: 6, fontSize: 11, color: 'var(--text-admin-main)', lineHeight: 1.4 }}>
                   💡 <b>Pro-Tip:</b> You can customize each individual order in the worksheet sequence. Editing prices and profits here will directly update both the task worksheet and the user's pending order screen. To prevent discrepancy, edit <b>Pending</b> orders only.
                 </div>
 
@@ -661,7 +863,7 @@ export default function OrdersTasking() {
                         border: '1px solid var(--border-color)', 
                         borderRadius: 8, 
                         padding: 12, 
-                        backgroundColor: isCompleted ? '#f8fafc' : '#ffffff',
+                        backgroundColor: isCompleted ? 'var(--bg-surface-hover)' : 'var(--bg-admin-card)',
                         opacity: isCompleted ? 0.8 : 1,
                         position: 'relative'
                       }}
@@ -685,7 +887,8 @@ export default function OrdersTasking() {
                               borderRadius: 4, 
                               border: '1px solid var(--border-color)',
                               outline: 'none',
-                              backgroundColor: isCompleted ? '#e2e8f0' : 'white'
+                              backgroundColor: isCompleted ? 'var(--border-color)' : 'var(--bg-admin-card)',
+                              color: 'var(--text-admin-main)'
                             }}
                           >
                             <option value="Pending">Pending</option>
@@ -752,7 +955,8 @@ export default function OrdersTasking() {
                               border: '1px solid var(--border-color)', 
                               padding: '0 8px', 
                               fontSize: 12,
-                              backgroundColor: isCompleted ? '#f1f5f9' : 'white'
+                              backgroundColor: isCompleted ? 'var(--bg-surface-hover)' : 'var(--bg-admin-card)',
+                              color: 'var(--text-admin-main)'
                             }}
                           />
                         </div>
@@ -782,7 +986,8 @@ export default function OrdersTasking() {
                                 border: '1px solid var(--border-color)', 
                                 padding: '0 8px', 
                                 fontSize: 12,
-                                backgroundColor: isCompleted ? '#f1f5f9' : 'white'
+                                backgroundColor: isCompleted ? 'var(--bg-surface-hover)' : 'var(--bg-admin-card)',
+                                color: 'var(--text-admin-main)'
                               }}
                             />
                           </div>
@@ -807,7 +1012,8 @@ export default function OrdersTasking() {
                                 border: '1px solid var(--border-color)', 
                                 padding: '0 8px', 
                                 fontSize: 12,
-                                backgroundColor: isCompleted ? '#f1f5f9' : 'white'
+                                backgroundColor: isCompleted ? 'var(--bg-surface-hover)' : 'var(--bg-admin-card)',
+                                color: 'var(--text-admin-main)'
                               }}
                             />
                           </div>
@@ -822,7 +1028,7 @@ export default function OrdersTasking() {
                 <button 
                   type="button" 
                   className="action-btn"
-                  style={{ background: '#f1f5f9', color: 'var(--text-admin-muted)' }}
+                  style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-admin-muted)' }}
                   onClick={() => { setShowEditOrdersModal(false); setEditingTask(null); }}
                 >
                   Cancel
@@ -838,8 +1044,8 @@ export default function OrdersTasking() {
 
       <style>{`
         .badge-node {
-          background-color: #f1f5f9;
-          color: #475569;
+          background-color: var(--bg-surface-hover);
+          color: var(--text-admin-muted);
           font-weight: 600;
         }
 
@@ -909,12 +1115,12 @@ export default function OrdersTasking() {
           padding: 0 12px;
           font-size: 13px;
           color: var(--text-admin-main);
-          background-color: #f8fafc;
+          background-color: var(--bg-surface);
           outline: none;
         }
 
         .input-sla-field:focus {
-          background-color: white;
+          background-color: var(--bg-admin-card);
           border-color: var(--color-primary);
         }
 

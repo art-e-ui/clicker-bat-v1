@@ -54,6 +54,36 @@
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
+
+  /* Theme variables for administrative interface (used inside modals/views) */
+  --text-admin-main: #2b2b36;
+  --text-admin-light: #a0a0b0;
+  --text-admin-muted: #6b6b7a;
+  --text-admin-dark: #111827;
+  --bg-admin-card: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-app: #0f172a; /* Slate 900 */
+    --bg-surface: #1e293b; /* Slate 800 */
+    --bg-surface-hover: #334155; /* Slate 700 */
+    --border-color: #334155;
+    --border-color-focus: #475569;
+    
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-light: #cbd5e1;
+    
+    --text-admin-main: #f8fafc;
+    --text-admin-light: #94a3b8;
+    --text-admin-muted: #cbd5e1;
+    --text-admin-dark: #f8fafc;
+    --bg-admin-card: #1e293b;
+
+    --sidebar-active-bg: #1e293b;
+    --sidebar-active-text: #ffffff;
+  }
 }
 
 * {
@@ -597,7 +627,7 @@ body {
 
 .modal-footer-admin {
   padding: 20px 24px;
-  background-color: #f8fafc;
+  background-color: var(--bg-surface-hover);
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;

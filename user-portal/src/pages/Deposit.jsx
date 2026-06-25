@@ -27,6 +27,7 @@ export default function Deposit({ addPendingDeposit }) {
   const [fileName, setFileName] = useState('');
   const [fileUrl, setFileUrl] = useState('');
   const [showIntlModal, setShowIntlModal] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // Crypto addresses from DB (keyed by dbKey)
   const [addresses, setAddresses] = useState({});
@@ -68,11 +69,35 @@ export default function Deposit({ addPendingDeposit }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setFileName(file.name);
-      setFileUrl(URL.createObjectURL(file));
+      try {
+        setUploading(true);
+        const fileExt = file.name.split('.').pop();
+        const generatedName = `deposit-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}.${fileExt}`;
+        const filePath = `deposits/${generatedName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('cb_storage')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: publicUrlData } = supabase.storage
+          .from('cb_storage')
+          .getPublicUrl(filePath);
+
+        const publicUrl = publicUrlData.publicUrl;
+        setFileUrl(publicUrl);
+        toast.success('Receipt screenshot uploaded successfully!');
+      } catch (err) {
+        console.error('Error uploading receipt screenshot:', err);
+        toast.error('Error uploading receipt: ' + err.message);
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -318,18 +343,18 @@ export default function Deposit({ addPendingDeposit }) {
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
                 </svg>
-                <span>{fileName || 'Choose screenshot image'}</span>
+                <span>{uploading ? 'Uploading screenshot...' : (fileName || 'Choose screenshot image')}</span>
               </label>
             </div>
             {fileUrl && (
               <div className="screenshot-preview-box">
-                <img src={fileUrl} alt="Receipt Preview" className="receipt-preview-img" />
+                <img src={fileUrl} alt="Receipt Preview" className="receipt-preview-img" referrerPolicy="no-referrer" />
               </div>
             )}
           </div>
 
-          <button type="submit" className="submit-deposit-btn" id="btn-submit-deposit">
-            ✓ Confirm & Submit Deposit Request
+          <button type="submit" className="submit-deposit-btn" id="btn-submit-deposit" disabled={uploading}>
+            {uploading ? 'Uploading image...' : '✓ Confirm & Submit Deposit Request'}
           </button>
 
           <div style={{ margin: '4px 0 8px', textAlign: 'center', fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }}>
