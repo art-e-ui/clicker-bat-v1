@@ -634,7 +634,7 @@ export default function LanguageSwitcher() {
 
         .region-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: 1fr;
           gap: 4px;
         }
 

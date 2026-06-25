@@ -16,6 +16,12 @@ export default function OrdersTasking() {
   const [profitPercent, setProfitPercent] = useState('5');
   const [showModal, setShowModal] = useState(false);
 
+  // Edit Worksheet Orders states
+  const [showEditOrdersModal, setShowEditOrdersModal] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+  const [editingOrders, setEditingOrders] = useState([]);
+  const [products, setProducts] = useState([]);
+
   const fetchUsersAndTasks = async () => {
     try {
       // Session
@@ -95,8 +101,27 @@ export default function OrdersTasking() {
     }
   };
 
+  const loadProducts = async () => {
+    try {
+      let activeProducts = PRODUCT_CATALOG;
+      const { data: dbProducts } = await supabase.from('cb_products').select('*');
+      if (dbProducts && dbProducts.length > 0) {
+        activeProducts = dbProducts.map(p => ({
+          title: p.title,
+          image: p.image_url || p.image,
+          price: parseFloat(p.price || 0),
+          profit: parseFloat(p.profit || 0)
+        }));
+      }
+      setProducts(activeProducts);
+    } catch (err) {
+      console.error("Error loading products catalog:", err);
+    }
+  };
+
   useEffect(() => {
     fetchUsersAndTasks();
+    loadProducts();
     const interval = setInterval(fetchUsersAndTasks, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -298,6 +323,63 @@ export default function OrdersTasking() {
     }
   };
 
+  const handleOpenEditOrdersModal = (task) => {
+    setEditingTask(task);
+    setEditingOrders(task.orders.map(o => ({ ...o })));
+    setShowEditOrdersModal(true);
+  };
+
+  const handleSaveEditedOrders = async (e) => {
+    e.preventDefault();
+    if (!editingTask) return;
+
+    for (let idx = 0; idx < editingOrders.length; idx++) {
+      const o = editingOrders[idx];
+      const pPrice = parseFloat(o.price);
+      const pProfit = parseFloat(o.profit);
+      if (isNaN(pPrice) || pPrice <= 0 || isNaN(pProfit) || pProfit < 0) {
+        toast.error(`Order #${idx + 1} has invalid price or profit.`);
+        return;
+      }
+    }
+
+    try {
+      // 1. Update cb_assigned_tasks JSON field
+      const { error: taskErr } = await supabase
+        .from('cb_assigned_tasks')
+        .update({ orders: editingOrders })
+        .eq('id', editingTask.id);
+
+      if (taskErr) {
+        toast.error("Error updating worksheet orders in task: " + taskErr.message);
+        return;
+      }
+
+      // 2. Update individual order records in cb_orders table
+      for (let idx = 0; idx < editingOrders.length; idx++) {
+        const o = editingOrders[idx];
+        await supabase
+          .from('cb_orders')
+          .update({
+            title: o.title,
+            price: parseFloat(o.price),
+            profit: parseFloat(o.profit),
+            status: o.status
+          })
+          .eq('assigned_task_id', editingTask.id)
+          .eq('assigned_order_index', idx);
+      }
+
+      toast.success("Successfully updated worksheet orders!");
+      setShowEditOrdersModal(false);
+      setEditingTask(null);
+      setEditingOrders([]);
+      fetchUsersAndTasks();
+    } catch (err) {
+      toast.error("Failed to save changes: " + err.message);
+    }
+  };
+
   const getActiveTaskDisplay = (username) => {
     const task = assignedTasks.find(t => 
       t.username.toLowerCase() === username.toLowerCase() && 
@@ -433,9 +515,14 @@ export default function OrdersTasking() {
                     <td>
                       <div className="action-buttons-cell">
                         {t.status !== 'Completed' ? (
-                          <button className="action-btn btn-reject" onClick={() => handleCancelTask(t.id)}>
-                            Cancel & Delete
-                          </button>
+                          <>
+                            <button className="action-btn btn-view" onClick={() => handleOpenEditOrdersModal(t)} style={{ whiteSpace: 'nowrap' }}>
+                              📝 Edit Orders
+                            </button>
+                            <button className="action-btn btn-reject" onClick={() => handleCancelTask(t.id)}>
+                              Cancel
+                            </button>
+                          </>
                         ) : (
                           <span style={{ fontSize: 11, color: 'var(--text-admin-light)' }}>Locked</span>
                         )}
@@ -536,6 +623,212 @@ export default function OrdersTasking() {
                 </button>
                 <button type="submit" className="sla-submit-btn">
                   ✅ Confirm Assignment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Worksheet Orders Modal */}
+      {showEditOrdersModal && editingTask && (
+        <div className="modal-overlay">
+          <div className="modal-content-card" style={{ maxWidth: 650, width: '90%', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="modal-header" style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-color)', marginBottom: 12 }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-admin-main)' }}>
+                  Edit Worksheet Orders (Task: {editingTask.id})
+                </h3>
+                <p style={{ margin: '4px 0 0 0', fontSize: 11, color: 'var(--text-admin-light)' }}>
+                  Assigned to: <b>{editingTask.username}</b> | Total sum: <b>${editingTask.totalAmount.toFixed(2)}</b>
+                </p>
+              </div>
+              <button className="modal-close-btn" onClick={() => { setShowEditOrdersModal(false); setEditingTask(null); }}>✕</button>
+            </div>
+
+            <form onSubmit={handleSaveEditedOrders} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+              <div className="modal-body" style={{ flex: 1, overflowY: 'auto', paddingRight: 6, display: 'flex', flexDirection: 'column', gap: 18 }}>
+                <div style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', padding: 10, borderRadius: 6, fontSize: 11, color: '#1e40af', lineHeight: 1.4 }}>
+                  💡 <b>Pro-Tip:</b> You can customize each individual order in the worksheet sequence. Editing prices and profits here will directly update both the task worksheet and the user's pending order screen. To prevent discrepancy, edit <b>Pending</b> orders only.
+                </div>
+
+                {editingOrders.map((order, idx) => {
+                  const isCompleted = order.status === 'Success';
+                  return (
+                    <div 
+                      key={idx} 
+                      style={{ 
+                        border: '1px solid var(--border-color)', 
+                        borderRadius: 8, 
+                        padding: 12, 
+                        backgroundColor: isCompleted ? '#f8fafc' : '#ffffff',
+                        opacity: isCompleted ? 0.8 : 1,
+                        position: 'relative'
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-admin-muted)', textTransform: 'uppercase' }}>
+                          Order #{idx + 1} <span style={{ fontSize: 10, fontWeight: 400, textTransform: 'none', marginLeft: 6 }}>({isCompleted ? '✓ Submitted' : '⌛ Pending'})</span>
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ fontSize: 11, color: 'var(--text-admin-light)' }}>Status:</span>
+                          <select
+                            value={order.status}
+                            onChange={(e) => {
+                              const newOrders = [...editingOrders];
+                              newOrders[idx].status = e.target.value;
+                              setEditingOrders(newOrders);
+                            }}
+                            style={{ 
+                              fontSize: 12, 
+                              padding: '2px 6px', 
+                              borderRadius: 4, 
+                              border: '1px solid var(--border-color)',
+                              outline: 'none',
+                              backgroundColor: isCompleted ? '#e2e8f0' : 'white'
+                            }}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Success">Success</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        {/* Quick fill dropdown from Catalog */}
+                        {!isCompleted && products.length > 0 && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Quick Fill from Product Catalog</label>
+                            <select
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  const prod = products[parseInt(e.target.value)];
+                                  const newOrders = [...editingOrders];
+                                  newOrders[idx].title = prod.title;
+                                  newOrders[idx].image = prod.image;
+                                  newOrders[idx].price = prod.price;
+                                  // Re-calculate profit based on task's profit yield percent
+                                  const pYield = parseFloat(editingTask.profitPercent || '5');
+                                  newOrders[idx].profit = parseFloat((prod.price * (pYield / 100)).toFixed(2));
+                                  setEditingOrders(newOrders);
+                                }
+                              }}
+                              style={{ 
+                                fontSize: 11, 
+                                padding: '6px', 
+                                borderRadius: 4, 
+                                border: '1px solid #cbd5e1', 
+                                backgroundColor: '#f8fafc',
+                                outline: 'none'
+                              }}
+                              defaultValue=""
+                            >
+                              <option value="">-- Choose a product to auto-fill title, image, price & profit --</option>
+                              {products.map((p, pIdx) => (
+                                <option key={pIdx} value={pIdx}>
+                                  {p.title.length > 50 ? p.title.substring(0, 50) + '...' : p.title} (${p.price})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Product Title</label>
+                          <input 
+                            type="text"
+                            value={order.title}
+                            onChange={(e) => {
+                              const newOrders = [...editingOrders];
+                              newOrders[idx].title = e.target.value;
+                              setEditingOrders(newOrders);
+                            }}
+                            required
+                            disabled={isCompleted}
+                            style={{ 
+                              width: '100%', 
+                              height: 34, 
+                              borderRadius: 4, 
+                              border: '1px solid var(--border-color)', 
+                              padding: '0 8px', 
+                              fontSize: 12,
+                              backgroundColor: isCompleted ? '#f1f5f9' : 'white'
+                            }}
+                          />
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Price ($)</label>
+                            <input 
+                              type="number"
+                              step="0.01"
+                              value={order.price}
+                              onChange={(e) => {
+                                const newOrders = [...editingOrders];
+                                newOrders[idx].price = e.target.value;
+                                // Automatically recalculate profit using the task's profit commission yield percentage
+                                const pYield = parseFloat(editingTask.profitPercent || '5');
+                                const val = parseFloat(e.target.value || '0');
+                                newOrders[idx].profit = parseFloat((val * (pYield / 100)).toFixed(2));
+                                setEditingOrders(newOrders);
+                              }}
+                              required
+                              disabled={isCompleted}
+                              style={{ 
+                                width: '100%', 
+                                height: 34, 
+                                borderRadius: 4, 
+                                border: '1px solid var(--border-color)', 
+                                padding: '0 8px', 
+                                fontSize: 12,
+                                backgroundColor: isCompleted ? '#f1f5f9' : 'white'
+                              }}
+                            />
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Profit ($)</label>
+                            <input 
+                              type="number"
+                              step="0.01"
+                              value={order.profit}
+                              onChange={(e) => {
+                                const newOrders = [...editingOrders];
+                                newOrders[idx].profit = e.target.value;
+                                setEditingOrders(newOrders);
+                              }}
+                              required
+                              disabled={isCompleted}
+                              style={{ 
+                                width: '100%', 
+                                height: 34, 
+                                borderRadius: 4, 
+                                border: '1px solid var(--border-color)', 
+                                padding: '0 8px', 
+                                fontSize: 12,
+                                backgroundColor: isCompleted ? '#f1f5f9' : 'white'
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-color)', paddingTop: 12, marginTop: 12, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                <button 
+                  type="button" 
+                  className="action-btn"
+                  style={{ background: '#f1f5f9', color: 'var(--text-admin-muted)' }}
+                  onClick={() => { setShowEditOrdersModal(false); setEditingTask(null); }}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="sla-submit-btn">
+                  💾 Save All Changes
                 </button>
               </div>
             </form>

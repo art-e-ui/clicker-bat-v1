@@ -9,6 +9,8 @@ export default function Profile({ balance, username, setUsername, setBalance, se
   const [showPoliciesModal, setShowPoliciesModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showBankingModal, setShowBankingModal] = useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -33,6 +35,19 @@ export default function Profile({ balance, username, setUsername, setBalance, se
         .eq('username', username);
       if (!error && users && users.length > 0) {
         const u = users[0];
+        
+        // Ensure a unique invitation code is generated if it doesn't exist
+        if (!u.invite_code) {
+          const generatedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+          const { error: updateErr } = await supabase
+            .from('cb_users')
+            .update({ invite_code: generatedCode })
+            .eq('id', u.id);
+          if (!updateErr) {
+            u.invite_code = generatedCode;
+          }
+        }
+
         setClientProfile(u);
         // Sync banking fields
         setUsdtAddress(u.usdt_address || '');
@@ -52,22 +67,26 @@ export default function Profile({ balance, username, setUsername, setBalance, se
   }, [username]);
 
   const handleSignOut = () => {
-    if (window.confirm("Are you sure you want to sign out?")) {
-      // Clear sessions
-      localStorage.removeItem('cb_user_session');
-      localStorage.removeItem('cb_username');
-      localStorage.removeItem('cb_balance');
-      navigate('/login');
-    }
+    setShowSignOutConfirm(true);
+  };
+
+  const executeSignOut = () => {
+    localStorage.removeItem('cb_user_session');
+    localStorage.removeItem('cb_username');
+    localStorage.removeItem('cb_balance');
+    setShowSignOutConfirm(false);
+    navigate('/login');
   };
 
   const handleEndSession = () => {
-    if (window.confirm("Are you sure you want to reset all platform data to initial defaults?")) {
-      // Clear all
-      localStorage.clear();
-      toast("All sessions and hierarchy states have been reset!");
-      window.location.reload();
-    }
+    setShowResetConfirm(true);
+  };
+
+  const executeEndSession = () => {
+    localStorage.clear();
+    setShowResetConfirm(false);
+    toast("All sessions and hierarchy states have been reset!");
+    window.location.reload();
   };
 
   const handleSaveBankingInfo = async () => {
@@ -442,6 +461,83 @@ export default function Profile({ balance, username, setUsername, setBalance, se
               <button className="profile-modal-btn" style={{ background: 'var(--bg-input)', color: 'var(--text-muted)', marginRight: 8 }} onClick={() => setShowBankingModal(false)}>Cancel</button>
               <button className="profile-modal-btn" onClick={handleSaveBankingInfo} disabled={savingBanking} id="btn-save-banking">
                 {savingBanking ? 'Saving...' : '💾 Save Info'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sign Out Confirmation Modal */}
+      {showSignOutConfirm && (
+        <div className="profile-modal-overlay">
+          <div className="profile-modal-content scale-up" style={{ maxWidth: '400px' }}>
+            <div className="profile-modal-header">
+              <h3>🚪 Sign Out Account</h3>
+              <button className="profile-modal-close" onClick={() => setShowSignOutConfirm(false)}>✕</button>
+            </div>
+            <div className="profile-modal-body" style={{ padding: '24px 20px', textAlign: 'center' }}>
+              <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-main)', marginBottom: '8px' }}>
+                Are you sure you want to sign out?
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                You will need to enter your credentials to log back in to your merchant panel.
+              </p>
+            </div>
+            <div className="profile-modal-footer" style={{ gap: '10px' }}>
+              <button 
+                className="profile-modal-btn" 
+                style={{ background: 'var(--bg-input)', color: 'var(--text-muted)', marginRight: '8px' }} 
+                onClick={() => setShowSignOutConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="profile-modal-btn" 
+                style={{ background: '#ef4444', color: 'white' }} 
+                onClick={executeSignOut}
+                id="btn-confirm-signout"
+              >
+                Confirm Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Platform Data Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="profile-modal-overlay">
+          <div className="profile-modal-content scale-up" style={{ maxWidth: '400px' }}>
+            <div className="profile-modal-header">
+              <h3>⚠️ Reset Platform Data</h3>
+              <button className="profile-modal-close" onClick={() => setShowResetConfirm(false)}>✕</button>
+            </div>
+            <div className="profile-modal-body" style={{ padding: '24px 20px', textAlign: 'center' }}>
+              <p style={{ fontSize: '14.5px', fontWeight: '600', color: '#ef4444', marginBottom: '8px' }}>
+                Warning: Irreversible Action
+              </p>
+              <p style={{ fontSize: '12.5px', color: 'var(--text-main)', marginBottom: '6px' }}>
+                Are you sure you want to reset all platform data to initial defaults?
+              </p>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                This is a developer convenience option that will completely clear your local storage sessions.
+              </p>
+            </div>
+            <div className="profile-modal-footer" style={{ gap: '10px' }}>
+              <button 
+                className="profile-modal-btn" 
+                style={{ background: 'var(--bg-input)', color: 'var(--text-muted)', marginRight: '8px' }} 
+                onClick={() => setShowResetConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="profile-modal-btn" 
+                style={{ background: '#ef4444', color: 'white' }} 
+                onClick={executeEndSession}
+                id="btn-confirm-reset"
+              >
+                Reset All Defaults
               </button>
             </div>
           </div>

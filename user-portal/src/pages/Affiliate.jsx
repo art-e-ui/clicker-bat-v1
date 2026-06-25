@@ -39,6 +39,19 @@ export default function Affiliate() {
       }
 
       const curProfile = users[0];
+      
+      // Ensure a unique invitation code is generated if it doesn't exist
+      if (!curProfile.invite_code) {
+        const generatedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const { error: updateErr } = await supabase
+          .from('cb_users')
+          .update({ invite_code: generatedCode })
+          .eq('id', curProfile.id);
+        if (!updateErr) {
+          curProfile.invite_code = generatedCode;
+        }
+      }
+
       setProfile(curProfile);
 
       // 2. Fetch referrer information if already bound

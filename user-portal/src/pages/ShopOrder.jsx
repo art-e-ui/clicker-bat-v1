@@ -44,6 +44,46 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
         // 2. Add profit/payout to balance
         updateBalance(parseFloat(price) + parseFloat(profit));
 
+        // 2.5 Affiliate Commission logic: If user B has an inviter (user A), reward user A with 10% of user B's profit
+        try {
+          const currentUsername = localStorage.getItem('cb_username');
+          if (currentUsername) {
+            const { data: userBData, error: userBError } = await supabase
+              .from('cb_users')
+              .select('id, invited_by_user_id')
+              .eq('username', currentUsername);
+
+            if (!userBError && userBData && userBData.length > 0) {
+              const invitedByUserId = userBData[0].invited_by_user_id;
+              if (invitedByUserId) {
+                const { data: userAData, error: userAError } = await supabase
+                  .from('cb_users')
+                  .select('id, balance, commissions')
+                  .eq('id', invitedByUserId);
+
+                if (!userAError && userAData && userAData.length > 0) {
+                  const userA = userAData[0];
+                  const commissionAmount = parseFloat((parseFloat(profit) * 0.10).toFixed(4));
+                  if (commissionAmount > 0) {
+                    const newA_Balance = parseFloat((parseFloat(userA.balance || 0) + commissionAmount).toFixed(4));
+                    const newA_Commissions = parseFloat((parseFloat(userA.commissions || 0) + commissionAmount).toFixed(4));
+
+                    await supabase
+                      .from('cb_users')
+                      .update({
+                        balance: newA_Balance,
+                        commissions: newA_Commissions
+                      })
+                      .eq('id', userA.id);
+                  }
+                }
+              }
+            }
+          }
+        } catch (affErr) {
+          console.error("Error processing affiliate commission:", affErr);
+        }
+
         // 3. Update assigned task progression in Supabase
         if (activeOrderDetails && activeOrderDetails.assignedTaskId) {
           const { data: taskList } = await supabase
