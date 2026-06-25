@@ -230,6 +230,20 @@ export default function Orders({ balance, orders, setOrders, updateBalance }) {
                   </div>
                 </div>
 
+                {order.status === 'Pending' && parseFloat(balance || 0) < parseFloat(order.price) && (
+                  <div className="diff-amount-badge-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.15)', padding: '10px 12px', borderRadius: '10px', fontSize: '12px' }}>
+                    <span style={{ color: '#ef4444', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'inline-block' }}>
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                      </svg>
+                      Difference Amount:
+                    </span>
+                    <span style={{ color: '#ef4444', fontWeight: '750' }}>$ {(parseFloat(order.price) - parseFloat(balance || 0)).toFixed(2)}</span>
+                  </div>
+                )}
+
                 {order.status === 'Pending' && (
                   <div className="order-item-actions">
                     <button
@@ -253,6 +267,7 @@ export default function Orders({ balance, orders, setOrders, updateBalance }) {
       {selectedOrderDetails && (
         <OrderDetailsModal
           order={selectedOrderDetails}
+          balance={balance}
           onClose={() => setSelectedOrderDetails(null)}
           onSubmit={(orderId, price, profit) => {
             handleSubmitTask(orderId, price, profit);

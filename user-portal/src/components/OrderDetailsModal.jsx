@@ -1,9 +1,14 @@
 import React from 'react';
 
-export default function OrderDetailsModal({ order, onClose, onSubmit, onCancel }) {
+export default function OrderDetailsModal({ order, balance = 0, onClose, onSubmit, onCancel }) {
   if (!order) return null;
 
   const isPending = order.status === 'Pending';
+  const userBalance = parseFloat(balance || 0);
+  const orderPrice = parseFloat(order.price || 0);
+  const isBalanceSufficient = userBalance >= orderPrice;
+  const differenceAmount = orderPrice - userBalance;
+  const showDifference = isPending && !isBalanceSufficient;
 
   return (
     <div className="modal-overlay-user">
@@ -57,6 +62,27 @@ export default function OrderDetailsModal({ order, onClose, onSubmit, onCancel }
                 $ {parseFloat(order.profit).toFixed(2)}
               </span>
             </div>
+
+            {showDifference && (
+              <div className="info-row-user difference-box-user" style={{ marginTop: '8px', padding: '10px 12px', borderRadius: '10px', backgroundColor: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.15)', display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                  <span className="info-lbl-user" style={{ color: '#ef4444', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Difference Amount
+                  </span>
+                  <span className="info-val-user font-bold-user" style={{ color: '#ef4444', fontSize: '13px' }}>
+                    $ {differenceAmount.toFixed(2)}
+                  </span>
+                </div>
+                <div style={{ fontSize: '10px', color: '#ef4444', opacity: 0.85, textAlign: 'left', width: '100%', lineHeight: '1.3' }}>
+                  Your wallet balance is insufficient. Please deposit $ {differenceAmount.toFixed(2)} to proceed.
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

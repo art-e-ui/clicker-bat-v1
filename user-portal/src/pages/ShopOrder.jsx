@@ -453,6 +453,7 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
       {activeOrderDetails && (
         <OrderDetailsModal
           order={activeOrderDetails}
+          balance={balance}
           onClose={() => setActiveOrderDetails(null)}
           onCancel={() => setActiveOrderDetails(null)}
           onSubmit={handleModalSubmit}
