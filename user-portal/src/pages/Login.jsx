@@ -216,7 +216,7 @@ export default function Login() {
                   <div className="country-dropdown-list">
                     {COUNTRIES.map(c => (
                       <div 
-                        key={c.code} 
+                        key={c.flagCode} 
                         className="country-dropdown-item"
                         onClick={() => {
                           setSelectedCountry(c);

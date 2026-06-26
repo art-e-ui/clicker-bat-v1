@@ -84,6 +84,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
+  const [username, setUsername] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -121,8 +122,8 @@ export default function Register() {
     setFormError('');
     setFormSuccess('');
 
-    if (!phone || !password || !confirmPassword || !referralCode) {
-      setFormError('Please fill in all required fields (Phone Number, Passwords, and Invitation Code).');
+    if (!username || !phone || !password || !confirmPassword || !referralCode) {
+      setFormError('Please fill in all required fields (Username, Phone Number, Passwords, and Invitation Code).');
       return;
     }
 
@@ -218,11 +219,11 @@ export default function Register() {
       const finalPhoneCombined = `${selectedCountry.code}${rawDigits}`;
       const finalPhoneWithSpace = `${selectedCountry.code} ${rawDigits}`;
 
-      const computedUsername = finalPhoneCombined;
+      const computedUsername = username.trim();
       const computedEmail = `${finalPhoneCombined}@merchant.wallmark.com`;
 
-      // 2. Check if phone already exists (searching all formatted and unformatted variations)
-      const queryCheck = `username.eq.${finalPhoneCombined},phone.eq.${finalPhoneCombined},username.eq.${finalPhoneWithSpace},phone.eq.${finalPhoneWithSpace},username.eq.${rawDigits},phone.eq.${rawDigits}`;
+      // 2. Check if phone or username already exists
+      const queryCheck = `username.eq.${computedUsername},phone.eq.${finalPhoneCombined},phone.eq.${finalPhoneWithSpace},phone.eq.${rawDigits}`;
 
       const { data: existingUsers, error: userCheckError } = await supabase
         .from('cb_users')
@@ -235,7 +236,13 @@ export default function Register() {
       }
 
       if (existingUsers && existingUsers.length > 0) {
-        setFormError("This phone number is already registered.");
+        // Find out if it's the username or phone that clashed
+        const isUsernameTaken = existingUsers.some(u => u.username === computedUsername);
+        if (isUsernameTaken) {
+          setFormError("This username is already taken.");
+        } else {
+          setFormError("This phone number is already registered.");
+        }
         return;
       }
 
@@ -346,6 +353,17 @@ export default function Register() {
           {formSuccess && <div className="inline-alert-success" style={{ marginBottom: 16 }}>{formSuccess}</div>}
 
           <div className="login-form-group">
+            <label>Username</label>
+            <input 
+              type="text" 
+              placeholder="Enter your username" 
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="login-form-group">
             <label>Phone Number</label>
             <div className="phone-input-wrapper" ref={countryDropdownRef}>
               <div className="country-code-selector">
@@ -369,7 +387,7 @@ export default function Register() {
                   <div className="country-dropdown-list">
                     {COUNTRIES.map(c => (
                       <div 
-                        key={c.code} 
+                        key={c.flagCode} 
                         className="country-dropdown-item"
                         onClick={() => {
                           setSelectedCountry(c);
@@ -428,7 +446,7 @@ export default function Register() {
             <label>Invitation Code</label>
             <input 
               type="text" 
-              placeholder="Staff code or friend's invite code" 
+              placeholder="Referral Code" 
               value={referralCode}
               onChange={(e) => setReferralCode(e.target.value)}
               required

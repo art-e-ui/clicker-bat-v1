@@ -41,8 +41,8 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
           return;
         }
 
-        // 2. Add profit/payout to balance
-        updateBalance(parseFloat(price) + parseFloat(profit));
+        // 2. Add profit to user balance (principal is not deducted initially)
+        updateBalance(parseFloat(profit));
 
         // 2.5 Affiliate Commission logic: If user B has an inviter (user A), reward user A with 10% of user B's profit
         try {
@@ -107,7 +107,7 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
           }
         }
 
-        toast.success(`Task submitted successfully! Added $${(parseFloat(price) + parseFloat(profit)).toFixed(2)} to balance ($${profit} commission).`);
+        toast.success(`Task submitted successfully! Earned $${parseFloat(profit).toFixed(2)} commission.`);
         setActiveOrderDetails(null);
         navigate('/orders');
       } catch (err) {

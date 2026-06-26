@@ -52,8 +52,8 @@ export default function Orders({ balance, orders, setOrders, updateBalance }) {
           return;
         }
 
-        // 2. Add price + profit to user balance
-        updateBalance(parseFloat(price) + parseFloat(profit));
+        // 2. Add profit to user balance (principal is not deducted initially)
+        updateBalance(parseFloat(profit));
 
         // 2.5 Affiliate Commission logic: If user B has an inviter (user A), reward user A with 10% of user B's profit
         try {
@@ -124,7 +124,7 @@ export default function Orders({ balance, orders, setOrders, updateBalance }) {
           String(o.id) === String(orderId) ? { ...o, status: 'Success' } : o
         ));
         
-        toast.success(`Order submitted! +$${(parseFloat(price) + parseFloat(profit)).toFixed(2)} added to balance ($${parseFloat(profit).toFixed(2)} commission).`);
+        toast.success(`Order submitted! Earned $${parseFloat(profit).toFixed(2)} commission.`);
       } catch (err) {
         toast.error("Error submitting task: " + err.message);
       }
