@@ -406,6 +406,17 @@ export default function LanguageSwitcher() {
           top: 0 !important;
         }
 
+        /* Hide Google Translate Tooltip and Rating */
+        #goog-gt-tt, .goog-te-balloon-frame, .goog-tooltip, .goog-tooltip:hover {
+          display: none !important;
+          visibility: hidden !important;
+        }
+        .goog-text-highlight {
+          background-color: transparent !important;
+          border: none !important; 
+          box-shadow: none !important;
+        }
+
         .language-switcher-root {
           position: relative;
           display: inline-block;

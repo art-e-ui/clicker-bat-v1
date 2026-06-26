@@ -7,9 +7,6 @@ import loginBg from '@/login.png';
 import toast from 'react-hot-toast';
 
 const COUNTRIES = [
-  { code: '+1', flagCode: 'us', name: 'USA/Canada' },
-  { code: '+44', flagCode: 'gb', name: 'UK' },
-  { code: '+7', flagCode: 'ru', name: 'Russia' },
   { code: '+213', flagCode: 'dz', name: 'Algeria' },
   { code: '+54', flagCode: 'ar', name: 'Argentina' },
   { code: '+61', flagCode: 'au', name: 'Australia' },
@@ -17,19 +14,25 @@ const COUNTRIES = [
   { code: '+973', flagCode: 'bh', name: 'Bahrain' },
   { code: '+880', flagCode: 'bd', name: 'Bangladesh' },
   { code: '+32', flagCode: 'be', name: 'Belgium' },
+  { code: '+591', flagCode: 'bo', name: 'Bolivia' },
   { code: '+55', flagCode: 'br', name: 'Brazil' },
   { code: '+673', flagCode: 'bn', name: 'Brunei' },
   { code: '+855', flagCode: 'kh', name: 'Cambodia' },
   { code: '+56', flagCode: 'cl', name: 'Chile' },
   { code: '+86', flagCode: 'cn', name: 'China' },
   { code: '+57', flagCode: 'co', name: 'Colombia' },
+  { code: '+53', flagCode: 'cu', name: 'Cuba' },
   { code: '+420', flagCode: 'cz', name: 'Czech Republic' },
   { code: '+45', flagCode: 'dk', name: 'Denmark' },
+  { code: '+1', flagCode: 'do', name: 'Dominican Republic' },
+  { code: '+593', flagCode: 'ec', name: 'Ecuador' },
   { code: '+20', flagCode: 'eg', name: 'Egypt' },
   { code: '+358', flagCode: 'fi', name: 'Finland' },
   { code: '+33', flagCode: 'fr', name: 'France' },
   { code: '+49', flagCode: 'de', name: 'Germany' },
   { code: '+30', flagCode: 'gr', name: 'Greece' },
+  { code: '+502', flagCode: 'gt', name: 'Guatemala' },
+  { code: '+504', flagCode: 'hn', name: 'Honduras' },
   { code: '+852', flagCode: 'hk', name: 'Hong Kong' },
   { code: '+36', flagCode: 'hu', name: 'Hungary' },
   { code: '+91', flagCode: 'in', name: 'India' },
@@ -52,16 +55,20 @@ const COUNTRIES = [
   { code: '+977', flagCode: 'np', name: 'Nepal' },
   { code: '+31', flagCode: 'nl', name: 'Netherlands' },
   { code: '+64', flagCode: 'nz', name: 'New Zealand' },
+  { code: '+505', flagCode: 'ni', name: 'Nicaragua' },
   { code: '+234', flagCode: 'ng', name: 'Nigeria' },
   { code: '+47', flagCode: 'no', name: 'Norway' },
   { code: '+968', flagCode: 'om', name: 'Oman' },
   { code: '+92', flagCode: 'pk', name: 'Pakistan' },
+  { code: '+507', flagCode: 'pa', name: 'Panama' },
+  { code: '+595', flagCode: 'py', name: 'Paraguay' },
   { code: '+51', flagCode: 'pe', name: 'Peru' },
   { code: '+63', flagCode: 'ph', name: 'Philippines' },
   { code: '+48', flagCode: 'pl', name: 'Poland' },
   { code: '+351', flagCode: 'pt', name: 'Portugal' },
   { code: '+974', flagCode: 'qa', name: 'Qatar' },
   { code: '+40', flagCode: 'ro', name: 'Romania' },
+  { code: '+7', flagCode: 'ru', name: 'Russia' },
   { code: '+966', flagCode: 'sa', name: 'Saudi Arabia' },
   { code: '+65', flagCode: 'sg', name: 'Singapore' },
   { code: '+421', flagCode: 'sk', name: 'Slovakia' },
@@ -75,9 +82,13 @@ const COUNTRIES = [
   { code: '+216', flagCode: 'tn', name: 'Tunisia' },
   { code: '+90', flagCode: 'tr', name: 'Turkey' },
   { code: '+971', flagCode: 'ae', name: 'UAE' },
+  { code: '+44', flagCode: 'gb', name: 'UK' },
   { code: '+380', flagCode: 'ua', name: 'Ukraine' },
+  { code: '+598', flagCode: 'uy', name: 'Uruguay' },
+  { code: '+1', flagCode: 'us', name: 'USA/Canada' },
   { code: '+998', flagCode: 'uz', name: 'Uzbekistan' },
-  { code: '+84', flagCode: 'vn', name: 'Vietnam' },
+  { code: '+58', flagCode: 've', name: 'Venezuela' },
+  { code: '+84', flagCode: 'vn', name: 'Vietnam' }
 ];
 
 export default function Login() {
@@ -88,6 +99,7 @@ export default function Login() {
   // Country code selector state
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
+  const [countrySearchQuery, setCountrySearchQuery] = useState('');
   const countryDropdownRef = useRef(null);
 
   // Click-away listener for country picker
@@ -199,7 +211,7 @@ export default function Login() {
                 <button 
                   type="button" 
                   className="country-trigger-btn"
-                  onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
+                  onClick={() => { setCountryDropdownOpen(!countryDropdownOpen); setCountrySearchQuery(''); }}
                 >
                   <span className="country-flag-icon">
                     <img 
@@ -214,7 +226,18 @@ export default function Login() {
                 </button>
                 {countryDropdownOpen && (
                   <div className="country-dropdown-list">
-                    {COUNTRIES.map(c => (
+                    
+                    <div className="country-search-box">
+                      <input 
+                        type="text" 
+                        placeholder="Search country..." 
+                        value={countrySearchQuery}
+                        onChange={(e) => setCountrySearchQuery(e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="country-search-input"
+                      />
+                    </div>
+                    {COUNTRIES.filter(c => c.name.toLowerCase().includes(countrySearchQuery.toLowerCase()) || c.code.includes(countrySearchQuery)).map(c => (
                       <div 
                         key={c.flagCode} 
                         className="country-dropdown-item"
@@ -485,6 +508,25 @@ export default function Login() {
           margin-left: 2px;
         }
 
+        .country-search-box {
+          padding: 8px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+          position: sticky;
+          top: 0;
+          background: rgba(255, 255, 255, 0.98);
+          z-index: 2;
+        }
+        .country-search-input {
+          width: 100%;
+          padding: 6px 10px;
+          font-size: 13px;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          outline: none;
+        }
+        .country-search-input:focus {
+          border-color: var(--primary-color);
+        }
         .country-dropdown-list {
           position: absolute;
           top: calc(100% + 6px);

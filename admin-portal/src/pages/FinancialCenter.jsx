@@ -23,6 +23,7 @@ export default function FinancialCenter() {
   const [rejectRemark, setRejectRemark] = useState('');
   const [editAddress, setEditAddress] = useState('');
   const [editQrCode, setEditQrCode] = useState('');
+  const [imageZoom, setImageZoom] = useState(1);
 
   const fetchFinancialData = async () => {
     try {
@@ -226,7 +227,7 @@ export default function FinancialCenter() {
     try {
       const { error } = await supabase
         .from('cb_deposits')
-        .update({ status: 'Rejected', remark: rejectRemark })
+        .update({ status: 'Rejected' })
         .eq('id', selectedItem.id);
 
       if (error) {
@@ -303,7 +304,7 @@ export default function FinancialCenter() {
       // 1. Update status to Rejected
       const { error: updateWthError } = await supabase
         .from('cb_withdrawals')
-        .update({ status: 'Rejected', remark: rejectRemark })
+        .update({ status: 'Rejected' })
         .eq('id', selectedItem.id);
 
       if (updateWthError) {
@@ -369,6 +370,7 @@ export default function FinancialCenter() {
   const handleViewSlip = (dep) => {
     setSelectedItem(dep);
     setActionType('view_slip');
+    setImageZoom(1);
   };
 
   const filteredDeps = getFilteredDeposits();
@@ -611,11 +613,36 @@ export default function FinancialCenter() {
               <p style={{ fontSize: 12, color: 'var(--text-admin-light)', marginBottom: 8 }}>
                 Uploaded File: <b>{selectedItem.screenshotName}</b>
               </p>
-              <img 
-                src={selectedItem.screenshotUrl} 
-                alt="Receipt Slip" 
-                style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: 6, border: '1px solid var(--border-color)', display: 'block', margin: '0 auto' }} 
-              />
+              <div style={{ width: '100%', overflow: 'auto', maxHeight: '500px' }}>
+                <img 
+                  src={selectedItem.screenshotUrl} 
+                  alt="Receipt Slip" 
+                  style={{ 
+                    maxWidth: '100%', 
+                    objectFit: 'contain', 
+                    borderRadius: 6, 
+                    border: '1px solid var(--border-color)', 
+                    display: 'block', 
+                    margin: '0 auto',
+                    transform: `scale()`,
+                    transformOrigin: 'top center',
+                    transition: 'transform 0.2s ease'
+                  }} 
+                />
+              </div>
+              <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-admin)' }}>Zoom:</span>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="5" 
+                  step="0.1" 
+                  value={imageZoom} 
+                  onChange={(e) => setImageZoom(parseFloat(e.target.value))} 
+                  style={{ width: '200px', cursor: 'pointer' }}
+                />
+                <span style={{ fontSize: '12px', color: 'var(--text-admin-light)', width: '30px' }}>{imageZoom}x</span>
+              </div>
             </div>
             <div className="modal-footer" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
               <button className="action-btn btn-view" onClick={() => { setSelectedItem(null); setActionType(''); }}>
