@@ -624,8 +624,8 @@ export default function FinancialCenter() {
                     border: '1px solid var(--border-color)', 
                     display: 'block', 
                     margin: '0 auto',
-                    transform: `scale()`,
-                    transformOrigin: 'top center',
+                    transform: `scale(${imageZoom})`,
+                    transformOrigin: 'center center',
                     transition: 'transform 0.2s ease'
                   }} 
                 />

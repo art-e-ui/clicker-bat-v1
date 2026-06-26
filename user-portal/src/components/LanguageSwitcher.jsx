@@ -1,37 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const REGIONS = {
-  'Southeast Asia': [
-    { code: 'my', name: 'Burmese', local: 'မြန်မာဘာသာ', flag: '🇲🇲' },
-    { code: 'km', name: 'Khmer', local: 'ភាសាខ្មែរ', flag: '🇰🇭' },
-    { code: 'lo', name: 'Lao', local: 'ພາສາລາວ', flag: '🇱🇦' },
-    { code: 'th', name: 'Thai', local: 'ภาษาไทย', flag: '🇹🇭' },
-    { code: 'vi', name: 'Vietnamese', local: 'Tiếng Việt', flag: '🇻🇳' },
-    { code: 'id', name: 'Indonesian', local: 'Bahasa Indonesia', flag: '🇮🇩' },
-    { code: 'ms', name: 'Malay', local: 'Bahasa Melayu', flag: '🇲🇾' },
-    { code: 'tl', name: 'Filipino', local: 'Wikang Filipino', flag: '🇵🇭' }
+  'America': [
+    { code: 'en', name: 'English', local: 'English', flag: '🇺🇸' }
   ],
-  'East Asia': [
-    { code: 'zh-CN', name: 'Chinese (Simplified)', local: '简体中文', flag: '🇨🇳' },
-    { code: 'zh-TW', name: 'Chinese (Traditional)', local: '繁體中文', flag: '🇹🇼' },
-    { code: 'ja', name: 'Japanese', local: '日本語', flag: '🇯🇵' },
-    { code: 'ko', name: 'Korean', local: '한국어', flag: '🇰🇷' }
-  ],
-  'India & South Asia': [
-    { code: 'hi', name: 'Hindi', local: 'हिन्दी', flag: '🇮🇳' },
-    { code: 'bn', name: 'Bengali', local: 'বাংলা', flag: '🇧🇩' },
-    { code: 'ur', name: 'Urdu', local: 'اردو', flag: '🇵🇰' },
-    { code: 'ta', name: 'Tamil', local: 'தமிழ்', flag: '🇱🇰' },
-    { code: 'te', name: 'Telugu', local: 'తెలుగు', flag: '🇮🇳' },
-    { code: 'mr', name: 'Marathi', local: 'मराठी', flag: '🇮🇳' },
-    { code: 'gu', name: 'Gujarati', local: 'ગુજરાતી', flag: '🇮🇳' },
-    { code: 'kn', name: 'Kannada', local: 'ಕನ್ನಡ', flag: '🇮🇳' },
-    { code: 'ml', name: 'Malayalam', local: 'മലയാളം', flag: '🇮🇳' },
-    { code: 'pa', name: 'Punjabi', local: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
-    { code: 'ne', name: 'Nepali', local: 'नेपाली', flag: '🇳🇵' },
-    { code: 'si', name: 'Sinhala', local: 'සිංහල', flag: '🇱🇰' }
-  ],
-  'East Europe': [
+  'Europe': [
+    { code: 'fr', name: 'French', local: 'Français', flag: '🇫🇷' },
+    { code: 'de', name: 'German', local: 'Deutsch', flag: '🇩🇪' },
+    { code: 'es', name: 'Spanish', local: 'Español', flag: '🇪🇸' },
+    { code: 'pt', name: 'Portuguese', local: 'Português', flag: '🇵🇹' },
+    { code: 'it', name: 'Italian', local: 'Italiano', flag: '🇮🇹' },
+    { code: 'nl', name: 'Dutch', local: 'Nederlands', flag: '🇳🇱' },
+    { code: 'sv', name: 'Swedish', local: 'Svenska', flag: '🇸🇪' },
+    { code: 'no', name: 'Norwegian', local: 'Norsk', flag: '🇳🇴' },
+    { code: 'da', name: 'Danish', local: 'Dansk', flag: '🇩🇰' },
+    { code: 'fi', name: 'Finnish', local: 'Suomi', flag: '🇫🇮' },
+    { code: 'ga', name: 'Irish', local: 'Gaeilge', flag: '🇮🇪' },
+    { code: 'cy', name: 'Welsh', local: 'Cymraeg', flag: '🇬🇧' },
+    { code: 'ca', name: 'Catalan', local: 'Català', flag: '🇪🇸' },
+    { code: 'is', name: 'Icelandic', local: 'Íslenska', flag: '🇮🇸' },
+    { code: 'el', name: 'Greek', local: 'Ελληνικά', flag: '🇬🇷' },
     { code: 'ru', name: 'Russian', local: 'Русский', flag: '🇷🇺' },
     { code: 'uk', name: 'Ukrainian', local: 'Українська', flag: '🇺🇦' },
     { code: 'pl', name: 'Polish', local: 'Polski', flag: '🇵🇱' },
@@ -62,23 +50,31 @@ const REGIONS = {
     { code: 'hy', name: 'Armenian', local: 'Հայերեն', flag: '🇦🇲' },
     { code: 'ps', name: 'Pashto', local: 'پښتو', flag: '🇦🇫' }
   ],
-  'West Europe': [
-    { code: 'en', name: 'English', local: 'English', flag: '🇺🇸' },
-    { code: 'fr', name: 'French', local: 'Français', flag: '🇫🇷' },
-    { code: 'de', name: 'German', local: 'Deutsch', flag: '🇩🇪' },
-    { code: 'es', name: 'Spanish', local: 'Español', flag: '🇪🇸' },
-    { code: 'pt', name: 'Portuguese', local: 'Português', flag: '🇵🇹' },
-    { code: 'it', name: 'Italian', local: 'Italiano', flag: '🇮🇹' },
-    { code: 'nl', name: 'Dutch', local: 'Nederlands', flag: '🇳🇱' },
-    { code: 'sv', name: 'Swedish', local: 'Svenska', flag: '🇸🇪' },
-    { code: 'no', name: 'Norwegian', local: 'Norsk', flag: '🇳🇴' },
-    { code: 'da', name: 'Danish', local: 'Dansk', flag: '🇩🇰' },
-    { code: 'fi', name: 'Finnish', local: 'Suomi', flag: '🇫🇮' },
-    { code: 'ga', name: 'Irish', local: 'Gaeilge', flag: '🇮🇪' },
-    { code: 'cy', name: 'Welsh', local: 'Cymraeg', flag: '🇬🇧' },
-    { code: 'ca', name: 'Catalan', local: 'Català', flag: '🇪🇸' },
-    { code: 'is', name: 'Icelandic', local: 'Íslenska', flag: '🇮🇸' },
-    { code: 'el', name: 'Greek', local: 'Ελληνικά', flag: '🇬🇷' }
+  'Asia': [
+    { code: 'my', name: 'Burmese', local: 'မြန်မာဘာသာ', flag: '🇲🇲' },
+    { code: 'km', name: 'Khmer', local: 'ភាសាខ្មែរ', flag: '🇰🇭' },
+    { code: 'lo', name: 'Lao', local: 'ພາສາລາව', flag: '🇱🇦' },
+    { code: 'th', name: 'Thai', local: 'ภาษาไทย', flag: '🇹🇭' },
+    { code: 'vi', name: 'Vietnamese', local: 'Tiếng Việt', flag: '🇻🇳' },
+    { code: 'id', name: 'Indonesian', local: 'Bahasa Indonesia', flag: '🇮🇩' },
+    { code: 'ms', name: 'Malay', local: 'Bahasa Melayu', flag: '🇲🇾' },
+    { code: 'tl', name: 'Filipino', local: 'Wikang Filipino', flag: '🇵🇭' },
+    { code: 'zh-CN', name: 'Chinese (Simplified)', local: '简体中文', flag: '🇨🇳' },
+    { code: 'zh-TW', name: 'Chinese (Traditional)', local: '繁體中文', flag: '🇹🇼' },
+    { code: 'ja', name: 'Japanese', local: '日本語', flag: '🇯🇵' },
+    { code: 'ko', name: 'Korean', local: '한국어', flag: '🇰🇷' },
+    { code: 'hi', name: 'Hindi', local: 'हिन्दी', flag: '🇮🇳' },
+    { code: 'bn', name: 'Bengali', local: 'বাংলা', flag: '🇧🇩' },
+    { code: 'ur', name: 'Urdu', local: 'اردو', flag: '🇵🇰' },
+    { code: 'ta', name: 'Tamil', local: 'தமிழ்', flag: '🇱🇰' },
+    { code: 'te', name: 'Telugu', local: 'తెలుగు', flag: '🇮🇳' },
+    { code: 'mr', name: 'Marathi', local: 'मराठी', flag: '🇮🇳' },
+    { code: 'gu', name: 'Gujarati', local: 'ગુજરાતી', flag: '🇮🇳' },
+    { code: 'kn', name: 'Kannada', local: 'ಕನ್ನಡ', flag: '🇮🇳' },
+    { code: 'ml', name: 'Malayalam', local: 'മലയാളം', flag: '🇮🇳' },
+    { code: 'pa', name: 'Punjabi', local: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+    { code: 'ne', name: 'Nepali', local: 'नेपाली', flag: '🇳🇵' },
+    { code: 'si', name: 'Sinhala', local: 'සිංහල', flag: '🇱🇰' }
   ]
 };
 

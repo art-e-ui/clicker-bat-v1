@@ -105,7 +105,7 @@ export default function Register() {
   const [formSuccess, setFormSuccess] = useState('');
 
   // Country code selector state
-  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
+  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES.find(c => c.code === '+1' && c.flagCode === 'us') || COUNTRIES[0]);
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [countrySearchQuery, setCountrySearchQuery] = useState('');
   const countryDropdownRef = useRef(null);
