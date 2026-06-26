@@ -3,6 +3,308 @@ import { PRODUCT_CATALOG } from '../data/products';
 import { supabase } from '../supabase';
 
 import toast from 'react-hot-toast';
+
+const TEMPLATE_M_1 = [
+  { sr: 1, price: 498.06, profit: 1.10, title: "Saint Laurent Monogram Leather Card Holder", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 2, price: 476.07, profit: 0.80, title: "Gucci Double G Flower Ring in Silver", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 3, price: 500.10, profit: 1.00, title: "Prada Saffiano Leather Keychain", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 4, price: 456.11, profit: 0.77, title: "Balenciaga Classic Card Case Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 5, price: 499.12, profit: 0.69, title: "Off-White Industrial Belt Yellow/Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 6, price: 486.30, profit: 0.74, title: "Alexander McQueen Skull Friendship Bracelet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 7, price: 501.66, profit: 1.01, title: "Givenchy G-Link Chain Bracelet in Metal", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 8, price: 487.12, profit: 0.89, title: "Burberry Vintage Check Cotton Baseball Cap", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 9, price: 491.90, profit: 0.88, title: "Versace Medusa Tribute Hair Clip Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 10, price: 503.65, profit: 1.40, title: "Tom Ford FT5532 Optical Glasses", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
+  { sr: 11, price: 503.44, profit: 0.80, title: "Moncler Tricolour Logo Wool Beanie", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
+  { sr: 12, price: 489.87, profit: 0.76, title: "Valentino Garavani Rockstud Bracelet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
+  { sr: 13, price: 504.00, profit: 1.10, title: "Fendi Baguette Canvas Key Charm", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
+  { sr: 14, price: 495.65, profit: 0.86, title: "Bottega Veneta Intrecciato Leather Card Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
+  { sr: 15, price: 741.80, profit: 68.00, title: "Dyson Airwrap Multi-Styler Complete Long (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
+  { sr: 16, price: 733.80, profit: 1.20, title: "Apple Watch Series 9 GPS + Cellular 45mm", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
+  { sr: 17, price: 731.70, profit: 1.00, title: "Sony WH-1000XM5 Wireless Noise-Cancelling Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
+  { sr: 18, price: 729.50, profit: 1.43, title: "Bose QuietComfort Ultra Headphones Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
+  { sr: 19, price: 721.60, profit: 1.21, title: "GoPro HERO12 Black Creator Edition", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
+  { sr: 20, price: 730.40, profit: 1.20, title: "Nintendo Switch OLED Model Bundle", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" },
+  { sr: 21, price: 727.90, profit: 1.10, title: "Sennheiser MOMENTUM 4 Wireless Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
+  { sr: 22, price: 739.30, profit: 1.80, title: "Garmin Venu 3 GPS Smartwatch Slate", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-14.png" },
+  { sr: 23, price: 733.90, profit: 1.30, title: "Marshall Woburn III Wireless Speaker", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-15.png" },
+  { sr: 24, price: 721.40, profit: 1.10, title: "DJI Pocket 3 Handheld 3-Axis Gimbal Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
+  { sr: 25, price: 734.20, profit: 1.30, title: "Insta360 X3 Waterproof 360 Action Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
+  { sr: 26, price: 740.40, profit: 1.50, title: "iPad 10.9-inch (10th Gen) Wi-Fi 256GB", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
+  { sr: 27, price: 749.60, profit: 1.60, title: "Sonos Move 2 Portable Wireless Speaker", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
+  { sr: 28, price: 1133.54, profit: 97.00, title: "Sony Alpha 7 III Mirrorless Camera (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
+  { sr: 29, price: 1121.54, profit: 1.70, title: "iPhone 15 Pro Max 256GB Titanium", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 30, price: 1123.56, profit: 1.60, title: "Samsung Galaxy S24 Ultra 512GB Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 31, price: 999.78, profit: 1.00, title: "Apple MacBook Air 13.6-inch M3 SSD", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 32, price: 1002.40, profit: 1.10, title: "Lenovo Legion Slim 5 Gaming Laptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 33, price: 1123.40, profit: 1.50, title: "HP Spectre x360 2-in-1 Touchscreen Laptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 34, price: 1110.50, profit: 1.40, title: "Dell XPS 13 Evo Laptop Intel Core i7", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 35, price: 1123.76, profit: 1.30, title: "Asus ROG Ally Gaming Console Extreme", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 36, price: 1147.66, profit: 1.40, title: "Segway Ninebot Max G30P Electric Scooter", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 37, price: 1138.99, profit: 1.50, title: "TUMI 19 Degree Carry-On Suitcase", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 38, price: 1136.86, profit: 1.40, title: "Rimowa Essential Lite Cabin Suitcase", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 39, price: 1144.79, profit: 1.30, title: "Meta Quest 3 512GB VR Gaming Headset", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 40, price: 1147.74, profit: 1.90, title: "iPad Pro 11-inch M2 Chip 256GB", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" }
+];
+
+const TEMPLATE_C_1 = [
+  { sr: 1, price: 21.01, profit: 0.07, title: "Premium Gel Ink Pen Set (0.7mm)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 2, price: 20.12, profit: 0.06, title: "Stainless Steel Reusable Straws (6-Pack)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 3, price: 19.45, profit: 0.04, title: "Ergonomic Anti-Slip Mouse Pad", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 4, price: 20.11, profit: 0.07, title: "Organic Bamboo Fiber Makeup Remover Pads", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 5, price: 20.43, profit: 0.06, title: "Portable Desktop Cell Phone Stand", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 6, price: 20.56, profit: 0.05, title: "Microfiber Screen Cleaning Cloths (10-Pack)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 7, price: 20.88, profit: 0.08, title: "Double-Walled Insulated Glass Mug", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 8, price: 20.94, profit: 0.07, title: "Waterproof Travel Toiletry Organizer Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 9, price: 21.12, profit: 0.08, title: "Mini Desktop USB Quiet Personal Fan", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 10, price: 19.88, profit: 0.06, title: "Adjustable Resistance Hand Gripper", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 11, price: 18.98, profit: 0.05, title: "Scented Soy Wax Travel Candle (Lavender)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 12, price: 20.77, profit: 0.09, title: "Retractable Keychain Badge Holder Reel", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" },
+  { sr: 13, price: 19.45, profit: 0.08, title: "Multi-Angle Laptop Cooling Stand", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-5.png" },
+  { sr: 14, price: 20.77, profit: 0.07, title: "Self-Adhesive Silicone Cable Clips (6-Pack)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-6.png" },
+  { sr: 15, price: 21.21, profit: 0.07, title: "Stainless Steel Dual-Blade Pocket Peeler", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-7.png" },
+  { sr: 16, price: 21.11, profit: 0.06, title: "High-Bounce Tennis Balls (3-Pack)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-8.png" },
+  { sr: 17, price: 20.56, profit: 0.05, title: "Nylon Braided USB-C Charging Cable (6ft)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-9.png" },
+  { sr: 18, price: 20.88, profit: 0.08, title: "Thermal Insulated Travel Coffee Tumbler", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-10.png" },
+  { sr: 19, price: 20.94, profit: 0.07, title: "Ceramic Ring Jewelry Dish Tray", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-11.png" },
+  { sr: 20, price: 21.12, profit: 0.08, title: "Elastic Sports Hair Bands (12-Pack)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-12.png" },
+  { sr: 21, price: 19.88, profit: 0.06, title: "Reusable Silicone Food Storage Bags", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-13.png" },
+  { sr: 22, price: 19.88, profit: 0.06, title: "LED Clip-On Reading Book Light", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-14.png" },
+  { sr: 23, price: 18.98, profit: 0.05, title: "Organic Peppermint Herbal Tea Box", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-15.png" },
+  { sr: 24, price: 20.77, profit: 0.09, title: "Magnetic Dry Erase Whiteboard Marker Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-16.png" },
+  { sr: 25, price: 19.45, profit: 0.08, title: "Natural Lavender Wardrobe Deodorizer Sachet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-17.png" },
+  { sr: 26, price: 20.77, profit: 0.07, title: "Hard Shell Travel Sunglasses Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-18.png" },
+  { sr: 27, price: 21.21, profit: 0.07, title: "Memory Foam Sleep Mask with Eye Cavities", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-19.png" },
+  { sr: 28, price: 21.11, profit: 0.06, title: "Aluminum Pocket Business Card Holder", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-20.png" },
+  { sr: 29, price: 20.56, profit: 0.05, title: "Compact Travel Umbrella (Windproof)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 30, price: 20.88, profit: 0.08, title: "Bamboo Wood Toothbrush Set (4-Pack)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 31, price: 20.94, profit: 0.07, title: "Universal Air Vent Magnetic Car Phone Mount", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 32, price: 21.12, profit: 0.08, title: "Exfoliating Loofah Back Scrubber Strap", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 33, price: 19.88, profit: 0.06, title: "Stainless Steel Keychain Multi-Tool", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 34, price: 19.88, profit: 0.06, title: "Velvet Hair Scrunchies Elastic Bands (6-Pack)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 35, price: 18.98, profit: 0.05, title: "Portable Pill Organizer Box (Weekly)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 36, price: 20.77, profit: 0.09, title: "Silicone Kitchen Cooking Utensils Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 37, price: 20.94, profit: 0.07, title: "Microfiber Hair Drying Turban Towel", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 38, price: 21.12, profit: 0.08, title: "Heavy-Duty Reusable Shopping Tote Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 39, price: 19.88, profit: 0.06, title: "Digital Kitchen Scale (Precision 1g)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 40, price: 19.88, profit: 0.06, title: "Natural Pumice Stone Pedicure Tool", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" }
+];
+
+const TEMPLATE_C_2 = [
+  { sr: 1, price: 40.2, profit: 0.12, title: "Ergonomic Memory Foam Seat Cushion", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 2, price: 43.8, profit: 0.11, title: "Stainless Steel French Press Coffee Maker", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 3, price: 46.8, profit: 0.15, title: "Professional Bartender Cocktail Shaker Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 4, price: 43.8, profit: 0.11, title: "Wireless Charging LED Desk Lamp", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 5, price: 47.8, profit: 0.14, title: "High-Density Speckled Yoga Mat & Strap", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 6, price: 40.2, profit: 0.27, title: "Acoustic Foam Soundproofing Panels (12-Pack)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 7, price: 43.8, profit: 0.11, title: "Double-Wall Vacuum Insulated Water Bottle", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 8, price: 47.8, profit: 0.28, title: "Vintage Style Wood Tabletop AM/FM Radio", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 9, price: 43.8, profit: 0.11, title: "Digital Thermostat Dual-Probe Meat Thermometer", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 10, price: 46.8, profit: 0.15, title: "Adjustable Laptop Stand with Heat-Vent", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 11, price: 47.8, profit: 0.14, title: "Ultrasonic Essential Oil Diffuser (500ml)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 12, price: 43.8, profit: 0.11, title: "Portable Waterproof Bluetooth Speaker", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" },
+  { sr: 13, price: 45.9, profit: 0.14, title: "Premium Leather Minimalist Slim Wallet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-5.png" },
+  { sr: 14, price: 43.8, profit: 0.11, title: "Heavy Duty Resistance Exercise Bands", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-6.png" },
+  { sr: 15, price: 47.8, profit: 0.14, title: "Rechargeable Sonic Electric Toothbrush", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-7.png" },
+  { sr: 16, price: 95.874, profit: 14, title: "Smart Ambient Mood Lighting Kit (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-8.png" },
+  { sr: 17, price: 94.11, profit: 0.23, title: "Mechanical Backlit Gaming Keyboard", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-9.png" },
+  { sr: 18, price: 93.24, profit: 0.22, title: "Noise-Cancelling Over-Ear Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-10.png" },
+  { sr: 19, price: 91.88, profit: 0.2, title: "Portable External SSD 1TB USB-C", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-11.png" },
+  { sr: 20, price: 94.99, profit: 0.3, title: "Instant-Read Digital Air Fryer (4-Quart)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-12.png" },
+  { sr: 21, price: 91.96, profit: 0.19, title: "Professional Hair Clipper & Grooming Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-13.png" },
+  { sr: 22, price: 91.88, profit: 0.2, title: "Premium Shiatsu Neck and Shoulder Massager", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-14.png" },
+  { sr: 23, price: 94.99, profit: 0.3, title: "Heated Stadium Seats for Bleachers", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-15.png" },
+  { sr: 24, price: 92.66, profit: 0.19, title: "Aero-Grade Aluminum Hiking Poles", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-16.png" },
+  { sr: 25, price: 94.11, profit: 0.23, title: "Waterproof Sports Action Camera 4K", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-17.png" },
+  { sr: 26, price: 93.24, profit: 0.22, title: "Cordless Handheld Car Vacuum Cleaner", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-18.png" },
+  { sr: 27, price: 91.88, profit: 0.2, title: "Minimalist Floating Wall Shelves (Set of 3)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-19.png" },
+  { sr: 28, price: 94.99, profit: 0.3, title: "Professional Acrylic Paint Set with Easel", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-20.png" },
+  { sr: 29, price: 97.01, profit: 0.34, title: "Electric Gooseneck Kettle for Pour-Over", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 30, price: 187.994, profit: 26, title: "Ultimate Pro-Gamer Ergonomic Office Chair (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 31, price: 180.55, profit: 0.5, title: "Home Security Wireless Camera 4-Pack", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 32, price: 187.01, profit: 0.6, title: "1200W High-Speed Nutrient Extractor Blender", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 33, price: 164.88, profit: 0.4, title: "Premium 100% Mulberry Silk Sheets Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 34, price: 183.99, profit: 0.4, title: "Therapeutic Red Light Therapy Device", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 35, price: 186.96, profit: 0.4, title: "High-Performance Wi-Fi 6 Mesh Router System", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 36, price: 171.8, profit: 0.3, title: "Handcrafted Premium Leather Travel Duffle", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+   { sr: 37, price: 177.9, profit: 0.3, title: "Ultra-Quiet Smart Air Purifier (True HEPA)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 38, price: 180.55, profit: 0.5, title: "GPS Smartwatch with Heart Rate Monitor", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 39, price: 187.01, profit: 0.6, title: "Compact Countertop Dishwasher (Portable)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 40, price: 164.88, profit: 0.4, title: "All-Weather Outdoor Patio Conversation Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" }
+];
+
+const TEMPLATE_C_3 = [
+  { sr: 1, price: 460.44, profit: 4.6, title: "Premium Noise-Cancelling Wireless Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 2, price: 421.88, profit: 4.3, title: "4K Ultra HD Streaming Projector", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 3, price: 450.99, profit: 5.1, title: "Handcrafted Oak Wood Bedside Nightstand", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 4, price: 460.66, profit: 6.4, title: "Professional Multi-Channel Studio Mixer", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" },
+  { sr: 5, price: 433.74, profit: 5.5, title: "Ergonomic High-Back Executive Office Chair", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-5.png" },
+  { sr: 6, price: 421.88, profit: 5.9, title: "Under-Sink Reverse Osmosis Water Filter", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-6.png" },
+  { sr: 7, price: 441.77, profit: 5.8, title: "Smart Wi-Fi Touchscreen Thermostat Combo", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-7.png" },
+  { sr: 8, price: 460.44, profit: 4.9, title: "Chef-Grade 15-Piece Stainless Steel Knife Block Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-8.png" },
+  { sr: 9, price: 433.93, profit: 5, title: "Portable Power Station 500W Solar Generator", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-9.png" },
+  { sr: 10, price: 460.66, profit: 6.4, title: "Solid Wood 4-Tier Bookshelf Organizer", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-10.png" },
+  { sr: 11, price: 499.65, profit: 7.9, title: "Deep Tissue Percussion Muscle Massage Gun Pro", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-11.png" },
+  { sr: 12, price: 510.88, profit: 13.6, title: "Adjustable Height Motorized Standing Desk", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-12.png" },
+  { sr: 13, price: 899.495, profit: 129.66, title: "Next-Gen Gaming Console Bundle (Premium Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-13.png" },
+  { sr: 14, price: 890.77, profit: 20.1, title: "Ultra-Wide 34-inch Curved Gaming Monitor 144Hz", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-14.png" },
+  { sr: 15, price: 888.54, profit: 20, title: "Home Theater Atmos Soundbar with Wireless Subwoofer", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-15.png" },
+  { sr: 16, price: 920.77, profit: 25.95, title: "Automatic Espresso Machine with Integrated Grinder", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-16.png" },
+  { sr: 17, price: 930.11, profit: 30.46, title: "Smart Robot Vacuum and Mop with Self-Empty Base", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-17.png" },
+  { sr: 18, price: 920.66, profit: 40.44, title: "High-Resolution Mirrorless Camera Lens (50mm f/1.2)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-18.png" },
+  { sr: 19, price: 1010.87, profit: 50.66, title: "Premium Leather Convertible Sectional Sofa", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-19.png" },
+  { sr: 20, price: 908.99, profit: 40.55, title: "Professional Grade Drone with 4K HDR Camera Gimbal", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-20.png" },
+  { sr: 21, price: 1100.93, profit: 60.55, title: "Dual-Fuel Portable Generator 4500-Watt", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 22, price: 1189.66, profit: 50.94, title: "Full-Body Zero Gravity Shiatsu Massage Chair", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 23, price: 1211.55, profit: 60.41, title: "Commercial Grade Countertop Soft Serve Ice Cream Machine", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 24, price: 1289.51, profit: 70.65, title: "Multi-Zone Ductless Mini Split Air Conditioner Heat Pump", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 25, price: 1236.88, profit: 60.79, title: "Retro Compact Refrigerator with Freezer Chest", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 26, price: 2612.515, profit: 397.65, title: "Pro-Athlete Smart Treadmill with 22-inch HD Touchscreen (Elite Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 27, price: 2601.88, profit: 120.99, title: "Professional Electric Guitar with Hard Shell Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 28, price: 2507.54, profit: 110.92, title: "Advanced Laser Engraving and Cutting Machine", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 29, price: 2799.84, profit: 140.9, title: "High-Performance Carbon Fiber Road Racing Bike", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 30, price: 2675.8, profit: 130.8, title: "Commercial Multi-Station Home Gym Workout Center", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 31, price: 3100.66, profit: 167.25, title: "Top-Tier Handcrafted Wood Pool Table Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 32, price: 5693.565, profit: 867.31, title: "Signature Edition Master Chef Gas Range & Double Oven (Supreme Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" },
+  { sr: 33, price: 5550.59, profit: 280.88, title: "Premium Inground Backyard Hot Tub & Spa Tub", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-5.png" },
+  { sr: 34, price: 5498.77, profit: 263.22, title: "Commercial-Grade Fully Automatic Lawn Mower Robot", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-6.png" },
+  { sr: 35, price: 6100.69, profit: 300.6, title: "Smart Interactive Fitness Mirror with Weight Accessories", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-7.png" },
+  { sr: 36, price: 5900.51, profit: 400.6, title: "High-Capacity Built-In Dual-Zone Wine Refrigerator", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-8.png" },
+  { sr: 37, price: 5821.63, profit: 398.22, title: "Luxury Hard Shell Expandable Luggage Suite (5-Piece Set)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-9.png" },
+  { sr: 38, price: 6590.61, profit: 502.91, title: "Off-Road Electric Fat Tire Mountain Bicycle 1000W", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-10.png" },
+  { sr: 39, price: 12793.695, profit: 1567.31, title: "Ultra-Premium 85-inch 8K Neo QLED Smart TV (Grand Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-11.png" },
+  { sr: 40, price: 21643.875, profit: 2852.77, title: "Enterprise Level AI-Powered Server Rack Console (Mega Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-12.png" }
+];
+
+const TEMPLATE_M_2 = [
+  { sr: 1, price: 1936.33, profit: 2.10, title: "Louis Vuitton Keepall Bandoulière 50 Monogram", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 2, price: 1999.64, profit: 1.98, title: "Apple MacBook Pro 14-inch M3 Max (Late 2023)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 3, price: 1821.75, profit: 1.77, title: "Sony Alpha 7R V Mirrorless Camera Body", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 4, price: 2001.55, profit: 2.00, title: "Prada Re-Nylon Medium Backpack Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 5, price: 1721.90, profit: 1.88, title: "Gucci GG Marmont Small Shoulder Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 6, price: 1856.41, profit: 1.96, title: "Christian Louboutin Kate 85 Patent Pumps", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 7, price: 1998.58, profit: 2.20, title: "Canon EOS R6 Mark II Mirrorless Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 8, price: 1962.95, profit: 2.10, title: "Sennheiser HD 800 S High-Resolution Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 9, price: 2030.88, profit: 2.30, title: "Yves Saint Laurent Loulou Medium Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 10, price: 2001.99, profit: 2.00, title: "DJI Inspire 3 Professional Cinema Drone", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
+  { sr: 11, price: 1995.80, profit: 1.88, title: "Moncler Maya Short Down Jacket Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
+  { sr: 12, price: 1953.48, profit: 1.70, title: "Balenciaga Neo Classic Medium Handbag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
+  { sr: 13, price: 2010.42, profit: 1.80, title: "Off-White Jitney 1.4 Leather Top Handle Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
+  { sr: 14, price: 1889.53, profit: 1.60, title: "Givenchy Antigona Small Leather Tote", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
+  { sr: 15, price: 1946.99, profit: 1.99, title: "Fendi First Medium Leather Clutch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
+  { sr: 16, price: 1826.79, profit: 1.98, title: "Bottega Veneta Cassette Intrecciato Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
+  { sr: 17, price: 2068.98, profit: 2.40, title: "Burberry Chelsea Heritage Trench Coat", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
+  { sr: 18, price: 2447.64, profit: 112.00, title: "Hermès Birkin 30 Togo Gold Hardware (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
+  { sr: 19, price: 2412.70, profit: 5.60, title: "Cartier Love Wedding Band 18K Yellow Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
+  { sr: 20, price: 2411.60, profit: 5.10, title: "Tiffany & Co. T1 Narrow Ring in Rose Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" },
+  { sr: 21, price: 2315.50, profit: 4.90, title: "ASUS ROG Zephyrus G14 OLED Gaming Laptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
+  { sr: 22, price: 2409.88, profit: 5.60, title: "Sinn 104 St Sa I Automatic Pilot Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-14.png" },
+  { sr: 23, price: 2367.90, profit: 4.70, title: "Devialet Phantom I 108dB Wireless Speaker", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-15.png" },
+  { sr: 24, price: 2386.90, profit: 4.90, title: "Omega Seamaster Aqua Terra Automatic Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
+  { sr: 25, price: 2399.50, profit: 5.30, title: "Tudor Black Bay Fifty-Eight Automatic Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
+  { sr: 26, price: 2480.70, profit: 5.90, title: "Breitling Avenger Automatic GMT Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
+  { sr: 27, price: 2370.90, profit: 4.60, title: "Tag Heuer Aquaracer Professional 300 Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-19.png" },
+  { sr: 28, price: 2383.80, profit: 4.80, title: "Longines Spirit Zulu Time GMT Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
+  { sr: 29, price: 3329.04, profit: 238.00, title: "Chanel Classic Double Flap Bag Medium (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 30, price: 3322.90, profit: 6.00, title: "LG OLED evo G3 Series 65-inch 4K Smart TV", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 31, price: 3212.00, profit: 5.10, title: "Astell&Kern A&ultima SP3000 Music Player", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 32, price: 3169.80, profit: 4.90, title: "Focal Utopia 2022 Open-Back Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 33, price: 3274.90, profit: 5.70, title: "Bang & Olufsen Beosound Stage Soundbar", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 34, price: 3311.80, profit: 5.40, title: "Leica Q3 Compact Digital Camera Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 35, price: 3258.90, profit: 5.10, title: "Hasselblad X2D 100C Medium Format Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 36, price: 3311.80, profit: 6.00, title: "RAZER Blade 16 Gaming Laptop Dual QHD+", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 37, price: 3313.80, profit: 6.00, title: "MSI Titan 18 HX Core i9 Gaming Laptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 38, price: 3126.70, profit: 5.10, title: "Aero 16 OLED Creator Laptop Intel Core i9", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 39, price: 3217.60, profit: 6.10, title: "Eurocom Tornado F9 17.3-inch Superlaptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 40, price: 3380.70, profit: 6.40, title: "Alienware m18 R2 Liquid-Cooled Gaming Laptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" }
+];
+
+const TEMPLATE_M_3 = [
+  { sr: 1, price: 5997.87, profit: 29.50, title: "Chanel Medium Classic Flap Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 2, price: 5624.00, profit: 28.70, title: "Rolex Submariner Date Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 3, price: 5999.89, profit: 30.10, title: "Cartier LOVE Bracelet 4 Diamonds", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 4, price: 5267.80, profit: 26.00, title: "Apple Mac Pro Tower M2 Ultra", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 5, price: 5742.99, profit: 31.00, title: "Louis Vuitton Horizon 55 Suitcase", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 6, price: 5822.77, profit: 29.85, title: "DJI Inspire 3 Cinema Drone", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-6.png" },
+  { sr: 7, price: 5986.83, profit: 30.11, title: "Sony CineAlta Venice 6K Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-7.png" },
+  { sr: 8, price: 5542.50, profit: 26.60, title: "RED V-RAPTOR 8K S35 Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-8.png" },
+  { sr: 9, price: 5846.61, profit: 27.00, title: "Hermes Clic Clac H Bracelet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 10, price: 5999.89, profit: 30.10, title: "Leica M11 Rangefinder Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
+  { sr: 11, price: 5267.80, profit: 26.00, title: "Tiffany T True Narrow Ring", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
+  { sr: 12, price: 6242.98, profit: 36.76, title: "Gucci Savoy Medium Duffel Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
+  { sr: 13, price: 6001.01, profit: 30.40, title: "Prada Saffiano Leather Tote", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
+  { sr: 14, price: 6311.22, profit: 34.60, title: "Rolex Oyster Perpetual 41", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
+  { sr: 15, price: 8822.06, profit: 863.00, title: "Patek Philippe Nautilus Ref. 5711 (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
+  { sr: 16, price: 8790.77, profit: 45.22, title: "Audemars Piguet Royal Oak Selfwinding", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
+  { sr: 17, price: 8682.33, profit: 40.96, title: "Saint Laurent Sac de Jour Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
+  { sr: 18, price: 8769.65, profit: 41.55, title: "Dior Book Tote Oblique Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
+  { sr: 19, price: 8802.53, profit: 47.80, title: "Loewe Puzzle Medium Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
+  { sr: 20, price: 8102.44, profit: 38.90, title: "Celine Triomphe Shoulder Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" },
+  { sr: 21, price: 8682.33, profit: 40.96, title: "Fendi Peekaboo ISeeU Medium", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
+  { sr: 22, price: 8769.65, profit: 41.55, title: "Balenciaga Hourglass XS Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-14.png" },
+  { sr: 23, price: 9100.30, profit: 49.70, title: "Bottega Veneta Andiamo Small Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-15.png" },
+  { sr: 24, price: 8802.53, profit: 47.80, title: "Burberry Trench Coat Heritage Chelsea", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
+  { sr: 25, price: 8102.44, profit: 38.90, title: "Moncler Maya Short Down Jacket", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
+  { sr: 26, price: 7632.99, profit: 28.99, title: "Tom Ford Shearling Bomber Jacket", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
+  { sr: 27, price: 8913.84, profit: 46.22, title: "Graff Spiral Diamond Pendant", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-19.png" },
+  { sr: 28, price: 8802.53, profit: 47.80, title: "Bvlgari B.zero1 18K Rose Gold Ring", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
+  { sr: 29, price: 8102.44, profit: 38.90, title: "Van Cleef & Arpels Vintage Alhambra", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 30, price: 9401.46, profit: 50.34, title: "Chopard Happy Hearts Bracelet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 31, price: 13767.53, profit: 1737.00, title: "Audemars Piguet Royal Oak Chronograph (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 32, price: 12876.55, profit: 90.34, title: "Rolex Day-Date 40 President Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 33, price: 13309.65, profit: 100.40, title: "Vacheron Constantin Overseas Automatic", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 34, price: 13394.76, profit: 99.97, title: "Hasselblad H6D-100c Medium Format", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 35, price: 12867.88, profit: 98.90, title: "Phase One XF IQ4 150MP System", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 36, price: 13427.00, profit: 89.99, title: "Devialet Phantom I Gold Speaker Pair", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 37, price: 14100.67, profit: 120.87, title: "Steinway & Sons Spirio Player Piano", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 38, price: 13998.73, profit: 110.77, title: "Moog One 16-Voice Polyphonic Synth", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 39, price: 14400.98, profit: 120.77, title: "Leica Noctilux-M 50mm f/0.95 ASPH", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 40, price: 14521.52, profit: 130.73, title: "RED V-RAPTOR XL 8K VV Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" }
+];
+
+const TEMPLATE_M_4 = [
+  { sr: 1, price: 7998.88, profit: 45.99, title: "Hermès Constance Slim Wallet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 2, price: 7689.23, profit: 40.69, title: "Rolex Oyster Perpetual 36 Olive Green", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 3, price: 8000.20, profit: 50.22, title: "Chanel Classic Card Holder Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 4, price: 7946.81, profit: 47.10, title: "Cartier Juste un Clou Ring Gold with Diamonds", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 5, price: 7140.60, profit: 42.60, title: "Louis Vuitton Bleecker Box Vernis", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 6, price: 7994.98, profit: 45.77, title: "RED V-RAPTOR S35 Cinema Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 7, price: 8152.16, profit: 58.99, title: "Sony CineAlta Venice 6K Extension System", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 8, price: 7863.91, profit: 43.90, title: "DJI Inspire 3 Drone Base Combo", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 9, price: 7891.61, profit: 45.22, title: "Leica M11 Mirrorless Rangefinder Body Only", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 10, price: 8235.71, profit: 60.10, title: "Tiffany T Diamond Wire Bracelet Rose Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 11, price: 7812.73, profit: 50.44, title: "Chopard Happy Diamonds White Gold Ring", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 12, price: 7912.80, profit: 55.90, title: "Gucci Savoy Medium Duffel Trolley Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" },
+  { sr: 13, price: 12095.72, profit: 1384.81, title: "Hermès Birkin 35 Rose Azalee Epsom (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-5.png" },
+  { sr: 14, price: 12007.91, profit: 65.66, title: "Audemars Piguet Royal Oak Selfwinding 34mm", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-6.png" },
+  { sr: 15, price: 11854.88, profit: 60.70, title: "Patek Philippe Aquanaut Lady Steel Blue", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-7.png" },
+  { sr: 16, price: 11678.91, profit: 70.40, title: "Saint Laurent Sac de Jour Alligator Leather", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-8.png" },
+  { sr: 17, price: 12115.60, profit: 75.80, title: "Dior Book Tote Crocodile Embossed Calfskin", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-9.png" },
+  { sr: 18, price: 11765.81, profit: 60.44, title: "Bottega Veneta Andiamo Large Intrecciato", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-10.png" },
+  { sr: 19, price: 11623.66, profit: 60.41, title: "Loewe Puzzle Medium Crocodile Finish", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-11.png" },
+  { sr: 20, price: 12118.40, profit: 70.10, title: "Celine Triomphe Medium Lizard Skin Shoulder Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-12.png" },
+  { sr: 21, price: 11862.88, profit: 70.40, title: "Fendi Peekaboo ISeeU Crocodile Accents", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-13.png" },
+  { sr: 22, price: 12178.66, profit: 75.80, title: "Balenciaga Hourglass XS Metallic Python Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-14.png" },
+  { sr: 23, price: 11854.88, profit: 60.44, title: "Graff Spiral 18K White Gold Diamond Pendant", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-15.png" },
+  { sr: 24, price: 11678.91, profit: 60.41, title: "Bvlgari B.zero1 4-Band Rose Gold Diamond Ring", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-16.png" },
+  { sr: 25, price: 12115.60, profit: 70.10, title: "Van Cleef & Arpels Magic Alhambra Pendant", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-17.png" },
+  { sr: 26, price: 11765.81, profit: 60.59, title: "Tom Ford Shearling Flight Jacket Leather", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-18.png" },
+  { sr: 27, price: 11149.79, profit: 68.20, title: "Steinway & Sons Spirio Player Grand Piano", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-19.png" },
+  { sr: 28, price: 18884.46, profit: 2616.51, title: "Patek Philippe Aquanaut Chronograph Rose Gold (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-20.png" },
+  { sr: 29, price: 17654.76, profit: 120.67, title: "Audemars Piguet Royal Oak Chronograph Silver Dial", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-1.png" },
+  { sr: 30, price: 17231.99, profit: 126.88, title: "Rolex Day-Date 40 President Platinum", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-2.png" },
+  { sr: 31, price: 17983.66, profit: 130.11, title: "Vacheron Constantin Overseas Dual Time Blue", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-3.png" },
+  { sr: 32, price: 16984.88, profit: 110.26, title: "Hasselblad H6D-100c Multi-Shot System", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-4.png" },
+  { sr: 33, price: 19112.66, profit: 180.67, title: "Phase One XF IQ4 150MP Trichromatic System", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-5.png" },
+  { sr: 34, price: 17883.90, profit: 150.66, title: "Leica Noctilux-M 75mm f/1.25 ASPH Lens", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-6.png" },
+  { sr: 35, price: 15832.91, profit: 130.22, title: "RED V-RAPTOR XL 8K Super35 Production Pack", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-7.png" },
+  { sr: 36, price: 19700.43, profit: 200.32, title: "Devialet Phantom I Gold Wireless Speaker Pair", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/prod-8.png" },
+  { sr: 37, price: 18943.81, profit: 197.44, title: "Moog One 16-Voice Synthesizer Pro Pack", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-1.png" },
+  { sr: 38, price: 19432.61, profit: 199.90, title: "Steinway & Sons Model S Baby Grand Piano", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-2.png" },
+  { sr: 39, price: 19842.64, profit: 200.40, title: "Alienware m18 R2 Dual Liquid-Cooled Laptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-3.png" },
+  { sr: 40, price: 20007.67, profit: 382.80, title: "Eurocom Tornado F9 Supercomputer Workstation", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-4.png" }
+];
+
 export default function OrdersTasking() {
   const [users, setUsers] = useState([]);
   const [assignedTasks, setAssignedTasks] = useState([]);
@@ -11,6 +313,7 @@ export default function OrdersTasking() {
 
   // Form assignment states
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState('custom'); // 'custom', 'M-1', 'M-2', 'M-3', 'M-4', 'C-1', 'C-2', 'C-3'
   const [totalAmount, setTotalAmount] = useState('1000');
   const [orderCount, setOrderCount] = useState('5');
   const [profitPercent, setProfitPercent] = useState('5');
@@ -172,6 +475,7 @@ export default function OrdersTasking() {
     }
 
     setSelectedUser(user);
+    setSelectedTemplate('custom');
     // Initialize with 1 empty manual order
     setNewAssignOrders([
       { title: '', image: '', price: '100', profit: '10', status: 'Pending' }
@@ -347,6 +651,43 @@ export default function OrdersTasking() {
       } catch (err) {
         toast.error("Failed to delete task: " + err.message);
       }
+    }
+  };
+
+  const handlePurgeTaskData = async () => {
+    const isConfirmed = window.confirm(
+      "⚠️ WARNING: This operation is IRREVERSIBLE!\n\n" +
+      "This will permanently delete all records of assigned tasks and associated orders (completed, pending, in-progress) from the database.\n\n" +
+      "Are you absolutely sure you want to proceed?"
+    );
+    if (!isConfirmed) return;
+
+    try {
+      // Delete all from cb_orders
+      const { error: ordersErr } = await supabase
+        .from('cb_orders')
+        .delete()
+        .neq('id', 0);
+
+      if (ordersErr) {
+        throw ordersErr;
+      }
+
+      // Delete all from cb_assigned_tasks
+      const { error: tasksErr } = await supabase
+        .from('cb_assigned_tasks')
+        .delete()
+        .neq('id', '0');
+
+      if (tasksErr) {
+        throw tasksErr;
+      }
+
+      toast.success("Successfully purged all assigned tasks and associated orders from the database!");
+      fetchUsersAndTasks();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to purge database records: " + err.message);
     }
   };
 
@@ -563,6 +904,40 @@ export default function OrdersTasking() {
         </table>
       </div>
 
+      {/* Database Maintenance & System Control Center */}
+      <div className="admin-card" style={{ marginTop: 24, border: '1px solid #f87171', backgroundColor: '#fef2f2' }}>
+        <h3 className="section-title" style={{ marginBottom: 8, color: '#991b1b', display: 'flex', alignItems: 'center', gap: 8 }}>
+          🛡️ Database Maintenance & System Control Center
+        </h3>
+        <p style={{ margin: '0 0 16px 0', fontSize: 13, color: '#7f1d1d', lineHeight: 1.5 }}>
+          Admin tool for clearing existing records. You can purge all order tasking data and wipe ongoing or pending orders to reset the system.
+        </p>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+          <button 
+            type="button"
+            className="action-btn btn-reject"
+            onClick={handlePurgeTaskData}
+            style={{ 
+              backgroundColor: '#dc2626', 
+              color: '#ffffff', 
+              border: 'none', 
+              fontWeight: 700, 
+              fontSize: 13, 
+              padding: '10px 16px', 
+              borderRadius: 6,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+            }}
+          >
+            🗑️ Wipe All Orders & Assigned Tasks From Database
+          </button>
+        </div>
+      </div>
+
       {/* Assign Task Modal */}
       {showModal && selectedUser && (
         <div className="modal-overlay">
@@ -582,216 +957,355 @@ export default function OrdersTasking() {
             <form onSubmit={handleConfirmAssignment} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
               <div className="modal-body" style={{ flex: 1, overflowY: 'auto', paddingRight: 6, display: 'flex', flexDirection: 'column', gap: 16 }}>
                 
-                {/* Control Header */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'end', backgroundColor: 'var(--bg-surface-hover)', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)' }}>
-                  <div className="form-group-sla" style={{ margin: 0 }}>
-                    <label style={{ fontWeight: 700 }}>Number of Orders in Task</label>
-                    <input 
-                      type="number"
-                      value={newAssignOrders.length}
-                      onChange={(e) => handleOrderCountChange(e.target.value)}
-                      required
-                      className="input-sla-field"
-                      min="1"
-                      max="40"
-                      style={{ height: 36 }}
-                    />
-                    <span style={{ fontSize: 9, color: 'var(--text-admin-light)', marginTop: 4, display: 'block' }}>
-                      * Adjust the number of orders dynamically.
-                    </span>
-                  </div>
-                  <button 
-                    type="button" 
-                    className="action-btn btn-view" 
-                    onClick={handleAddOrder}
-                    style={{ height: 36, display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}
+                {/* Worksheet Template Selector */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, backgroundColor: 'var(--bg-surface-hover)', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)' }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                    Select Allocation Method
+                  </label>
+                  <select
+                    value={selectedTemplate}
+                    onChange={(e) => {
+                      const mode = e.target.value;
+                      setSelectedTemplate(mode);
+                      if (mode === 'M-1') {
+                        setNewAssignOrders(TEMPLATE_M_1.map(item => ({
+                          title: item.title,
+                          image: item.image,
+                          price: item.price.toString(),
+                          profit: item.profit.toString(),
+                          status: 'Pending'
+                        })));
+                      } else if (mode === 'M-2') {
+                        setNewAssignOrders(TEMPLATE_M_2.map(item => ({
+                          title: item.title,
+                          image: item.image,
+                          price: item.price.toString(),
+                          profit: item.profit.toString(),
+                          status: 'Pending'
+                        })));
+                      } else if (mode === 'M-3') {
+                        setNewAssignOrders(TEMPLATE_M_3.map(item => ({
+                          title: item.title,
+                          image: item.image,
+                          price: item.price.toString(),
+                          profit: item.profit.toString(),
+                          status: 'Pending'
+                        })));
+                      } else if (mode === 'M-4') {
+                        setNewAssignOrders(TEMPLATE_M_4.map(item => ({
+                          title: item.title,
+                          image: item.image,
+                          price: item.price.toString(),
+                          profit: item.profit.toString(),
+                          status: 'Pending'
+                        })));
+                      } else if (mode === 'C-1') {
+                        setNewAssignOrders(TEMPLATE_C_1.map(item => ({
+                          title: item.title,
+                          image: item.image,
+                          price: item.price.toString(),
+                          profit: item.profit.toString(),
+                          status: 'Pending'
+                        })));
+                      } else if (mode === 'C-2') {
+                        setNewAssignOrders(TEMPLATE_C_2.map(item => ({
+                          title: item.title,
+                          image: item.image,
+                          price: item.price.toString(),
+                          profit: item.profit.toString(),
+                          status: 'Pending'
+                        })));
+                      } else if (mode === 'C-3') {
+                        setNewAssignOrders(TEMPLATE_C_3.map(item => ({
+                          title: item.title,
+                          image: item.image,
+                          price: item.price.toString(),
+                          profit: item.profit.toString(),
+                          status: 'Pending'
+                        })));
+                      } else {
+                        setNewAssignOrders([
+                          { title: '', image: '', price: '100', profit: '10', status: 'Pending' }
+                        ]);
+                      }
+                    }}
+                    style={{
+                      fontSize: 13,
+                      padding: '8px 12px',
+                      borderRadius: 6,
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: 'var(--bg-admin-card)',
+                      color: 'var(--text-admin-main)',
+                      outline: 'none',
+                      width: '100%',
+                      fontWeight: 600
+                    }}
                   >
-                    ➕ Add Order Row
-                  </button>
+                    <option value="custom">✍️ Custom Manual Worksheet (Assign items one-by-one)</option>
+                    <option value="M-1">📦 Order Template M-1 (40 Items - total: $30,973.03 | profit: $210.54)</option>
+                    <option value="M-2">📦 Order Template M-2 (40 Items - total: $98,640.93 | profit: $496.84)</option>
+                    <option value="M-3">📦 Order Template M-3 (40 Items - total: $354,599.82 | profit: $4,605.05)</option>
+                    <option value="M-4">📦 Order Template M-4 (40 Items - total: $512,003.42 | profit: $7,648.02)</option>
+                    <option value="C-1">💼 Order Template C-1 (40 Items - total: $817.17 | profit: $2.69)</option>
+                    <option value="C-2">💼 Order Template C-2 (40 Items - total: $3,960.24 | profit: $49.71)</option>
+                    <option value="C-3">💼 Order Template C-3 (40 Items - total: $110,747.83 | profit: $9,238.89)</option>
+                  </select>
                 </div>
 
-                {/* Orders List Container */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {newAssignOrders.map((order, idx) => (
-                    <div 
-                      key={idx} 
-                      style={{ 
-                        border: '1px solid var(--border-color)', 
-                        borderRadius: 8, 
-                        padding: 12, 
-                        backgroundColor: 'var(--bg-admin-card)',
-                        position: 'relative'
-                      }}
-                    >
-                      {/* Order Row Header */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-admin-muted)', textTransform: 'uppercase' }}>
-                          Order #{idx + 1}
-                        </span>
-                        {newAssignOrders.length > 1 && (
-                          <button 
-                            type="button" 
-                            onClick={() => handleRemoveOrder(idx)}
-                            style={{ 
-                              background: 'none', 
-                              border: 'none', 
-                              color: '#ef4444', 
-                              fontSize: 11, 
-                              cursor: 'pointer', 
-                              display: 'flex', 
-                              alignItems: 'center', 
-                              gap: 2 
-                            }}
-                          >
-                            ✕ Remove
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Dropdown for products to select */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                            Select Product Catalog
-                          </label>
-                          <select
-                            onChange={(e) => {
-                              if (e.target.value !== "") {
-                                const prod = products[parseInt(e.target.value)];
-                                const updated = [...newAssignOrders];
-                                updated[idx] = {
-                                  ...updated[idx],
-                                  title: prod.title,
-                                  image: prod.image,
-                                  price: String(prod.price),
-                                  profit: String(prod.profit || (prod.price * 0.1).toFixed(2))
-                                };
-                                setNewAssignOrders(updated);
-                              }
-                            }}
-                            style={{ 
-                              fontSize: 11, 
-                              padding: '6px', 
-                              borderRadius: 4, 
-                              border: '1px solid var(--border-color)', 
-                              backgroundColor: 'var(--bg-surface-hover)',
-                              color: 'var(--text-admin-main)',
-                              outline: 'none',
-                              width: '100%'
-                            }}
-                            defaultValue=""
-                          >
-                            <option value="">-- Choose a product to auto-fill title, image, price & profit --</option>
-                            {products.map((p, pIdx) => (
-                              <option key={pIdx} value={pIdx}>
-                                {p.title.length > 60 ? p.title.substring(0, 60) + '...' : p.title} (${p.price})
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        {/* Custom fields & Image Preview */}
-                        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                          {order.image && (
-                            <img 
-                              src={order.image} 
-                              alt="Product" 
-                              referrerPolicy="no-referrer"
-                              style={{ 
-                                width: 44, 
-                                height: 44, 
-                                objectFit: 'contain', 
-                                border: '1px solid var(--border-color)', 
-                                borderRadius: 4, 
-                                backgroundColor: 'var(--bg-surface-hover)', 
-                                padding: 2,
-                                marginTop: 18
-                              }} 
-                            />
-                          )}
-                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                              Product Title / Name
-                            </label>
-                            <input 
-                              type="text"
-                              value={order.title}
-                              onChange={(e) => {
-                                const updated = [...newAssignOrders];
-                                updated[idx].title = e.target.value;
-                                setNewAssignOrders(updated);
-                              }}
-                              required
-                              placeholder="e.g. barkTHINS Snacking Chocolate"
-                              style={{ 
-                                width: '100%', 
-                                height: 34, 
-                                borderRadius: 4, 
-                                border: '1px solid var(--border-color)', 
-                                padding: '0 8px', 
-                                fontSize: 12 
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Price and Profit */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                              Price ($)
-                            </label>
-                            <input 
-                              type="number"
-                              step="0.01"
-                              value={order.price}
-                              onChange={(e) => {
-                                const updated = [...newAssignOrders];
-                                updated[idx].price = e.target.value;
-                                setNewAssignOrders(updated);
-                              }}
-                              required
-                              placeholder="0.00"
-                              style={{ 
-                                width: '100%', 
-                                height: 34, 
-                                borderRadius: 4, 
-                                border: '1px solid var(--border-color)', 
-                                padding: '0 8px', 
-                                fontSize: 12 
-                              }}
-                            />
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                              Commission / Profit ($)
-                            </label>
-                            <input 
-                              type="number"
-                              step="0.01"
-                              value={order.profit}
-                              onChange={(e) => {
-                                const updated = [...newAssignOrders];
-                                updated[idx].profit = e.target.value;
-                                setNewAssignOrders(updated);
-                              }}
-                              required
-                              placeholder="0.00"
-                              style={{ 
-                                width: '100%', 
-                                height: 34, 
-                                borderRadius: 4, 
-                                border: '1px solid var(--border-color)', 
-                                padding: '0 8px', 
-                                fontSize: 12 
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
+                {selectedTemplate === 'custom' && (
+                  /* Control Header */
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'end', backgroundColor: 'var(--bg-surface-hover)', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)' }}>
+                    <div className="form-group-sla" style={{ margin: 0 }}>
+                      <label style={{ fontWeight: 700 }}>Number of Orders in Task</label>
+                      <input 
+                        type="number"
+                        value={newAssignOrders.length}
+                        onChange={(e) => handleOrderCountChange(e.target.value)}
+                        required
+                        className="input-sla-field"
+                        min="1"
+                        max="40"
+                        style={{ height: 36 }}
+                      />
+                      <span style={{ fontSize: 9, color: 'var(--text-admin-light)', marginTop: 4, display: 'block' }}>
+                        * Adjust the number of orders dynamically.
+                      </span>
                     </div>
-                  ))}
-                </div>
+                    <button 
+                      type="button" 
+                      className="action-btn btn-view" 
+                      onClick={handleAddOrder}
+                      style={{ height: 36, display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}
+                    >
+                      ➕ Add Order Row
+                    </button>
+                  </div>
+                )}
+
+                {/* Orders Preview Area */}
+                {selectedTemplate !== 'custom' ? (
+                  <div style={{ border: '1px solid var(--border-color)', borderRadius: 8, backgroundColor: 'var(--bg-admin-card)', overflow: 'hidden' }}>
+                    <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-surface-hover)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-admin-muted)' }}>
+                      Preset Worksheet Order Sequence ({newAssignOrders.length} items)
+                    </div>
+                    <div style={{ maxHeight: 300, overflowY: 'auto' }}>
+                      <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse', textAlign: 'left' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-surface-hover)', fontSize: 10, textTransform: 'uppercase', opacity: 0.8 }}>
+                            <th style={{ padding: '8px 12px', width: 50 }}>Sr.</th>
+                            <th style={{ padding: '8px 12px' }}>Product Title</th>
+                            <th style={{ padding: '8px 12px', textAlign: 'right', width: 100 }}>Price</th>
+                            <th style={{ padding: '8px 12px', textAlign: 'right', width: 100 }}>Profit</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {newAssignOrders.map((o, oIdx) => (
+                            <tr key={oIdx} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                              <td style={{ padding: '8px 12px', fontWeight: 600 }}>{oIdx + 1}</td>
+                              <td style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                {o.image && (
+                                  <img 
+                                    src={o.image} 
+                                    alt="" 
+                                    referrerPolicy="no-referrer"
+                                    style={{ width: 24, height: 24, objectFit: 'contain', border: '1px solid var(--border-color)', borderRadius: 4, padding: 1, backgroundColor: 'white' }} 
+                                  />
+                                )}
+                                <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 280 }} title={o.title}>
+                                  {o.title}
+                                </span>
+                              </td>
+                              <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600 }}>$ {parseFloat(o.price).toFixed(2)}</td>
+                              <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600, color: 'var(--color-green)' }}>$ {parseFloat(o.profit).toFixed(2)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {newAssignOrders.map((order, idx) => (
+                      <div 
+                        key={idx} 
+                        style={{ 
+                          border: '1px solid var(--border-color)', 
+                          borderRadius: 8, 
+                          padding: 12, 
+                          backgroundColor: 'var(--bg-admin-card)',
+                          position: 'relative'
+                        }}
+                      >
+                        {/* Order Row Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-admin-muted)', textTransform: 'uppercase' }}>
+                            Order #{idx + 1}
+                          </span>
+                          {newAssignOrders.length > 1 && (
+                            <button 
+                              type="button" 
+                              onClick={() => handleRemoveOrder(idx)}
+                              style={{ 
+                                background: 'none', 
+                                border: 'none', 
+                                color: '#ef4444', 
+                                fontSize: 11, 
+                                cursor: 'pointer', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: 2 
+                              }}
+                            >
+                              ✕ Remove
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Dropdown for products to select */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                              Select Product Catalog
+                            </label>
+                            <select
+                              onChange={(e) => {
+                                if (e.target.value !== "") {
+                                  const prod = products[parseInt(e.target.value)];
+                                  const updated = [...newAssignOrders];
+                                  updated[idx] = {
+                                    ...updated[idx],
+                                    title: prod.title,
+                                    image: prod.image,
+                                    price: String(prod.price),
+                                    profit: String(prod.profit || (prod.price * 0.1).toFixed(2))
+                                  };
+                                  setNewAssignOrders(updated);
+                                }
+                              }}
+                              style={{ 
+                                fontSize: 11, 
+                                padding: '6px', 
+                                borderRadius: 4, 
+                                border: '1px solid var(--border-color)', 
+                                backgroundColor: 'var(--bg-surface-hover)',
+                                color: 'var(--text-admin-main)',
+                                outline: 'none',
+                                width: '100%'
+                              }}
+                              defaultValue=""
+                            >
+                              <option value="">-- Choose a product to auto-fill title, image, price & profit --</option>
+                              {products.map((p, pIdx) => (
+                                <option key={pIdx} value={pIdx}>
+                                  {p.title.length > 60 ? p.title.substring(0, 60) + '...' : p.title} (${p.price})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Custom fields & Image Preview */}
+                          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                            {order.image && (
+                              <img 
+                                src={order.image} 
+                                alt="Product" 
+                                referrerPolicy="no-referrer"
+                                style={{ 
+                                  width: 44, 
+                                  height: 44, 
+                                  objectFit: 'contain', 
+                                  border: '1px solid var(--border-color)', 
+                                  borderRadius: 4, 
+                                  backgroundColor: 'var(--bg-surface-hover)', 
+                                  padding: 2,
+                                  marginTop: 18
+                                }} 
+                              />
+                            )}
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                              <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                                Product Title / Name
+                              </label>
+                              <input 
+                                type="text"
+                                value={order.title}
+                                onChange={(e) => {
+                                  const updated = [...newAssignOrders];
+                                  updated[idx].title = e.target.value;
+                                  setNewAssignOrders(updated);
+                                }}
+                                required
+                                placeholder="e.g. barkTHINS Snacking Chocolate"
+                                style={{ 
+                                  width: '100%', 
+                                  height: 34, 
+                                  borderRadius: 4, 
+                                  border: '1px solid var(--border-color)', 
+                                  padding: '0 8px', 
+                                  fontSize: 12 
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Price and Profit */}
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                              <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                                Price ($)
+                              </label>
+                              <input 
+                                type="number"
+                                step="0.01"
+                                value={order.price}
+                                onChange={(e) => {
+                                  const updated = [...newAssignOrders];
+                                  updated[idx].price = e.target.value;
+                                  setNewAssignOrders(updated);
+                                }}
+                                required
+                                placeholder="0.00"
+                                style={{ 
+                                  width: '100%', 
+                                  height: 34, 
+                                  borderRadius: 4, 
+                                  border: '1px solid var(--border-color)', 
+                                  padding: '0 8px', 
+                                  fontSize: 12 
+                                }}
+                              />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                              <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
+                                Commission / Profit ($)
+                              </label>
+                              <input 
+                                type="number"
+                                step="0.01"
+                                value={order.profit}
+                                onChange={(e) => {
+                                  const updated = [...newAssignOrders];
+                                  updated[idx].profit = e.target.value;
+                                  setNewAssignOrders(updated);
+                                }}
+                                required
+                                placeholder="0.00"
+                                style={{ 
+                                  width: '100%', 
+                                  height: 34, 
+                                  borderRadius: 4, 
+                                  border: '1px solid var(--border-color)', 
+                                  padding: '0 8px', 
+                                  fontSize: 12 
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* Computation Summary block */}
                 <div style={{ backgroundColor: 'var(--color-success-bg)', padding: 12, borderRadius: 6, border: '1px solid var(--color-success)', display: 'flex', flexDirection: 'column', gap: 6 }}>
