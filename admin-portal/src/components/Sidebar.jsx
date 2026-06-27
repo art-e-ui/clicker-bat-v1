@@ -50,15 +50,16 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     <div className="admin-sidebar">
       {/* Brand Logo */}
       <div className="sidebar-brand">
-        <div className="walmart-logo">
-          <div className="text-wrap">
-            <span className="wal">Wal</span>
-            <span className="mart">mart</span>
-          </div>
+        <div className="brand-mark">
           <span className="spark">❋</span>
+        </div>
+        <div className="brand-text">
+          <span className="brand-name">Walmart</span>
+          <span className="brand-sub">Admin Console</span>
         </div>
       </div>
       <div className="sidebar-menu">
+        <div className="sidebar-section-label">Menu</div>
         {menuItems.map(item => {
           const IconComponent = item.icon;
           return (

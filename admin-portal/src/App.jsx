@@ -156,56 +156,56 @@ export default function App() {
         return (
           <div className="admin-page-container scale-up">
             <div className="dashboard-stats-grid">
-              
-              {/* Card 1: Violet */}
-              <div className="stat-box-card" style={{ backgroundColor: 'var(--bg-violet)', color: '#fff' }}>
+
+              {/* Card 1: Total Payouts */}
+              <div className="stat-box-card">
                 <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
-                    <DollarSign size={24} />
+                  <div className="stat-icon-jobie" style={{ backgroundColor: 'var(--tint-violet-bg)', color: 'var(--tint-violet-fg)' }}>
+                    <DollarSign size={22} />
                   </div>
                   <span className="stat-label">Total Payouts</span>
                 </div>
                 <div className="stat-val">$ {stats.payoutRequests.toFixed(2)}</div>
               </div>
 
-              {/* Card 2: Light Blue */}
-              <div className="stat-box-card" style={{ backgroundColor: 'var(--bg-lightblue)', color: '#fff' }}>
+              {/* Card 2: Total Deposits */}
+              <div className="stat-box-card">
                 <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
-                    <TrendingUp size={24} />
+                  <div className="stat-icon-jobie" style={{ backgroundColor: 'var(--tint-blue-bg)', color: 'var(--tint-blue-fg)' }}>
+                    <TrendingUp size={22} />
                   </div>
                   <span className="stat-label">Total Deposits</span>
                 </div>
                 <div className="stat-val">$ {stats.totalDeposits.toFixed(2)}</div>
               </div>
 
-              {/* Card 3: Green */}
-              <div className="stat-box-card" style={{ backgroundColor: 'var(--bg-green)', color: '#fff' }}>
+              {/* Card 3: Client Nodes */}
+              <div className="stat-box-card">
                 <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
-                    <Users size={24} />
+                  <div className="stat-icon-jobie" style={{ backgroundColor: 'var(--tint-green-bg)', color: 'var(--tint-green-fg)' }}>
+                    <Users size={22} />
                   </div>
                   <span className="stat-label">Client Nodes</span>
                 </div>
                 <div className="stat-val">{stats.newUsers.toLocaleString()}</div>
               </div>
 
-              {/* Card 4: Light Green */}
-              <div className="stat-box-card" style={{ backgroundColor: 'var(--bg-lightgreen)', color: '#fff' }}>
+              {/* Card 4: Matched Tasks */}
+              <div className="stat-box-card">
                 <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
-                    <Briefcase size={24} />
+                  <div className="stat-icon-jobie" style={{ backgroundColor: 'var(--tint-teal-bg)', color: 'var(--tint-teal-fg)' }}>
+                    <Briefcase size={22} />
                   </div>
                   <span className="stat-label">Matched Tasks</span>
                 </div>
                 <div className="stat-val">{stats.matchedTasks.toLocaleString()}</div>
               </div>
 
-              {/* Card 5: Active Orange */}
-              <div className="stat-box-card" style={{ backgroundColor: '#f0932b', color: '#fff' }}>
+              {/* Card 5: Online Users */}
+              <div className="stat-box-card">
                 <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
-                    <Activity size={24} />
+                  <div className="stat-icon-jobie" style={{ backgroundColor: 'var(--tint-amber-bg)', color: 'var(--tint-amber-fg)' }}>
+                    <Activity size={22} />
                   </div>
                   <span className="stat-label">Online Users</span>
                 </div>
@@ -224,68 +224,6 @@ export default function App() {
                 <span>[Matching Activity Metrics Projection]</span>
               </div>
             </div>
-            
-            <style>{`
-              .dashboard-stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 24px;
-                margin-bottom: 24px;
-              }
-              .stat-box-card {
-                border-radius: var(--radius-md);
-                padding: 24px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                min-height: 140px;
-                box-shadow: var(--shadow-sm);
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-              }
-              .stat-box-card:hover {
-                transform: translateY(-4px);
-                box-shadow: var(--shadow-md);
-              }
-              .stat-header {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-              }
-              .stat-icon-jobie {
-                width: 48px;
-                height: 48px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #ffffff;
-              }
-              .stat-label {
-                font-size: 15px;
-                font-weight: 500;
-                opacity: 0.9;
-              }
-              .stat-val {
-                font-size: 32px;
-                font-weight: 700;
-                margin-top: 16px;
-                align-self: flex-end;
-              }
-              .chart-placeholder {
-                height: 240px;
-                background-color: var(--bg-app);
-                border: 1px dashed var(--border-color-focus);
-                border-radius: var(--radius-md);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                color: var(--text-light);
-                font-size: 14px;
-                font-weight: 500;
-                font-size: 13px;
-              }
-            `}</style>
           </div>
         );
 
