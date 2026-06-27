@@ -797,9 +797,10 @@ export default function OrdersTasking() {
                     <button 
                       className="action-btn btn-approve"
                       onClick={() => handleOpenAssignModal(u)}
-                      style={{ padding: '4px 12px', borderRadius: 4 }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 8 }}
                     >
-                      ➕ Assign Task
+                      <Plus className="w-3.5 h-3.5" />
+                      Assign Task
                     </button>
                   </td>
                 </tr>
@@ -913,15 +914,15 @@ export default function OrdersTasking() {
                     }}
                     className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition-all"
                   >
-                    <option value="custom">✍️ Custom Manual Worksheet (Assign items one-by-one)</option>
-                    <option value="M-1">📦 Order Template M-1 (40 Items - total: $30,718.07 | profit: $210.66)</option>
-                    <option value="M-2">📦 Order Template M-2 (40 Items - total: $98,290.93 | profit: $496.84)</option>
-                    <option value="M-3">📦 Order Template M-3 (40 Items - total: $353,999.72 | profit: $4,625.05)</option>
-                    <option value="M-4">📦 Order Template M-4 (40 Items - total: $508,022.10 | profit: $7,648.03)</option>
-                    <option value="C-1">💼 Order Template C-1 (40 Items - total: $817.17 | profit: $2.69)</option>
-                    <option value="C-2">💼 Order Template C-2 (40 Items - total: $3,920.24 | profit: $49.71)</option>
-                    <option value="C-3">💼 Order Template C-3 (40 Items - total: $104,951.13 | profit: $9,238.89)</option>
-                    <option value="C-4">💼 Order Template C-4 (40 Items - total: $148,524.49 | profit: $14,637.48)</option>
+                    <option value="custom">Custom Manual Worksheet — assign items one by one</option>
+                    <option value="M-1">Template M-1 · 40 items · total $30,718.07 · profit $210.66</option>
+                    <option value="M-2">Template M-2 · 40 items · total $98,290.93 · profit $496.84</option>
+                    <option value="M-3">Template M-3 · 40 items · total $353,999.72 · profit $4,625.05</option>
+                    <option value="M-4">Template M-4 · 40 items · total $508,022.10 · profit $7,648.03</option>
+                    <option value="C-1">Template C-1 · 40 items · total $817.17 · profit $2.69</option>
+                    <option value="C-2">Template C-2 · 40 items · total $3,920.24 · profit $49.71</option>
+                    <option value="C-3">Template C-3 · 40 items · total $104,951.13 · profit $9,238.89</option>
+                    <option value="C-4">Template C-4 · 40 items · total $148,524.49 · profit $14,637.48</option>
                   </select>
                 </div>
 

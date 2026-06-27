@@ -71,10 +71,14 @@
   --bg-admin-card: #ffffff;
 }
 
+/* NOTE: Do not blanket-reset margin or padding here. Tailwind v4 places its
+   utilities inside cascade layers, and unlayered rules (like this one) always
+   win over layered ones regardless of specificity. A universal margin/padding
+   reset would override every spacing utility on the pages, making tables and
+   cards collapse into cramped spreadsheet-like layouts. Tailwind preflight
+   already normalizes margins, so we only keep box-sizing here. */
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 body {
