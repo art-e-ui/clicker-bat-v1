@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import Home from './pages/Home';
@@ -263,14 +263,15 @@ export default function App() {
 
 // Subcomponents to handle conditional headers and footers based on route
 function ConditionalHeader({ theme, onThemeChange }) {
-  const showHeader = window.location.hash.includes('/home');
+  const { pathname } = useLocation();
+  const showHeader = pathname.includes('/home');
   if (!showHeader) return null;
   return <Header currentTheme={theme} onThemeChange={onThemeChange} />;
 }
 
 function ConditionalBottomNav() {
-  const path = window.location.hash;
-  const hideNav = path.includes('/deposit') || path.includes('/withdraw');
+  const { pathname } = useLocation();
+  const hideNav = pathname.includes('/deposit') || pathname.includes('/withdraw');
   if (hideNav) return null;
   return <BottomNav />;
 }
