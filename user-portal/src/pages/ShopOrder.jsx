@@ -119,7 +119,7 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
   // Derive stats from orders list and active task
   const [orderCompleteCount, setOrderCompleteCount] = useState(0);
   const [undoneCount, setUndoneCount] = useState(0);
-  const [totalTasks, setTotalTasks] = useState(10);
+  const [totalTasks, setTotalTasks] = useState(0);
   const [totalCommission, setTotalCommission] = useState('0.00');
   const [activeTaskState, setActiveTaskState] = useState(null);
 
@@ -149,7 +149,7 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
           setTotalCommission(comm.toFixed(2));
         } else {
           setActiveTaskState(null);
-          setTotalTasks(10);
+          setTotalTasks(0);
           const completed = orders.filter(o => o.status === 'Success');
           setOrderCompleteCount(completed.length);
           const pending = orders.filter(o => o.status === 'Pending').length;

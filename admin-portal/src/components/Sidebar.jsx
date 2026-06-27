@@ -36,7 +36,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     { id: 'sla-staff', label: 'Staff Members', icon: Users, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'user-management', label: 'User Management', icon: Users, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'orders-tasking', label: 'Orders Tasking', icon: Briefcase, roles: ['Owner', 'Admin', 'Staff'] },
-    { id: 'operations', label: 'Operations', icon: LineChart, roles: ['Owner', 'Admin'] },
+    { id: 'orders-in-progress', label: 'Orders In Progress', icon: LineChart, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'financial-center', label: 'Financial Center', icon: DollarSign, roles: ['Owner', 'Admin'] },
     { id: 'support-chat', label: 'Support & Chat', icon: MessageSquare, roles: ['Owner', 'Admin'] },
     { id: 'settings', label: 'Settings', icon: Settings, roles: ['Owner', 'Admin'] }
@@ -51,8 +51,10 @@ export default function Sidebar({ activeTab, setActiveTab }) {
       {/* Brand Logo */}
       <div className="sidebar-brand">
         <div className="walmart-logo">
-          <span className="wal">Wal</span>
-          <span className="mart">mart</span>
+          <div className="text-wrap">
+            <span className="wal">Wal</span>
+            <span className="mart">mart</span>
+          </div>
           <span className="spark">❋</span>
         </div>
       </div>

@@ -1,8 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { PRODUCT_CATALOG } from '../data/products';
 import { supabase } from '../supabase';
-
 import toast from 'react-hot-toast';
+import { 
+  ClipboardList, 
+  UserPlus, 
+  ListOrdered, 
+  TrendingUp, 
+  DollarSign, 
+  Plus, 
+  Trash2, 
+  Edit3, 
+  Check, 
+  X, 
+  Layers, 
+  AlertCircle,
+  HelpCircle,
+  Briefcase,
+  Layers3,
+  Sparkles,
+  Award,
+  Database,
+  Eye,
+  Info,
+  Layers as LayersIcon,
+  BadgeAlert
+} from 'lucide-react';
 
 const TEMPLATE_M_1 = [
   { sr: 1, price: 498.06, profit: 1.10, title: "Saint Laurent Monogram Leather Card Holder", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
@@ -18,8 +41,8 @@ const TEMPLATE_M_1 = [
   { sr: 11, price: 503.44, profit: 0.80, title: "Moncler Tricolour Logo Wool Beanie", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
   { sr: 12, price: 489.87, profit: 0.76, title: "Valentino Garavani Rockstud Bracelet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
   { sr: 13, price: 504.00, profit: 1.10, title: "Fendi Baguette Canvas Key Charm", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
-  { sr: 14, price: 495.65, profit: 0.86, title: "Bottega Veneta Intrecciato Leather Card Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
-  { sr: 15, price: 741.80, profit: 68.00, title: "Dyson Airwrap Multi-Styler Complete Long (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
+  { sr: 14, price: 495.65, profit: 0.88, title: "Bottega Veneta Intrecciato Leather Card Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
+  { sr: 15, price: 673.80, profit: 68.00, title: "Dyson Airwrap Multi-Styler Complete Long (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
   { sr: 16, price: 733.80, profit: 1.20, title: "Apple Watch Series 9 GPS + Cellular 45mm", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
   { sr: 17, price: 731.70, profit: 1.00, title: "Sony WH-1000XM5 Wireless Noise-Cancelling Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
   { sr: 18, price: 729.50, profit: 1.43, title: "Bose QuietComfort Ultra Headphones Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
@@ -32,7 +55,7 @@ const TEMPLATE_M_1 = [
   { sr: 25, price: 734.20, profit: 1.30, title: "Insta360 X3 Waterproof 360 Action Camera", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
   { sr: 26, price: 740.40, profit: 1.50, title: "iPad 10.9-inch (10th Gen) Wi-Fi 256GB", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
   { sr: 27, price: 749.60, profit: 1.60, title: "Sonos Move 2 Portable Wireless Speaker", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
-  { sr: 28, price: 1133.54, profit: 97.00, title: "Sony Alpha 7 III Mirrorless Camera (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
+  { sr: 28, price: 1036.54, profit: 97.00, title: "Sony Alpha 7 III Mirrorless Camera (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
   { sr: 29, price: 1121.54, profit: 1.70, title: "iPhone 15 Pro Max 256GB Titanium", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 30, price: 1123.56, profit: 1.60, title: "Samsung Galaxy S24 Ultra 512GB Black", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 31, price: 999.78, profit: 1.00, title: "Apple MacBook Air 13.6-inch M3 SSD", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
@@ -106,7 +129,7 @@ const TEMPLATE_C_2 = [
   { sr: 13, price: 45.9, profit: 0.14, title: "Premium Leather Minimalist Slim Wallet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
   { sr: 14, price: 43.8, profit: 0.11, title: "Heavy Duty Resistance Exercise Bands", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
   { sr: 15, price: 47.8, profit: 0.14, title: "Rechargeable Sonic Electric Toothbrush", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
-  { sr: 16, price: 95.874, profit: 14, title: "Smart Ambient Mood Lighting Kit (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
+  { sr: 16, price: 81.874, profit: 14, title: "Smart Ambient Mood Lighting Kit (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
   { sr: 17, price: 94.11, profit: 0.23, title: "Mechanical Backlit Gaming Keyboard", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
   { sr: 18, price: 93.24, profit: 0.22, title: "Noise-Cancelling Over-Ear Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
   { sr: 19, price: 91.88, profit: 0.2, title: "Portable External SSD 1TB USB-C", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
@@ -120,7 +143,7 @@ const TEMPLATE_C_2 = [
   { sr: 27, price: 91.88, profit: 0.2, title: "Minimalist Floating Wall Shelves (Set of 3)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
   { sr: 28, price: 94.99, profit: 0.3, title: "Professional Acrylic Paint Set with Easel", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
   { sr: 29, price: 97.01, profit: 0.34, title: "Electric Gooseneck Kettle for Pour-Over", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
-  { sr: 30, price: 187.994, profit: 26, title: "Ultimate Pro-Gamer Ergonomic Office Chair (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 30, price: 161.994, profit: 26, title: "Ultimate Pro-Gamer Ergonomic Office Chair (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 31, price: 180.55, profit: 0.5, title: "Home Security Wireless Camera 4-Pack", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
   { sr: 32, price: 187.01, profit: 0.6, title: "1200W High-Speed Nutrient Extractor Blender", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
   { sr: 33, price: 164.88, profit: 0.4, title: "Premium 100% Mulberry Silk Sheets Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
@@ -146,7 +169,7 @@ const TEMPLATE_C_3 = [
   { sr: 10, price: 460.66, profit: 6.4, title: "Solid Wood 4-Tier Bookshelf Organizer", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
   { sr: 11, price: 499.65, profit: 7.9, title: "Deep Tissue Percussion Muscle Massage Gun Pro", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
   { sr: 12, price: 510.88, profit: 13.6, title: "Adjustable Height Motorized Standing Desk", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" },
-  { sr: 13, price: 899.495, profit: 129.66, title: "Next-Gen Gaming Console Bundle (Premium Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
+  { sr: 13, price: 769.835, profit: 129.66, title: "Next-Gen Gaming Console Bundle (Premium Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
   { sr: 14, price: 890.77, profit: 20.1, title: "Ultra-Wide 34-inch Curved Gaming Monitor 144Hz", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-14.png" },
   { sr: 15, price: 888.54, profit: 20, title: "Home Theater Atmos Soundbar with Wireless Subwoofer", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-15.png" },
   { sr: 16, price: 920.77, profit: 25.95, title: "Automatic Espresso Machine with Integrated Grinder", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
@@ -159,21 +182,21 @@ const TEMPLATE_C_3 = [
   { sr: 23, price: 1211.55, profit: 60.41, title: "Commercial Grade Countertop Soft Serve Ice Cream Machine", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
   { sr: 24, price: 1289.51, profit: 70.65, title: "Multi-Zone Ductless Mini Split Air Conditioner Heat Pump", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
   { sr: 25, price: 1236.88, profit: 60.79, title: "Retro Compact Refrigerator with Freezer Chest", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
-  { sr: 26, price: 2612.515, profit: 397.65, title: "Pro-Athlete Smart Treadmill with 22-inch HD Touchscreen (Elite Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 26, price: 2232.865, profit: 397.65, title: "Pro-Athlete Smart Treadmill with 22-inch HD Touchscreen (Elite Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
   { sr: 27, price: 2601.88, profit: 120.99, title: "Professional Electric Guitar with Hard Shell Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
   { sr: 28, price: 2507.54, profit: 110.92, title: "Advanced Laser Engraving and Cutting Machine", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
   { sr: 29, price: 2799.84, profit: 140.9, title: "High-Performance Carbon Fiber Road Racing Bike", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
   { sr: 30, price: 2675.8, profit: 130.8, title: "Commercial Multi-Station Home Gym Workout Center", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
   { sr: 31, price: 3100.66, profit: 167.25, title: "Top-Tier Handcrafted Wood Pool Table Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
-  { sr: 32, price: 5693.565, profit: 867.31, title: "Signature Edition Master Chef Gas Range & Double Oven (Supreme Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
+  { sr: 32, price: 4826.255, profit: 867.31, title: "Signature Edition Master Chef Gas Range & Double Oven (Supreme Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
   { sr: 33, price: 5550.59, profit: 280.88, title: "Premium Inground Backyard Hot Tub & Spa Tub", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
   { sr: 34, price: 5498.77, profit: 263.22, title: "Commercial-Grade Fully Automatic Lawn Mower Robot", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
   { sr: 35, price: 6100.69, profit: 300.6, title: "Smart Interactive Fitness Mirror with Weight Accessories", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
   { sr: 36, price: 5900.51, profit: 400.6, title: "High-Capacity Built-In Dual-Zone Wine Refrigerator", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
   { sr: 37, price: 5821.63, profit: 398.22, title: "Luxury Hard Shell Expandable Luggage Suite (5-Piece Set)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
   { sr: 38, price: 6590.61, profit: 502.91, title: "Off-Road Electric Fat Tire Mountain Bicycle 1000W", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
-  { sr: 39, price: 12793.695, profit: 1567.31, title: "Ultra-Premium 85-inch 8K Neo QLED Smart TV (Grand Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
-  { sr: 40, price: 21643.875, profit: 2852.77, title: "Enterprise Level AI-Powered Server Rack Console (Mega Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" }
+  { sr: 39, price: 11226.385, profit: 1567.31, title: "Ultra-Premium 85-inch 8K Neo QLED Smart TV (Grand Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
+  { sr: 40, price: 18791.105, profit: 2852.77, title: "Enterprise Level AI-Powered Server Rack Console (Mega Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" }
 ];
 
 const TEMPLATE_C_4 = [
@@ -192,7 +215,7 @@ const TEMPLATE_C_4 = [
   { sr: 13, price: 831.55, profit: 10.2, title: "Cordless Stick Vacuum Cleaner with Laser", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
   { sr: 14, price: 791.54, profit: 7.8, title: "Digital Piano with Weighted Keys (88-Key)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-14.png" },
   { sr: 15, price: 870.33, profit: 11.5, title: "Self-Cleaning Litter Box for Cats", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-15.png" },
-  { sr: 16, price: 1585.743, profit: 256.1, title: "Premium E-Bike Commuter Edition (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
+  { sr: 16, price: 1329.643, profit: 256.1, title: "Premium E-Bike Commuter Edition (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
   { sr: 17, price: 1500.22, profit: 56.87, title: "Smart Home Security System Bundle 12-Piece", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
   { sr: 18, price: 1600.34, profit: 60.4, title: "Fully Automatic Integrated Coffee Machine", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
   { sr: 19, price: 1476.65, profit: 40.5, title: "Professional 3D Printer with Dual Extruder", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
@@ -205,18 +228,18 @@ const TEMPLATE_C_4 = [
   { sr: 26, price: 1997.55, profit: 90.5, title: "Professional Recording Studio Microphone Set", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
   { sr: 27, price: 1876.87, profit: 76.9, title: "High-End Turntable with Ortofon Cartridge", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
   { sr: 28, price: 2100.63, profit: 100.57, title: "Smart Electric Smoker with Meat Probe", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
-  { sr: 29, price: 4196.873, profit: 605.32, title: "Advanced VR Headset System (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 29, price: 3591.553, profit: 605.32, title: "Advanced VR Headset System (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
   { sr: 30, price: 4111.34, profit: 200.67, title: "Professional Video Editing Workstation Laptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
   { sr: 31, price: 3999.76, profit: 197.55, title: "Commercial Grade Under-Counter Ice Machine", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
   { sr: 32, price: 4288.56, profit: 230.91, title: "Luxury Freestanding Soaking Bathtub", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
-  { sr: 33, price: 8798.903, profit: 1299.99, title: "Premium Home Golf Simulator Package (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
+  { sr: 33, price: 7498.913, profit: 1299.99, title: "Premium Home Golf Simulator Package (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
   { sr: 34, price: 8722.23, profit: 362.66, title: "Professional 12-Burner Gas Range with Griddle", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
   { sr: 35, price: 8112.98, profit: 310.55, title: "High-End Home Theater Laser Projector 8K", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
   { sr: 36, price: 9200.56, profit: 450.57, title: "Complete Solar Panel Kit with Inverter", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
   { sr: 37, price: 9771.84, profit: 560.44, title: "Custom Built Outdoor Kitchen Island", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
   { sr: 38, price: 8176.93, profit: 432.98, title: "Luxury Steam Shower Enclosure Unit", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
-  { sr: 39, price: 19471.813, profit: 2912.93, title: "Grand Piano with Self-Playing System (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
-  { sr: 40, price: 36646.083, profit: 5927.51, title: "State-of-the-Art Private Submersible (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" }
+  { sr: 39, price: 16558.883, profit: 2912.93, title: "Grand Piano with Self-Playing System (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
+  { sr: 40, price: 30718.573, profit: 5927.51, title: "State-of-the-Art Private Submersible (Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" }
 ];
 
 const TEMPLATE_M_2 = [
@@ -237,7 +260,7 @@ const TEMPLATE_M_2 = [
   { sr: 15, price: 1946.99, profit: 1.99, title: "Fendi First Medium Leather Clutch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
   { sr: 16, price: 1826.79, profit: 1.98, title: "Bottega Veneta Cassette Intrecciato Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
   { sr: 17, price: 2068.98, profit: 2.40, title: "Burberry Chelsea Heritage Trench Coat", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
-  { sr: 18, price: 2447.64, profit: 112.00, title: "Hermès Birkin 30 Togo Gold Hardware (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
+  { sr: 18, price: 2335.64, profit: 112.00, title: "Hermès Birkin 30 Togo Gold Hardware (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
   { sr: 19, price: 2412.70, profit: 5.60, title: "Cartier Love Wedding Band 18K Yellow Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
   { sr: 20, price: 2411.60, profit: 5.10, title: "Tiffany & Co. T1 Narrow Ring in Rose Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" },
   { sr: 21, price: 2315.50, profit: 4.90, title: "ASUS ROG Zephyrus G14 OLED Gaming Laptop", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
@@ -248,7 +271,7 @@ const TEMPLATE_M_2 = [
   { sr: 26, price: 2480.70, profit: 5.90, title: "Breitling Avenger Automatic GMT Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
   { sr: 27, price: 2370.90, profit: 4.60, title: "Tag Heuer Aquaracer Professional 300 Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
   { sr: 28, price: 2383.80, profit: 4.80, title: "Longines Spirit Zulu Time GMT Watch", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
-  { sr: 29, price: 3329.04, profit: 238.00, title: "Chanel Classic Double Flap Bag Medium (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 29, price: 3091.04, profit: 238.00, title: "Chanel Classic Double Flap Bag Medium (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 30, price: 3322.90, profit: 6.00, title: "LG OLED evo G3 Series 65-inch 4K Smart TV", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 31, price: 3212.00, profit: 5.10, title: "Astell&Kern A&ultima SP3000 Music Player", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
   { sr: 32, price: 3169.80, profit: 4.90, title: "Focal Utopia 2022 Open-Back Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
@@ -277,7 +300,7 @@ const TEMPLATE_M_3 = [
   { sr: 12, price: 6242.98, profit: 36.76, title: "Gucci Savoy Medium Duffel Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
   { sr: 13, price: 6001.01, profit: 30.40, title: "Prada Saffiano Leather Tote", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
   { sr: 14, price: 6311.22, profit: 34.60, title: "Rolex Oyster Perpetual 41", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
-  { sr: 15, price: 8822.06, profit: 863.00, title: "Patek Philippe Nautilus Ref. 5711 (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
+  { sr: 15, price: 7959.06, profit: 863.00, title: "Patek Philippe Nautilus Ref. 5711 (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
   { sr: 16, price: 8790.77, profit: 45.22, title: "Audemars Piguet Royal Oak Selfwinding", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
   { sr: 17, price: 8682.33, profit: 40.96, title: "Saint Laurent Sac de Jour Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
   { sr: 18, price: 8769.65, profit: 41.55, title: "Dior Book Tote Oblique Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
@@ -293,7 +316,7 @@ const TEMPLATE_M_3 = [
   { sr: 28, price: 8802.53, profit: 47.80, title: "Bvlgari B.zero1 18K Rose Gold Ring", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
   { sr: 29, price: 8102.44, profit: 38.90, title: "Van Cleef & Arpels Vintage Alhambra", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 30, price: 9401.46, profit: 50.34, title: "Chopard Happy Hearts Bracelet", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
-  { sr: 31, price: 13767.53, profit: 1737.00, title: "Audemars Piguet Royal Oak Chronograph (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 31, price: 12030.53, profit: 1737.00, title: "Audemars Piguet Royal Oak Chronograph (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
   { sr: 32, price: 12876.55, profit: 90.34, title: "Rolex Day-Date 40 President Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
   { sr: 33, price: 13309.65, profit: 100.40, title: "Vacheron Constantin Overseas Automatic", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
   { sr: 34, price: 13394.76, profit: 99.97, title: "Hasselblad H6D-100c Medium Format", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
@@ -318,7 +341,7 @@ const TEMPLATE_M_4 = [
   { sr: 10, price: 8235.71, profit: 60.10, title: "Tiffany T Diamond Wire Bracelet Rose Gold", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
   { sr: 11, price: 7812.73, profit: 50.44, title: "Chopard Happy Diamonds White Gold Ring", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
   { sr: 12, price: 7912.80, profit: 55.90, title: "Gucci Savoy Medium Duffel Trolley Bag", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
-  { sr: 13, price: 12095.72, profit: 1384.81, title: "Hermès Birkin 35 Rose Azalee Epsom (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
+  { sr: 13, price: 10710.91, profit: 1384.81, title: "Hermès Birkin 35 Rose Azalee Epsom (Special Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
   { sr: 14, price: 12007.91, profit: 65.66, title: "Audemars Piguet Royal Oak Selfwinding 34mm", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
   { sr: 15, price: 11854.88, profit: 60.70, title: "Patek Philippe Aquanaut Lady Steel Blue", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
   { sr: 16, price: 11678.91, profit: 70.40, title: "Saint Laurent Sac de Jour Alligator Leather", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
@@ -333,7 +356,7 @@ const TEMPLATE_M_4 = [
   { sr: 25, price: 12115.60, profit: 70.10, title: "Van Cleef & Arpels Magic Alhambra Pendant", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
   { sr: 26, price: 11765.81, profit: 60.59, title: "Tom Ford Shearling Flight Jacket Leather", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
   { sr: 27, price: 11149.79, profit: 68.20, title: "Steinway & Sons Spirio Player Grand Piano", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
-  { sr: 28, price: 18884.46, profit: 2616.51, title: "Patek Philippe Aquanaut Chronograph Rose Gold (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
+  { sr: 28, price: 16287.95, profit: 2616.51, title: "Patek Philippe Aquanaut Chronograph Rose Gold (Premium Combo Match)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
   { sr: 29, price: 17654.76, profit: 120.67, title: "Audemars Piguet Royal Oak Chronograph Silver Dial", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 30, price: 17231.99, profit: 126.88, title: "Rolex Day-Date 40 President Platinum", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 31, price: 17983.66, profit: 130.11, title: "Vacheron Constantin Overseas Dual Time Blue", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
@@ -697,100 +720,6 @@ export default function OrdersTasking() {
     }
   };
 
-  const handlePurgeTaskData = async () => {
-    const isConfirmed = window.confirm(
-      "⚠️ WARNING: This operation is IRREVERSIBLE!\n\n" +
-      "This will permanently delete all records of assigned tasks and associated orders (completed, pending, in-progress) from the database.\n\n" +
-      "Are you absolutely sure you want to proceed?"
-    );
-    if (!isConfirmed) return;
-
-    try {
-      // Delete all from cb_orders
-      const { error: ordersErr } = await supabase
-        .from('cb_orders')
-        .delete()
-        .neq('id', 0);
-
-      if (ordersErr) {
-        throw ordersErr;
-      }
-
-      // Delete all from cb_assigned_tasks
-      const { error: tasksErr } = await supabase
-        .from('cb_assigned_tasks')
-        .delete()
-        .neq('id', '0');
-
-      if (tasksErr) {
-        throw tasksErr;
-      }
-
-      toast.success("Successfully purged all assigned tasks and associated orders from the database!");
-      fetchUsersAndTasks();
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to purge database records: " + err.message);
-    }
-  };
-
-  const handleOpenEditOrdersModal = (task) => {
-    setEditingTask(task);
-    setEditingOrders(task.orders.map(o => ({ ...o })));
-    setShowEditOrdersModal(true);
-  };
-
-  const handleSaveEditedOrders = async (e) => {
-    e.preventDefault();
-    if (!editingTask) return;
-
-    for (let idx = 0; idx < editingOrders.length; idx++) {
-      const o = editingOrders[idx];
-      const pPrice = parseFloat(o.price);
-      const pProfit = parseFloat(o.profit);
-      if (isNaN(pPrice) || pPrice <= 0 || isNaN(pProfit) || pProfit < 0) {
-        toast.error(`Order #${idx + 1} has invalid price or profit.`);
-        return;
-      }
-    }
-
-    try {
-      // 1. Update cb_assigned_tasks JSON field
-      const { error: taskErr } = await supabase
-        .from('cb_assigned_tasks')
-        .update({ orders: editingOrders })
-        .eq('id', editingTask.id);
-
-      if (taskErr) {
-        toast.error("Error updating worksheet orders in task: " + taskErr.message);
-        return;
-      }
-
-      // 2. Update individual order records in cb_orders table
-      for (let idx = 0; idx < editingOrders.length; idx++) {
-        const o = editingOrders[idx];
-        await supabase
-          .from('cb_orders')
-          .update({
-            title: o.title,
-            price: parseFloat(o.price),
-            profit: parseFloat(o.profit),
-            status: o.status
-          })
-          .eq('assigned_task_id', editingTask.id)
-          .eq('assigned_order_index', idx);
-      }
-
-      toast.success("Successfully updated worksheet orders!");
-      setShowEditOrdersModal(false);
-      setEditingTask(null);
-      setEditingOrders([]);
-      fetchUsersAndTasks();
-    } catch (err) {
-      toast.error("Failed to save changes: " + err.message);
-    }
-  };
-
   const getActiveTaskDisplay = (username) => {
     const task = assignedTasks.find(t => 
       t.username.toLowerCase() === username.toLowerCase() && 
@@ -880,130 +809,32 @@ export default function OrdersTasking() {
         </table>
       </div>
 
-      <div className="admin-card" style={{ marginTop: 24 }}>
-        <h3 className="section-title" style={{ marginBottom: 16 }}>Worksheet Task Tracker</h3>
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Task ID</th>
-              <th>Client User</th>
-              <th>Total Sum</th>
-              <th>Orders Count</th>
-              <th>Profit Margin</th>
-              <th>Assigned By</th>
-              <th>Task Status</th>
-              <th>Assigned Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTasks.length === 0 ? (
-              <tr>
-                <td colSpan="9" style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-admin-light)' }}>
-                  No assigned tasks active in this node.
-                </td>
-              </tr>
-            ) : (
-              filteredTasks.map(t => {
-                const completedCount = t.orders.filter(o => o.status === 'Success').length;
-                return (
-                  <tr key={t.id}>
-                    <td><b>{t.id}</b></td>
-                    <td>{t.username}</td>
-                    <td style={{ fontWeight: 700 }}>$ {t.totalAmount.toFixed(2)}</td>
-                    <td>{t.orderCount} orders</td>
-                    <td style={{ color: 'var(--color-green)', fontWeight: 600 }}>{t.profitPercent}%</td>
-                    <td>{t.assignedBy}</td>
-                    <td>
-                      <span className={`badge ${
-                        t.status === 'Completed' ? 'badge-success' : 
-                        t.status === 'In Progress' ? 'badge-warning' : 'badge-deposit-pending'
-                      }`}>
-                        {t.status} ({completedCount}/{t.orderCount})
-                      </span>
-                    </td>
-                    <td>{t.createdAt}</td>
-                    <td>
-                      <div className="action-buttons-cell">
-                        {t.status !== 'Completed' ? (
-                          <>
-                            <button className="action-btn btn-view" onClick={() => handleOpenEditOrdersModal(t)} style={{ whiteSpace: 'nowrap' }}>
-                              📝 Edit Orders
-                            </button>
-                            <button className="action-btn btn-reject" onClick={() => handleCancelTask(t.id)}>
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <span style={{ fontSize: 11, color: 'var(--text-admin-light)' }}>Locked</span>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Database Maintenance & System Control Center */}
-      <div className="admin-card" style={{ marginTop: 24, border: '1px solid #f87171', backgroundColor: '#fef2f2' }}>
-        <h3 className="section-title" style={{ marginBottom: 8, color: '#991b1b', display: 'flex', alignItems: 'center', gap: 8 }}>
-          🛡️ Database Maintenance & System Control Center
-        </h3>
-        <p style={{ margin: '0 0 16px 0', fontSize: 13, color: '#7f1d1d', lineHeight: 1.5 }}>
-          Admin tool for clearing existing records. You can purge all order tasking data and wipe ongoing or pending orders to reset the system.
-        </p>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-          <button 
-            type="button"
-            className="action-btn btn-reject"
-            onClick={handlePurgeTaskData}
-            style={{ 
-              backgroundColor: '#dc2626', 
-              color: '#ffffff', 
-              border: 'none', 
-              fontWeight: 700, 
-              fontSize: 13, 
-              padding: '10px 16px', 
-              borderRadius: 6,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              cursor: 'pointer',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-            }}
-          >
-            🗑️ Wipe All Orders & Assigned Tasks From Database
-          </button>
-        </div>
-      </div>
-
       {/* Assign Task Modal */}
       {showModal && selectedUser && (
-        <div className="modal-overlay">
-          <div className="modal-content-card" style={{ maxWidth: 650, width: '95%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
-            <div className="modal-header" style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-color)', marginBottom: 12 }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-admin-main)' }}>
-                  Assign Manual Worksheet to {selectedUser.username}
-                </h3>
-                <p style={{ margin: '4px 0 0 0', fontSize: 11, color: 'var(--text-admin-light)' }}>
-                  Configure each matched order manually. Both the product title, price, and commission can be customized.
-                </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ClipboardList className="w-5 h-5 text-indigo-500" />
+                <h3 className="font-bold text-slate-900 dark:text-slate-50 text-lg">Allocate Worksheet to {selectedUser.username}</h3>
               </div>
-              <button className="modal-close-btn" onClick={() => { setShowModal(false); setSelectedUser(null); }}>✕</button>
+              <button 
+                type="button"
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors"
+                onClick={() => { setShowModal(false); setSelectedUser(null); }}
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <form onSubmit={handleConfirmAssignment} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-              <div className="modal-body" style={{ flex: 1, overflowY: 'auto', paddingRight: 6, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form onSubmit={handleConfirmAssignment} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-6 overflow-y-auto space-y-5">
                 
                 {/* Worksheet Template Selector */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, backgroundColor: 'var(--bg-surface-hover)', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)' }}>
-                  <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                    Select Allocation Method
+                <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
+                    Select Allocation Method / Preset
                   </label>
                   <select
                     value={selectedTemplate}
@@ -1080,95 +911,85 @@ export default function OrdersTasking() {
                         ]);
                       }
                     }}
-                    style={{
-                      fontSize: 13,
-                      padding: '8px 12px',
-                      borderRadius: 6,
-                      border: '1px solid var(--border-color)',
-                      backgroundColor: 'var(--bg-admin-card)',
-                      color: 'var(--text-admin-main)',
-                      outline: 'none',
-                      width: '100%',
-                      fontWeight: 600
-                    }}
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition-all"
                   >
                     <option value="custom">✍️ Custom Manual Worksheet (Assign items one-by-one)</option>
-                    <option value="M-1">📦 Order Template M-1 (40 Items - total: $30,973.03 | profit: $210.54)</option>
-                    <option value="M-2">📦 Order Template M-2 (40 Items - total: $98,640.93 | profit: $496.84)</option>
-                    <option value="M-3">📦 Order Template M-3 (40 Items - total: $354,599.82 | profit: $4,605.05)</option>
-                    <option value="M-4">📦 Order Template M-4 (40 Items - total: $512,003.42 | profit: $7,648.02)</option>
+                    <option value="M-1">📦 Order Template M-1 (40 Items - total: $30,718.07 | profit: $210.66)</option>
+                    <option value="M-2">📦 Order Template M-2 (40 Items - total: $98,290.93 | profit: $496.84)</option>
+                    <option value="M-3">📦 Order Template M-3 (40 Items - total: $353,999.72 | profit: $4,625.05)</option>
+                    <option value="M-4">📦 Order Template M-4 (40 Items - total: $508,022.10 | profit: $7,648.03)</option>
                     <option value="C-1">💼 Order Template C-1 (40 Items - total: $817.17 | profit: $2.69)</option>
-                    <option value="C-2">💼 Order Template C-2 (40 Items - total: $3,960.24 | profit: $49.71)</option>
-                    <option value="C-3">💼 Order Template C-3 (40 Items - total: $110,747.83 | profit: $9,238.89)</option>
-                    <option value="C-4">💼 Order Template C-4 (40 Items - total: $159,526.35 | profit: $14,637.48)</option>
+                    <option value="C-2">💼 Order Template C-2 (40 Items - total: $3,920.24 | profit: $49.71)</option>
+                    <option value="C-3">💼 Order Template C-3 (40 Items - total: $104,951.13 | profit: $9,238.89)</option>
+                    <option value="C-4">💼 Order Template C-4 (40 Items - total: $148,524.49 | profit: $14,637.48)</option>
                   </select>
                 </div>
 
                 {selectedTemplate === 'custom' && (
-                  /* Control Header */
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'end', backgroundColor: 'var(--bg-surface-hover)', padding: 12, borderRadius: 6, border: '1px solid var(--border-color)' }}>
-                    <div className="form-group-sla" style={{ margin: 0 }}>
-                      <label style={{ fontWeight: 700 }}>Number of Orders in Task</label>
+                  /* Custom controls Row */
+                  <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Number of Worksheet Items</label>
                       <input 
                         type="number"
                         value={newAssignOrders.length}
                         onChange={(e) => handleOrderCountChange(e.target.value)}
                         required
-                        className="input-sla-field"
                         min="1"
                         max="40"
-                        style={{ height: 36 }}
+                        className="w-32 h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-indigo-600 outline-none"
                       />
-                      <span style={{ fontSize: 9, color: 'var(--text-admin-light)', marginTop: 4, display: 'block' }}>
-                        * Adjust the number of orders dynamically.
-                      </span>
+                      <span className="text-[10px] text-slate-400 block mt-1">* Set between 1 and 40 items.</span>
                     </div>
                     <button 
                       type="button" 
-                      className="action-btn btn-view" 
                       onClick={handleAddOrder}
-                      style={{ height: 36, display: 'flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}
+                      className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold flex items-center gap-2 transition-colors shadow-sm"
                     >
-                      ➕ Add Order Row
+                      <Plus className="w-4 h-4" />
+                      Add Row
                     </button>
                   </div>
                 )}
 
-                {/* Orders Preview Area */}
+                {/* Sequence Preview / Configuration Cards Container */}
                 {selectedTemplate !== 'custom' ? (
-                  <div style={{ border: '1px solid var(--border-color)', borderRadius: 8, backgroundColor: 'var(--bg-admin-card)', overflow: 'hidden' }}>
-                    <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-surface-hover)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-admin-muted)' }}>
-                      Preset Worksheet Order Sequence ({newAssignOrders.length} items)
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+                    <div className="px-4 py-3 bg-slate-50/50 dark:bg-slate-950/40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      <span>Worksheet Sequence Preview</span>
+                      <span>{newAssignOrders.length} Items</span>
                     </div>
-                    <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-                      <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead>
-                          <tr style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-surface-hover)', fontSize: 10, textTransform: 'uppercase', opacity: 0.8 }}>
-                            <th style={{ padding: '8px 12px', width: 50 }}>Sr.</th>
-                            <th style={{ padding: '8px 12px' }}>Product Title</th>
-                            <th style={{ padding: '8px 12px', textAlign: 'right', width: 100 }}>Price</th>
-                            <th style={{ padding: '8px 12px', textAlign: 'right', width: 100 }}>Profit</th>
+                    <div className="max-h-64 overflow-y-auto">
+                      <table className="w-full text-sm text-left">
+                        <thead className="sticky top-0 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm z-10 border-b border-slate-100 dark:border-slate-800">
+                          <tr className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            <th className="px-4 py-3 w-12 text-center">Sr.</th>
+                            <th className="px-4 py-3">Product Title</th>
+                            <th className="px-4 py-3 text-right">Price</th>
+                            <th className="px-4 py-3 text-right">Profit</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                           {newAssignOrders.map((o, oIdx) => (
-                            <tr key={oIdx} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                              <td style={{ padding: '8px 12px', fontWeight: 600 }}>{oIdx + 1}</td>
-                              <td style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                                {o.image && (
-                                  <img 
-                                    src={o.image} 
-                                    alt="" 
-                                    referrerPolicy="no-referrer"
-                                    style={{ width: 24, height: 24, objectFit: 'contain', border: '1px solid var(--border-color)', borderRadius: 4, padding: 1, backgroundColor: 'white' }} 
-                                  />
-                                )}
-                                <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 280 }} title={o.title}>
-                                  {o.title}
-                                </span>
+                            <tr key={oIdx} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/30 transition-colors">
+                              <td className="px-4 py-3 text-center text-xs text-slate-500 font-medium">{oIdx + 1}</td>
+                              <td className="px-4 py-3">
+                                <div className="flex items-center gap-3">
+                                  {o.image && (
+                                    <img 
+                                      src={o.image} 
+                                      alt="" 
+                                      referrerPolicy="no-referrer"
+                                      className="w-8 h-8 object-contain rounded border border-slate-200 dark:border-slate-700 bg-white"
+                                    />
+                                  )}
+                                  <span className="font-medium text-slate-700 dark:text-slate-300 max-w-[280px] truncate" title={o.title}>
+                                    {o.title}
+                                  </span>
+                                </div>
                               </td>
-                              <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600 }}>$ {parseFloat(o.price).toFixed(2)}</td>
-                              <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 600, color: 'var(--color-green)' }}>$ {parseFloat(o.profit).toFixed(2)}</td>
+                              <td className="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-400">$ {parseFloat(o.price || 0).toFixed(2)}</td>
+                              <td className="px-4 py-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">$ {parseFloat(o.profit || 0).toFixed(2)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -1176,182 +997,120 @@ export default function OrdersTasking() {
                     </div>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div className="max-h-80 overflow-y-auto pr-2 space-y-4">
                     {newAssignOrders.map((order, idx) => (
                       <div 
                         key={idx} 
-                        style={{ 
-                          border: '1px solid var(--border-color)', 
-                          borderRadius: 8, 
-                          padding: 12, 
-                          backgroundColor: 'var(--bg-admin-card)',
-                          position: 'relative'
-                        }}
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm relative group"
                       >
-                        {/* Order Row Header */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-admin-muted)', textTransform: 'uppercase' }}>
-                            Order #{idx + 1}
+                        {/* Order Header / Actions */}
+                        <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
+                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                            <ListOrdered className="w-4 h-4 text-indigo-400" />
+                            Worksheet Order Row #{idx + 1}
                           </span>
                           {newAssignOrders.length > 1 && (
                             <button 
                               type="button" 
                               onClick={() => handleRemoveOrder(idx)}
-                              style={{ 
-                                background: 'none', 
-                                border: 'none', 
-                                color: '#ef4444', 
-                                fontSize: 11, 
-                                cursor: 'pointer', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: 2 
-                              }}
+                              className="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-colors p-1 rounded-md hover:bg-rose-50 dark:hover:bg-rose-500/10"
                             >
-                              ✕ Remove
+                              <Trash2 className="w-3.5 h-3.5" />
+                              Remove
                             </button>
                           )}
                         </div>
 
-                        {/* Dropdown for products to select */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                              Select Product Catalog
-                            </label>
-                            <select
+                        {/* Quick fill catalog select */}
+                        <div className="mb-4">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Auto-Fill Catalog Selector</label>
+                          <select
+                            onChange={(e) => {
+                              if (e.target.value !== "") {
+                                const prod = products[parseInt(e.target.value)];
+                                const updated = [...newAssignOrders];
+                                updated[idx] = {
+                                  ...updated[idx],
+                                  title: prod.title,
+                                  image: prod.image,
+                                  price: String(prod.price),
+                                  profit: String(prod.profit || (prod.price * 0.1).toFixed(2))
+                                };
+                                setNewAssignOrders(updated);
+                              }
+                            }}
+                            defaultValue=""
+                            className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-xs focus:ring-2 focus:ring-indigo-600 outline-none"
+                          >
+                            <option value="">-- Choose from Catalog to Pre-fill product variables --</option>
+                            {products.map((p, pIdx) => (
+                              <option key={pIdx} value={pIdx}>
+                                {p.title.length > 60 ? p.title.substring(0, 60) + '...' : p.title} (${p.price})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Text fields */}
+                        <div className="flex gap-4 mb-4 items-end">
+                          {order.image && (
+                            <img 
+                              src={order.image} 
+                              alt="Product" 
+                              referrerPolicy="no-referrer"
+                              className="w-12 h-12 object-contain rounded-lg border border-slate-200 dark:border-slate-700 bg-white shadow-sm p-1 flex-shrink-0"
+                            />
+                          )}
+                          <div className="flex-1">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Product Title / Catalog Description</label>
+                            <input 
+                              type="text"
+                              value={order.title}
                               onChange={(e) => {
-                                if (e.target.value !== "") {
-                                  const prod = products[parseInt(e.target.value)];
-                                  const updated = [...newAssignOrders];
-                                  updated[idx] = {
-                                    ...updated[idx],
-                                    title: prod.title,
-                                    image: prod.image,
-                                    price: String(prod.price),
-                                    profit: String(prod.profit || (prod.price * 0.1).toFixed(2))
-                                  };
-                                  setNewAssignOrders(updated);
-                                }
+                                const updated = [...newAssignOrders];
+                                updated[idx].title = e.target.value;
+                                setNewAssignOrders(updated);
                               }}
-                              style={{ 
-                                fontSize: 11, 
-                                padding: '6px', 
-                                borderRadius: 4, 
-                                border: '1px solid var(--border-color)', 
-                                backgroundColor: 'var(--bg-surface-hover)',
-                                color: 'var(--text-admin-main)',
-                                outline: 'none',
-                                width: '100%'
+                              required
+                              placeholder="e.g. barkTHINS Snacking Chocolate Bundle"
+                              className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Price and Profit */}
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Assigned Price ($)</label>
+                            <input 
+                              type="number"
+                              step="0.01"
+                              value={order.price}
+                              onChange={(e) => {
+                                const updated = [...newAssignOrders];
+                                updated[idx].price = e.target.value;
+                                setNewAssignOrders(updated);
                               }}
-                              defaultValue=""
-                            >
-                              <option value="">-- Choose a product to auto-fill title, image, price & profit --</option>
-                              {products.map((p, pIdx) => (
-                                <option key={pIdx} value={pIdx}>
-                                  {p.title.length > 60 ? p.title.substring(0, 60) + '...' : p.title} (${p.price})
-                                </option>
-                              ))}
-                            </select>
+                              required
+                              placeholder="0.00"
+                              className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm font-mono focus:ring-2 focus:ring-indigo-600 outline-none"
+                            />
                           </div>
-
-                          {/* Custom fields & Image Preview */}
-                          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                            {order.image && (
-                              <img 
-                                src={order.image} 
-                                alt="Product" 
-                                referrerPolicy="no-referrer"
-                                style={{ 
-                                  width: 44, 
-                                  height: 44, 
-                                  objectFit: 'contain', 
-                                  border: '1px solid var(--border-color)', 
-                                  borderRadius: 4, 
-                                  backgroundColor: 'var(--bg-surface-hover)', 
-                                  padding: 2,
-                                  marginTop: 18
-                                }} 
-                              />
-                            )}
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                              <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                                Product Title / Name
-                              </label>
-                              <input 
-                                type="text"
-                                value={order.title}
-                                onChange={(e) => {
-                                  const updated = [...newAssignOrders];
-                                  updated[idx].title = e.target.value;
-                                  setNewAssignOrders(updated);
-                                }}
-                                required
-                                placeholder="e.g. barkTHINS Snacking Chocolate"
-                                style={{ 
-                                  width: '100%', 
-                                  height: 34, 
-                                  borderRadius: 4, 
-                                  border: '1px solid var(--border-color)', 
-                                  padding: '0 8px', 
-                                  fontSize: 12 
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          {/* Price and Profit */}
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                              <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                                Price ($)
-                              </label>
-                              <input 
-                                type="number"
-                                step="0.01"
-                                value={order.price}
-                                onChange={(e) => {
-                                  const updated = [...newAssignOrders];
-                                  updated[idx].price = e.target.value;
-                                  setNewAssignOrders(updated);
-                                }}
-                                required
-                                placeholder="0.00"
-                                style={{ 
-                                  width: '100%', 
-                                  height: 34, 
-                                  borderRadius: 4, 
-                                  border: '1px solid var(--border-color)', 
-                                  padding: '0 8px', 
-                                  fontSize: 12 
-                                }}
-                              />
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                              <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>
-                                Commission / Profit ($)
-                              </label>
-                              <input 
-                                type="number"
-                                step="0.01"
-                                value={order.profit}
-                                onChange={(e) => {
-                                  const updated = [...newAssignOrders];
-                                  updated[idx].profit = e.target.value;
-                                  setNewAssignOrders(updated);
-                                }}
-                                required
-                                placeholder="0.00"
-                                style={{ 
-                                  width: '100%', 
-                                  height: 34, 
-                                  borderRadius: 4, 
-                                  border: '1px solid var(--border-color)', 
-                                  padding: '0 8px', 
-                                  fontSize: 12 
-                                }}
-                              />
-                            </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Commission Earnings ($)</label>
+                            <input 
+                              type="number"
+                              step="0.01"
+                              value={order.profit}
+                              onChange={(e) => {
+                                const updated = [...newAssignOrders];
+                                updated[idx].profit = e.target.value;
+                                setNewAssignOrders(updated);
+                              }}
+                              required
+                              placeholder="0.00"
+                              className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 text-sm font-mono focus:ring-2 focus:ring-emerald-500 outline-none"
+                            />
                           </div>
                         </div>
                       </div>
@@ -1360,253 +1119,52 @@ export default function OrdersTasking() {
                 )}
 
                 {/* Computation Summary block */}
-                <div style={{ backgroundColor: 'var(--color-success-bg)', padding: 12, borderRadius: 6, border: '1px solid var(--color-success)', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <h4 style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-success)', textTransform: 'uppercase', margin: 0 }}>
-                    Manual Worksheet Summary
+                <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-slate-50 flex items-center gap-2 mb-4">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    Worksheet Calculations Summary
                   </h4>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-admin-main)' }}>
-                    <span>Total Orders:</span>
-                    <b>{newAssignOrders.length}</b>
+                  <div className="grid grid-cols-2 gap-6 text-sm">
+                    <div className="flex justify-between border-r border-slate-200 dark:border-slate-800 pr-6">
+                      <span className="text-slate-500">Total Items:</span>
+                      <b className="text-slate-900 dark:text-slate-50 font-mono">{newAssignOrders.length}</b>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Aggregate Price:</span>
+                      <b className="text-slate-900 dark:text-slate-50 font-mono">${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.price || 0), 0).toFixed(2)}</b>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-admin-main)' }}>
-                    <span>Computed Total Price ($):</span>
-                    <b>${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.price || 0), 0).toFixed(2)}</b>
-                  </div>
-                  <hr style={{ border: 'none', borderTop: '1px solid var(--color-success)', margin: '4px 0', opacity: 0.3 }} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: 'var(--color-success)' }}>
-                    <span>Total User Profit / Commission:</span>
-                    <span>${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0).toFixed(2)}</span>
+                  <div className="h-px bg-slate-200 dark:bg-slate-800 my-4" />
+                  <div className="flex justify-between text-sm font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 p-3 rounded-xl">
+                    <span>Aggregate Net Commission Payout:</span>
+                    <span className="font-mono">${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-color)', paddingTop: 12, marginTop: 12, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              {/* Footer */}
+              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-end gap-3">
                 <button 
                   type="button" 
-                  className="action-btn"
-                  style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-admin-muted)' }}
+                  className="px-5 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-xl transition-colors shadow-sm"
                   onClick={() => { setShowModal(false); setSelectedUser(null); }}
                 >
                   Cancel
                 </button>
-                <button type="submit" className="sla-submit-btn">
-                  ✅ Confirm Assignment
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Worksheet Orders Modal */}
-      {showEditOrdersModal && editingTask && (
-        <div className="modal-overlay">
-          <div className="modal-content-card" style={{ maxWidth: 650, width: '90%', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
-            <div className="modal-header" style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-color)', marginBottom: 12 }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-admin-main)' }}>
-                  Edit Worksheet Orders (Task: {editingTask.id})
-                </h3>
-                <p style={{ margin: '4px 0 0 0', fontSize: 11, color: 'var(--text-admin-light)' }}>
-                  Assigned to: <b>{editingTask.username}</b> | Total sum: <b>${editingTask.totalAmount.toFixed(2)}</b>
-                </p>
-              </div>
-              <button className="modal-close-btn" onClick={() => { setShowEditOrdersModal(false); setEditingTask(null); }}>✕</button>
-            </div>
-
-            <form onSubmit={handleSaveEditedOrders} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-              <div className="modal-body" style={{ flex: 1, overflowY: 'auto', paddingRight: 6, display: 'flex', flexDirection: 'column', gap: 18 }}>
-                <div style={{ backgroundColor: 'var(--color-warning-bg)', border: '1px solid var(--color-warning)', padding: 10, borderRadius: 6, fontSize: 11, color: 'var(--text-admin-main)', lineHeight: 1.4 }}>
-                  💡 <b>Pro-Tip:</b> You can customize each individual order in the worksheet sequence. Editing prices and profits here will directly update both the task worksheet and the user's pending order screen. To prevent discrepancy, edit <b>Pending</b> orders only.
-                </div>
-
-                {editingOrders.map((order, idx) => {
-                  const isCompleted = order.status === 'Success';
-                  return (
-                    <div 
-                      key={idx} 
-                      style={{ 
-                        border: '1px solid var(--border-color)', 
-                        borderRadius: 8, 
-                        padding: 12, 
-                        backgroundColor: isCompleted ? 'var(--bg-surface-hover)' : 'var(--bg-admin-card)',
-                        opacity: isCompleted ? 0.8 : 1,
-                        position: 'relative'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-admin-muted)', textTransform: 'uppercase' }}>
-                          Order #{idx + 1} <span style={{ fontSize: 10, fontWeight: 400, textTransform: 'none', marginLeft: 6 }}>({isCompleted ? '✓ Submitted' : '⌛ Pending'})</span>
-                        </span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ fontSize: 11, color: 'var(--text-admin-light)' }}>Status:</span>
-                          <select
-                            value={order.status}
-                            onChange={(e) => {
-                              const newOrders = [...editingOrders];
-                              newOrders[idx].status = e.target.value;
-                              setEditingOrders(newOrders);
-                            }}
-                            style={{ 
-                              fontSize: 12, 
-                              padding: '2px 6px', 
-                              borderRadius: 4, 
-                              border: '1px solid var(--border-color)',
-                              outline: 'none',
-                              backgroundColor: isCompleted ? 'var(--border-color)' : 'var(--bg-admin-card)',
-                              color: 'var(--text-admin-main)'
-                            }}
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="Success">Success</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        {/* Quick fill dropdown from Catalog */}
-                        {!isCompleted && products.length > 0 && (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Quick Fill from Product Catalog</label>
-                            <select
-                              onChange={(e) => {
-                                if (e.target.value) {
-                                  const prod = products[parseInt(e.target.value)];
-                                  const newOrders = [...editingOrders];
-                                  newOrders[idx].title = prod.title;
-                                  newOrders[idx].image = prod.image;
-                                  newOrders[idx].price = prod.price;
-                                  // Re-calculate profit based on task's profit yield percent
-                                  const pYield = parseFloat(editingTask.profitPercent || '5');
-                                  newOrders[idx].profit = parseFloat((prod.price * (pYield / 100)).toFixed(2));
-                                  setEditingOrders(newOrders);
-                                }
-                              }}
-                              style={{ 
-                                fontSize: 11, 
-                                padding: '6px', 
-                                borderRadius: 4, 
-                                border: '1px solid #cbd5e1', 
-                                backgroundColor: '#f8fafc',
-                                outline: 'none'
-                              }}
-                              defaultValue=""
-                            >
-                              <option value="">-- Choose a product to auto-fill title, image, price & profit --</option>
-                              {products.map((p, pIdx) => (
-                                <option key={pIdx} value={pIdx}>
-                                  {p.title.length > 50 ? p.title.substring(0, 50) + '...' : p.title} (${p.price})
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Product Title</label>
-                          <input 
-                            type="text"
-                            value={order.title}
-                            onChange={(e) => {
-                              const newOrders = [...editingOrders];
-                              newOrders[idx].title = e.target.value;
-                              setEditingOrders(newOrders);
-                            }}
-                            required
-                            disabled={isCompleted}
-                            style={{ 
-                              width: '100%', 
-                              height: 34, 
-                              borderRadius: 4, 
-                              border: '1px solid var(--border-color)', 
-                              padding: '0 8px', 
-                              fontSize: 12,
-                              backgroundColor: isCompleted ? 'var(--bg-surface-hover)' : 'var(--bg-admin-card)',
-                              color: 'var(--text-admin-main)'
-                            }}
-                          />
-                        </div>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Price ($)</label>
-                            <input 
-                              type="number"
-                              step="0.01"
-                              value={order.price}
-                              onChange={(e) => {
-                                const newOrders = [...editingOrders];
-                                newOrders[idx].price = e.target.value;
-                                // Automatically recalculate profit using the task's profit commission yield percentage
-                                const pYield = parseFloat(editingTask.profitPercent || '5');
-                                const val = parseFloat(e.target.value || '0');
-                                newOrders[idx].profit = parseFloat((val * (pYield / 100)).toFixed(2));
-                                setEditingOrders(newOrders);
-                              }}
-                              required
-                              disabled={isCompleted}
-                              style={{ 
-                                width: '100%', 
-                                height: 34, 
-                                borderRadius: 4, 
-                                border: '1px solid var(--border-color)', 
-                                padding: '0 8px', 
-                                fontSize: 12,
-                                backgroundColor: isCompleted ? 'var(--bg-surface-hover)' : 'var(--bg-admin-card)',
-                                color: 'var(--text-admin-main)'
-                              }}
-                            />
-                          </div>
-
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Profit ($)</label>
-                            <input 
-                              type="number"
-                              step="0.01"
-                              value={order.profit}
-                              onChange={(e) => {
-                                const newOrders = [...editingOrders];
-                                newOrders[idx].profit = e.target.value;
-                                setEditingOrders(newOrders);
-                              }}
-                              required
-                              disabled={isCompleted}
-                              style={{ 
-                                width: '100%', 
-                                height: 34, 
-                                borderRadius: 4, 
-                                border: '1px solid var(--border-color)', 
-                                padding: '0 8px', 
-                                fontSize: 12,
-                                backgroundColor: isCompleted ? 'var(--bg-surface-hover)' : 'var(--bg-admin-card)',
-                                color: 'var(--text-admin-main)'
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-color)', paddingTop: 12, marginTop: 12, display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
                 <button 
-                  type="button" 
-                  className="action-btn"
-                  style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-admin-muted)' }}
-                  onClick={() => { setShowEditOrdersModal(false); setEditingTask(null); }}
+                  type="submit" 
+                  className="px-6 h-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center gap-2 active:scale-[0.98]"
                 >
-                  Cancel
-                </button>
-                <button type="submit" className="sla-submit-btn">
-                  💾 Save All Changes
+                  <Check className="w-4 h-4" />
+                  Confirm and Allocate
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+
 
       <style>{`
         .badge-node {
@@ -1704,61 +1262,6 @@ export default function OrdersTasking() {
 
         .sla-submit-btn:hover {
           background-color: var(--color-primary-hover);
-        }
-
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(15,23,42,0.4);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-        }
-
-        .modal-content-card {
-          background-color: var(--bg-admin-card);
-          border-radius: 8px;
-          border: 1px solid var(--border-color);
-          width: 90%;
-          max-width: 500px;
-          padding: 20px;
-          box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-          display: flex;
-          flex-direction: column;
-        }
-
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 1px solid var(--border-color);
-          padding-bottom: 8px;
-          margin-bottom: 12px;
-        }
-
-        .modal-header h3 {
-          font-size: 15px;
-          font-weight: 700;
-          color: var(--text-admin-main);
-        }
-
-        .modal-close-btn {
-          background: none;
-          border: none;
-          font-size: 16px;
-          color: var(--text-admin-light);
-          cursor: pointer;
-        }
-
-        .modal-footer {
-          display: flex;
-          justify-content: flex-end;
-          border-top: 1px solid var(--border-color);
-          padding-top: 10px;
         }
       `}</style>
     </div>

@@ -8,6 +8,7 @@ import SLAAdmins from './pages/SLAAdmins';
 import SLAStaff from './pages/SLAStaff';
 import FinancialCenter from './pages/FinancialCenter';
 import OrdersTasking from './pages/OrdersTasking';
+import OrdersInProgress from './pages/OrdersInProgress';
 import Settings from './pages/Settings';
 import SupportChat from './pages/SupportChat';
 import Login from './pages/Login';
@@ -103,7 +104,7 @@ export default function App() {
   // Set default tab safely if switching roles redirects to an unauthorized tab
   useEffect(() => {
     if (session) {
-      if (session.role === 'Staff' && ['ownership', 'sla-admins', 'operations', 'financial-center', 'settings'].includes(activeTab)) {
+      if (session.role === 'Staff' && ['ownership', 'sla-admins', 'orders-in-progress', 'financial-center', 'settings'].includes(activeTab)) {
         setActiveTab('dashboard');
       } else if (session.role === 'Admin' && ['ownership'].includes(activeTab)) {
         setActiveTab('dashboard');
@@ -119,7 +120,7 @@ export default function App() {
       case 'sla-staff': return 'SLA Staff Members';
       case 'user-management': return 'User Management';
       case 'orders-tasking': return 'Orders Tasking & Allocations';
-      case 'operations': return 'Operations Settings';
+      case 'orders-in-progress': return 'Orders In Progress';
       case 'financial-center': return 'Financial Center';
       case 'support-chat': return 'Support & Chat Inbox';
       case 'settings': return 'System Settings';
@@ -135,6 +136,9 @@ export default function App() {
 
       case 'orders-tasking':
         return <OrdersTasking />;
+        
+      case 'orders-in-progress':
+        return <OrdersInProgress />;
         
       case 'ownership':
         return <SLAOwnership />;

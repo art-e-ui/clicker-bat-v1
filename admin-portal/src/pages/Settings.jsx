@@ -1,7 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
-
 import toast from 'react-hot-toast';
+import { 
+  Shield, 
+  Key, 
+  Camera, 
+  Save, 
+  Coins, 
+  Lock, 
+  User, 
+  Check, 
+  Link, 
+  AlertTriangle,
+  Eye,
+  Settings as SettingsIcon,
+  Bitcoin,
+  TrendingUp
+} from 'lucide-react';
+
 export default function Settings() {
   const [session, setSession] = useState(null);
   const [photoUrl, setPhotoUrl] = useState('');
@@ -62,7 +78,7 @@ export default function Settings() {
     setLoading(true);
     try {
       const table = session.role === 'Staff' ? 'cb_staff' : 'cb_admins';
-      const matchCol = session.role === 'Staff' ? 'email' : 'email';
+      const matchCol = 'email';
 
       const { error } = await supabase
         .from(table)
@@ -71,12 +87,18 @@ export default function Settings() {
 
       if (error) {
         if (error.code === '42703') {
-           toast.error("Database Schema Error: The profile_photo column does not exist. Please contact support or run the schema update.");
+          toast.error("Database Schema Error: The profile_photo column does not exist. Please contact support or run the schema update.");
         } else {
-           toast.error("Failed to update profile photo: " + error.message);
+          toast.error("Failed to update profile photo: " + error.message);
         }
       } else {
         toast.success("Profile photo updated successfully!");
+        
+        // Update local session to show the change live
+        const updatedSession = { ...session, avatarUrl: photoUrl };
+        setSession(updatedSession);
+        localStorage.setItem('cb_admin_session', JSON.stringify(updatedSession));
+        
         setPhotoUrl('');
       }
     } catch (err) {
@@ -88,7 +110,7 @@ export default function Settings() {
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast("New passwords do not match.");
+      toast.error("New passwords do not match.");
       return;
     }
 
@@ -101,7 +123,7 @@ export default function Settings() {
       if (error) {
         toast.error("Failed to update password: " + error.message);
       } else {
-        toast("Password updated securely!");
+        toast.success("Password updated securely!");
         setPasswordForm({ newPassword: '', confirmPassword: '' });
       }
     } catch (err) {
@@ -130,159 +152,260 @@ export default function Settings() {
     setLoading(false);
   };
 
-  if (!session) return <div>Loading...</div>;
+  if (!session) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-pulse flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-indigo-200 border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+          <span className="text-sm font-medium text-slate-500">Retrieving secure access configurations...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-page-container scale-up">
-      <div className="admin-card" style={{ marginBottom: 20 }}>
-        <h3 className="section-title" style={{ marginBottom: 12 }}>Operator Security Settings</h3>
-        <p style={{ fontSize: 13, color: 'var(--text-admin-light)' }}>
-          Update your secure access credentials and operational profile picture.
-        </p>
-      </div>
-
-      <div className="settings-grid">
-        <div className="admin-card">
-          <h4 style={{ fontSize: 14, marginBottom: 12, color: 'var(--text-admin-dark)' }}>Update Profile Photo</h4>
-          <form onSubmit={handlePhotoUpdate} className="settings-form">
-            <div className="form-group-admin">
-              <label>Image URL</label>
-              <input 
-                type="url" 
-                placeholder="https://example.com/avatar.jpg" 
-                value={photoUrl}
-                onChange={(e) => setPhotoUrl(e.target.value)}
-                required
-              />
+      <div className="w-full space-y-6">
+        {/* Upper Status / Header Section */}
+        <div className="admin-card flex items-center justify-between" style={{ padding: '24px 32px' }}>
+          <div className="flex items-center gap-5">
+            <div className="relative w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center shadow-sm">
+              {session.avatarUrl || session.profile_photo ? (
+                <img 
+                  src={session.avatarUrl || session.profile_photo} 
+                  alt="Operator profile" 
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="w-8 h-8 text-slate-400" />
+              )}
             </div>
-            <button type="submit" className="btn-admin-primary" disabled={loading}>
-              {loading ? 'Updating...' : 'Save Avatar'}
-            </button>
-          </form>
+
+            <div>
+              <div className="flex items-center gap-2.5">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">{session.name || session.email}</h2>
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-200/50 uppercase tracking-wider">
+                  {session.role}
+                </span>
+              </div>
+              <p className="text-slate-500 text-sm mt-1 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-emerald-500" />
+                Authorized Security Key Node • {session.email}
+              </p>
+            </div>
+          </div>
+
+          <div className="text-right">
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Active Node Status</div>
+            <div className="text-lg font-bold text-slate-900 dark:text-slate-50 mt-1">Operational</div>
+            <div className="text-xs text-emerald-500 font-medium mt-1 flex items-center gap-1.5 justify-end">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+              All services connected
+            </div>
+          </div>
         </div>
 
-        <div className="admin-card">
-          <h4 style={{ fontSize: 14, marginBottom: 12, color: 'var(--text-admin-dark)' }}>Update Access Password</h4>
-          <form onSubmit={handlePasswordChange} className="settings-form">
-            <div className="form-group-admin">
-              <label>New Password</label>
-              <input 
-                type="password" 
-                placeholder="••••••••" 
-                value={passwordForm.newPassword}
-                onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                required
-              />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Profile Photo Settings Card */}
+          <div className="admin-card flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                  <Camera className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="section-title">Profile Avatar</h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-admin-light)' }}>Set visual identifier URL</p>
+                </div>
+              </div>
+
+              <form onSubmit={handlePhotoUpdate} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Image Address Link</label>
+                  <input 
+                    type="url" 
+                    placeholder="https://example.com/your-avatar-image.jpg" 
+                    value={photoUrl}
+                    onChange={(e) => setPhotoUrl(e.target.value)}
+                    required
+                    className="search-input"
+                    style={{ width: '100%', height: 36, paddingLeft: 12 }}
+                  />
+                </div>
+
+                {/* Live Preview Container */}
+                <div style={{ backgroundColor: 'var(--bg-app)', padding: 12, borderRadius: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden flex-shrink-0 border-2 border-white shadow-sm">
+                    {photoUrl ? (
+                      <img 
+                        src={photoUrl} 
+                        alt="New avatar preview" 
+                        onError={(e) => { e.target.src = ''; }}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-400 text-[10px]">No img</div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs font-semibold text-slate-800 dark:text-slate-300">Live Avatar Feed Preview</div>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">If the image URL is valid and hotlink-enabled, it will render instantly above.</p>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded font-bold text-xs flex items-center gap-2 justify-center w-full transition-colors disabled:opacity-50"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  {loading ? 'Processing...' : 'Securely Save Avatar'}
+                </button>
+              </form>
             </div>
-            <div className="form-group-admin">
-              <label>Confirm New Password</label>
-              <input 
-                type="password" 
-                placeholder="••••••••" 
-                value={passwordForm.confirmPassword}
-                onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                required
-              />
+            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 flex items-center gap-1.5">
+              <AlertTriangle className="w-3.5 h-3.5 text-slate-400" />
+              Ensure URLs are publicly accessible (HTTPS) and hosted securely.
             </div>
-            <button type="submit" className="btn-admin-primary" disabled={loading}>
-              {loading ? 'Updating...' : 'Update Password'}
-            </button>
-          </form>
+          </div>
+
+          {/* Access Security Credentials Form */}
+          <div className="admin-card flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="section-title">Access Authentication</h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-admin-light)' }}>Update operator security passphrase</p>
+                </div>
+              </div>
+
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>New Password</label>
+                    <input 
+                      type="password" 
+                      placeholder="••••••••••••" 
+                      value={passwordForm.newPassword}
+                      onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                      required
+                      className="search-input"
+                      style={{ width: '100%', height: 36, paddingLeft: 12 }}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Confirm New Password</label>
+                    <input 
+                      type="password" 
+                      placeholder="••••••••••••" 
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                      required
+                      className="search-input"
+                      style={{ width: '100%', height: 36, paddingLeft: 12 }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: 'var(--bg-app)', padding: 12, borderRadius: 8 }} className="space-y-2">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-slate-500" />
+                    Operator Password Guidelines
+                  </div>
+                  <ul className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 list-disc list-inside">
+                    <li>Use a strong password that is not reused elsewhere.</li>
+                    <li>Password updates register instantly across authorization firewalls.</li>
+                    <li>Keep this credential confidential to protect admin workspace integrity.</li>
+                  </ul>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded font-bold text-xs flex items-center gap-2 justify-center w-full transition-colors disabled:opacity-50"
+                >
+                  <Key className="w-3.5 h-3.5" />
+                  {loading ? 'Processing...' : 'Apply Secure Key Change'}
+                </button>
+              </form>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 flex items-center gap-1.5">
+              Authentication is bound securely with Supabase cryptographic architecture.
+            </div>
+          </div>
         </div>
 
+        {/* Crypto Address Settings (Owner Only) */}
         {session.role === 'Owner' && (
-          <div className="admin-card" style={{ gridColumn: '1 / -1' }}>
-            <h4 style={{ fontSize: 14, marginBottom: 6, color: 'var(--text-admin-dark)' }}>Crypto Deposit Addresses (Owner Only)</h4>
-            <p style={{ fontSize: 11, color: 'var(--text-admin-light)', marginBottom: 16 }}>Configure the receiving wallet addresses for each supported cryptocurrency. Leave blank to hide that network from users.</p>
-            <form onSubmit={handleUsdtUpdate} className="settings-form">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="admin-card space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                  <Coins className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="section-title">Crypto Receiving Channels</h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-admin-light)' }}>Configure global deposit wallet destinations displayed to user clients</p>
+                </div>
+              </div>
+              <span style={{ fontSize: 10, fontWeight: 700, padding: '4px 8px', borderRadius: 4, backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-color)' }}>
+                🔒 System Root Access
+              </span>
+            </div>
+
+            <form onSubmit={handleUsdtUpdate} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { key: 'usdt_address',       label: '₮ USDT — TRC20',    placeholder: 'TY3N9dSk8s...' },
-                  { key: 'usdt_erc20_address', label: '₮ USDT — ERC20',    placeholder: '0xAbc123...' },
-                  { key: 'btc_address',        label: '₿ BTC — Bitcoin',   placeholder: 'bc1q...' },
-                  { key: 'eth_address',        label: 'Ξ ETH — Ethereum',  placeholder: '0xAbc123...' },
-                  { key: 'bnb_address',        label: 'B BNB — BEP20',     placeholder: '0xAbc123...' },
-                  { key: 'xrp_address',        label: 'X XRP — Ripple',    placeholder: 'rN7n3473...' },
-                  { key: 'sol_address',        label: '◎ SOL — Solana',    placeholder: '5FHwkrdxk...' },
-                  { key: 'doge_address',       label: 'Ð DOGE — Dogecoin', placeholder: 'D7Y3hX...' },
-                ].map(({ key, label, placeholder }) => (
-                  <div key={key} className="form-group-admin">
-                    <label>{label}</label>
+                  { key: 'usdt_address',       label: 'USDT (TRC20)',    badge: 'TRX' },
+                  { key: 'usdt_erc20_address', label: 'USDT (ERC20)',    badge: 'ETH' },
+                  { key: 'btc_address',        label: 'BTC',             badge: 'BTC' },
+                  { key: 'eth_address',        label: 'ETH',             badge: 'ETH' },
+                  { key: 'bnb_address',        label: 'BNB',             badge: 'BSC' },
+                  { key: 'xrp_address',        label: 'XRP',             badge: 'XRP' },
+                  { key: 'sol_address',        label: 'SOL',             badge: 'SOL' },
+                  { key: 'doge_address',       label: 'DOGE',            badge: 'DOGE' },
+                ].map(({ key, label, badge }) => (
+                  <div key={key} className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>{label}</label>
+                    </div>
                     <input
                       type="text"
-                      placeholder={placeholder}
+                      placeholder="Not set (hidden)"
                       value={cryptoAddresses[key]}
                       onChange={e => setCryptoAddresses(prev => ({ ...prev, [key]: e.target.value }))}
                       id={`input-addr-${key}`}
+                      className="search-input"
+                      style={{ width: '100%', height: 32, paddingLeft: 8, fontSize: 11, fontFamily: 'monospace' }}
                     />
                   </div>
                 ))}
               </div>
-              <button type="submit" className="btn-admin-primary" disabled={loading} style={{ maxWidth: 200 }}>
-                {loading ? 'Saving...' : '💾 Save All Addresses'}
-              </button>
+
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                  <span>Only input wallet destinations under your absolute private control. Leaving blank disables it.</span>
+                </div>
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="px-6 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded font-bold text-xs flex items-center gap-2 justify-center transition-colors disabled:opacity-50"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  {loading ? 'Processing...' : 'Save All Gateway Addresses'}
+                </button>
+              </div>
             </form>
           </div>
         )}
       </div>
-
-      <style>{`
-        .settings-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
-        }
-        @media (max-width: 768px) {
-          .settings-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-        .settings-form {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-        .form-group-admin {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        .form-group-admin label {
-          font-size: 11px;
-          font-weight: 700;
-          color: var(--text-admin-light);
-          text-transform: uppercase;
-        }
-        .form-group-admin input {
-          height: 38px;
-          border-radius: 4px;
-          border: 1px solid var(--border-color);
-          padding: 0 12px;
-          font-size: 13px;
-        }
-        .form-group-admin input:focus {
-          border-color: var(--color-primary);
-          outline: none;
-        }
-        .btn-admin-primary {
-          height: 38px;
-          background-color: var(--color-primary);
-          color: white;
-          border: none;
-          border-radius: 4px;
-          font-size: 13px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background-color 0.2s;
-        }
-        .btn-admin-primary:hover {
-          background-color: #005fa7;
-        }
-        .btn-admin-primary:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-      `}</style>
     </div>
   );
 }

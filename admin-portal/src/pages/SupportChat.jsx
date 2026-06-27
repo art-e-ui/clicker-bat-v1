@@ -44,7 +44,7 @@ export default function SupportChat() {
     supabase.from('cb_support_sessions').update({ unread_admin_count: 0 }).eq('id', activeSession.id).then();
 
     const sub = supabase
-      .channel(`public:cb_support_messages:session_id=eq.${activeSession.id}`)
+      .channel(`support_admin_${activeSession.id}_${Date.now()}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cb_support_messages', filter: `session_id=eq.${activeSession.id}` }, payload => {
         setMessages(prev => [...prev, payload.new]);
       })

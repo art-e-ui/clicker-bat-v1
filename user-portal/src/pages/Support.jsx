@@ -13,52 +13,56 @@ export default function Support() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    initChat();
-  }, []);
+    let sub = null;
 
-  const initChat = async () => {
-    const userSessionStr = localStorage.getItem('cb_user_session');
-    if (!userSessionStr) return;
-    const userSession = JSON.parse(userSessionStr);
-    
-    // Find or create session
-    let { data: sessions } = await supabase
-      .from('cb_support_sessions')
-      .select('*')
-      .eq('user_id', userSession.id);
+    const initChat = async () => {
+      const userSessionStr = localStorage.getItem('cb_user_session');
+      if (!userSessionStr) return;
+      const userSession = JSON.parse(userSessionStr);
       
-    let activeSessionId;
-    if (!sessions || sessions.length === 0) {
-      const { data: newSession } = await supabase
+      // Find or create session
+      let { data: sessions } = await supabase
         .from('cb_support_sessions')
-        .insert([{ user_id: userSession.id, user_username: userSession.username }])
-        .select();
-      activeSessionId = newSession[0].id;
-    } else {
-      activeSessionId = sessions[0].id;
-    }
-    
-    setSessionId(activeSessionId);
-    
-    // Fetch messages
-    const { data: msgs } = await supabase
-      .from('cb_support_messages')
-      .select('*')
-      .eq('session_id', activeSessionId)
-      .order('created_at', { ascending: true });
+        .select('*')
+        .eq('user_id', userSession.id);
+        
+      let activeSessionId;
+      if (!sessions || sessions.length === 0) {
+        const { data: newSession } = await supabase
+          .from('cb_support_sessions')
+          .insert([{ user_id: userSession.id, user_username: userSession.username }])
+          .select();
+        activeSessionId = newSession[0].id;
+      } else {
+        activeSessionId = sessions[0].id;
+      }
       
-    if (msgs) setMessages(msgs);
+      setSessionId(activeSessionId);
+      
+      // Fetch messages
+      const { data: msgs } = await supabase
+        .from('cb_support_messages')
+        .select('*')
+        .eq('session_id', activeSessionId)
+        .order('created_at', { ascending: true });
+        
+      if (msgs) setMessages(msgs);
 
-    // Subscribe to new messages
-    const sub = supabase
-      .channel(`public:cb_support_messages:session_id=eq.${activeSessionId}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cb_support_messages', filter: `session_id=eq.${activeSessionId}` }, payload => {
-        setMessages(prev => [...prev, payload.new]);
-      })
-      .subscribe();
+      // Subscribe to new messages
+      sub = supabase
+        .channel(`support_${activeSessionId}_${Date.now()}`)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cb_support_messages', filter: `session_id=eq.${activeSessionId}` }, payload => {
+          setMessages(prev => [...prev, payload.new]);
+        })
+        .subscribe();
+    };
 
-    return () => { supabase.removeChannel(sub); };
-  };
+    initChat();
+
+    return () => { 
+      if (sub) supabase.removeChannel(sub); 
+    };
+  }, []);
 
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
