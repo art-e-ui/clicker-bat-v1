@@ -24,7 +24,8 @@ import {
   Eye,
   Info,
   Layers as LayersIcon,
-  BadgeAlert
+  BadgeAlert,
+  FileText
 } from 'lucide-react';
 
 const TEMPLATE_M_1 = [
@@ -385,6 +386,7 @@ export default function OrdersTasking() {
   const [profitPercent, setProfitPercent] = useState('5');
   const [showModal, setShowModal] = useState(false);
   const [newAssignOrders, setNewAssignOrders] = useState([]);
+  const [freezeTarget, setFreezeTarget] = useState('');
 
   // Edit Worksheet Orders states
   const [showEditOrdersModal, setShowEditOrdersModal] = useState(false);
@@ -725,12 +727,12 @@ export default function OrdersTasking() {
       t.username.toLowerCase() === username.toLowerCase() && 
       (t.status === 'Pending' || t.status === 'In Progress')
     );
-    if (!task) return <span style={{ color: 'var(--text-admin-light)' }}>None</span>;
+    if (!task) return <span className="text-slate-400 text-sm font-medium">None</span>;
     const completed = task.orders.filter(o => o.status === 'Success').length;
     return (
-      <span className={`badge ${task.status === 'In Progress' ? 'badge-warning' : 'badge-deposit-pending'}`} style={{ display: 'inline-flex', flexDirection: 'column', padding: '4px 8px' }}>
-        <b>{task.status}</b>
-        <span style={{ fontSize: 9 }}>({completed}/{task.orderCount} orders)</span>
+      <span className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-semibold border ${task.status === 'In Progress' ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:border-amber-800' : 'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800'}`}>
+        <span>{task.status}</span>
+        <span className="opacity-75">({completed}/{task.orderCount})</span>
       </span>
     );
   };
@@ -744,99 +746,121 @@ export default function OrdersTasking() {
   const filteredTasks = getFilteredTasks();
 
   return (
-    <div className="admin-page-container scale-up">
+    <div className="w-full space-y-6">
       <div className="admin-card">
-        <h3 className="section-title" style={{ marginBottom: 12 }}>User Accounts Allocation</h3>
-        <p style={{ fontSize: 13, color: 'var(--text-admin-light)', marginBottom: 16 }}>
-          Assign custom retail matching worksheets to users to configure matching progress, order amounts, and commission yields.
-        </p>
-
-        <div className="filter-controls-row" style={{ padding: 0, marginBottom: 16 }}>
-          <div className="search-box-wrapper" style={{ flex: 1, maxWidth: 360 }}>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" className="search-icon" style={{ position: 'absolute', left: 10, top: 10, color: 'var(--text-admin-light)' }}>
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+        <h3 className="font-bold text-slate-900 dark:text-slate-50 text-xl tracking-tight mb-4">User Accounts Allocation</h3>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative w-full md:w-80">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </div>
             <input 
               type="text" 
               placeholder="Search user by ID or username..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-              style={{ height: 36, width: '100%', borderRadius: 6, border: '1px solid var(--border-color)', paddingLeft: 36, outline: 'none' }}
+              className="w-full pl-10 pr-4 h-10 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all outline-none"
             />
           </div>
         </div>
+      </div>
 
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Username</th>
-              <th>Staff Node</th>
-              <th>Active Balance</th>
-              <th>Active Task Progress</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length === 0 ? (
-              <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-admin-light)' }}>
-                  No client accounts found matching filter node.
-                </td>
+      <div className="admin-card !p-0 overflow-hidden flex flex-col">
+        <div className="overflow-x-auto">
+          <table className="w-full whitespace-nowrap text-left">
+            <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+              <tr className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4 w-40">User ID</th>
+                <th className="px-6 py-4 w-56">Username</th>
+                <th className="px-6 py-4 w-48">Staff Node</th>
+                <th className="px-6 py-4 w-40">Active Balance</th>
+                <th className="px-6 py-4 w-48">Active Task Progress</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
-            ) : (
-              filteredUsers.map(u => (
-                <tr key={u.id}>
-                  <td><b>{u.id}</b></td>
-                  <td>{u.username}</td>
-                  <td><span className="badge badge-node">{u.referred_by_staff_id}</span></td>
-                  <td style={{ fontWeight: 700 }}>$ {parseFloat(u.balance).toFixed(2)}</td>
-                  <td>{getActiveTaskDisplay(u.username)}</td>
-                  <td>
-                    <button 
-                      className="action-btn btn-approve"
-                      onClick={() => handleOpenAssignModal(u)}
-                      style={{ padding: '4px 12px', borderRadius: 4 }}
-                    >
-                      ➕ Assign Task
-                    </button>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 font-medium text-sm">
+                    No client accounts found matching filter node.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                filteredUsers.map(u => (
+                  <tr key={u.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors group">
+                    <td className="px-6 py-4">
+                      <span className="font-mono text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">{u.id.substring(0,8)}...</span>
+                    </td>
+                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-slate-50 text-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-700 dark:text-indigo-400 text-xs font-bold border border-indigo-100 dark:border-indigo-800/30">
+                          {u.username.substring(0,2).toUpperCase()}
+                        </div>
+                        {u.username}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 px-2.5 py-1 rounded-lg text-xs font-semibold">{u.referred_by_staff_id}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="font-mono text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/10 px-2.5 py-1 rounded-md border border-emerald-100 dark:border-emerald-800/30 inline-block">
+                        ${parseFloat(u.balance).toFixed(2)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">{getActiveTaskDisplay(u.username)}</td>
+                    <td className="px-6 py-4 text-right">
+                      <button 
+                        className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-lg transition-all shadow-sm flex items-center justify-end gap-1.5 ml-auto"
+                        onClick={() => handleOpenAssignModal(u)}
+                      >
+                        <Plus className="w-4 h-4" /> Assign Task
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Assign Task Modal */}
       {showModal && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 sm:p-6 transition-all">
+          <div className="admin-card !p-0 w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ClipboardList className="w-5 h-5 text-indigo-500" />
-                <h3 className="font-bold text-slate-900 dark:text-slate-50 text-lg">Allocate Worksheet to {selectedUser.username}</h3>
+            <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100 dark:border-indigo-800/30">
+                  <ClipboardList className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-xl tracking-tight">Allocate Worksheet</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Creating tasking layout for <span className="font-semibold text-slate-700 dark:text-slate-300">{selectedUser.username}</span></p>
+                </div>
               </div>
               <button 
                 type="button"
-                className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors"
                 onClick={() => { setShowModal(false); setSelectedUser(null); }}
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleConfirmAssignment} className="flex flex-col flex-1 overflow-hidden">
-              <div className="p-6 overflow-y-auto space-y-5">
+              <div className="flex-1 overflow-y-auto p-8 space-y-8">
                 
                 {/* Worksheet Template Selector */}
-                <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3 block flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-indigo-500" />
                     Select Allocation Method / Preset
                   </label>
                   <select
+                    className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm font-medium focus:ring-2 focus:ring-indigo-600 outline-none transition-colors appearance-none cursor-pointer"
                     value={selectedTemplate}
                     onChange={(e) => {
                       const mode = e.target.value;
@@ -911,25 +935,25 @@ export default function OrdersTasking() {
                         ]);
                       }
                     }}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition-all"
+                    className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition-all shadow-sm"
                   >
-                    <option value="custom">✍️ Custom Manual Worksheet (Assign items one-by-one)</option>
-                    <option value="M-1">📦 Order Template M-1 (40 Items - total: $30,718.07 | profit: $210.66)</option>
-                    <option value="M-2">📦 Order Template M-2 (40 Items - total: $98,290.93 | profit: $496.84)</option>
-                    <option value="M-3">📦 Order Template M-3 (40 Items - total: $353,999.72 | profit: $4,625.05)</option>
-                    <option value="M-4">📦 Order Template M-4 (40 Items - total: $508,022.10 | profit: $7,648.03)</option>
-                    <option value="C-1">💼 Order Template C-1 (40 Items - total: $817.17 | profit: $2.69)</option>
-                    <option value="C-2">💼 Order Template C-2 (40 Items - total: $3,920.24 | profit: $49.71)</option>
-                    <option value="C-3">💼 Order Template C-3 (40 Items - total: $104,951.13 | profit: $9,238.89)</option>
-                    <option value="C-4">💼 Order Template C-4 (40 Items - total: $148,524.49 | profit: $14,637.48)</option>
+                    <option value="custom">Custom Worksheet (Manual)</option>
+                    <option value="M-1">Preset M-1 (40 Items / $30k / $210)</option>
+                    <option value="M-2">Preset M-2 (40 Items / $98k / $496)</option>
+                    <option value="M-3">Preset M-3 (40 Items / $353k / $4.6k)</option>
+                    <option value="M-4">Preset M-4 (40 Items / $508k / $7.6k)</option>
+                    <option value="C-1">Preset C-1 (40 Items / $817 / $2.69)</option>
+                    <option value="C-2">Preset C-2 (40 Items / $3.9k / $49)</option>
+                    <option value="C-3">Preset C-3 (40 Items / $104k / $9.2k)</option>
+                    <option value="C-4">Preset C-4 (40 Items / $148k / $14.6k)</option>
                   </select>
                 </div>
 
                 {selectedTemplate === 'custom' && (
                   /* Custom controls Row */
-                  <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                  <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm">
                     <div>
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Number of Worksheet Items</label>
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">Items Count</label>
                       <input 
                         type="number"
                         value={newAssignOrders.length}
@@ -937,17 +961,17 @@ export default function OrdersTasking() {
                         required
                         min="1"
                         max="40"
-                        className="w-32 h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-indigo-600 outline-none"
+                        className="w-32 h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm font-bold focus:ring-2 focus:ring-indigo-600 outline-none transition-colors"
                       />
-                      <span className="text-[10px] text-slate-400 block mt-1">* Set between 1 and 40 items.</span>
+                      <span className="text-[10px] text-slate-400 block mt-2 font-medium">* Maximum 40 items allowed per worksheet.</span>
                     </div>
                     <button 
                       type="button" 
                       onClick={handleAddOrder}
-                      className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold flex items-center gap-2 transition-colors shadow-sm"
+                      className="px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95"
                     >
                       <Plus className="w-4 h-4" />
-                      Add Row
+                      Add New Row
                     </button>
                   </div>
                 )}
@@ -955,18 +979,18 @@ export default function OrdersTasking() {
                 {/* Sequence Preview / Configuration Cards Container */}
                 {selectedTemplate !== 'custom' ? (
                   <div className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
-                    <div className="px-4 py-3 bg-slate-50/50 dark:bg-slate-950/40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      <span>Worksheet Sequence Preview</span>
-                      <span>{newAssignOrders.length} Items</span>
+                    <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-950/40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      <span className="flex items-center gap-2"><ListOrdered className="w-4 h-4 text-indigo-500" /> Worksheet Sequence Preview</span>
+                      <span className="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full">{newAssignOrders.length} Items</span>
                     </div>
-                    <div className="max-h-64 overflow-y-auto">
+                    <div className="max-h-96 overflow-y-auto">
                       <table className="w-full text-sm text-left">
-                        <thead className="sticky top-0 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm z-10 border-b border-slate-100 dark:border-slate-800">
-                          <tr className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                            <th className="px-4 py-3 w-12 text-center">Sr.</th>
-                            <th className="px-4 py-3">Product Title</th>
-                            <th className="px-4 py-3 text-right">Price</th>
-                            <th className="px-4 py-3 text-right">Profit</th>
+                        <thead className="sticky top-0 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md z-10 border-b border-slate-100 dark:border-slate-800">
+                          <tr className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            <th className="px-6 py-4 w-16 text-center">Sr.</th>
+                            <th className="px-6 py-4">Product Title</th>
+                            <th className="px-6 py-4 text-right">Price</th>
+                            <th className="px-6 py-4 text-right">Commission</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -997,33 +1021,38 @@ export default function OrdersTasking() {
                     </div>
                   </div>
                 ) : (
-                  <div className="max-h-80 overflow-y-auto pr-2 space-y-4">
+                  <div className="space-y-5">
                     {newAssignOrders.map((order, idx) => (
                       <div 
                         key={idx} 
-                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm relative group"
+                        className={`bg-white dark:bg-slate-900 border ${freezeTarget === String(idx + 1) ? 'border-rose-400 dark:border-rose-500/50 shadow-rose-500/10' : 'border-slate-200 dark:border-slate-800'} rounded-2xl p-6 shadow-sm relative group transition-all`}
                       >
                         {/* Order Header / Actions */}
-                        <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
+                        <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800/60 mb-5">
                           <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                            <ListOrdered className="w-4 h-4 text-indigo-400" />
-                            Worksheet Order Row #{idx + 1}
+                            <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-mono text-[10px]">
+                              {idx + 1}
+                            </div>
+                            Worksheet Order Row
+                            {freezeTarget === String(idx + 1) && (
+                              <span className="ml-2 px-2 py-0.5 rounded text-[10px] bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400">Target Freeze</span>
+                            )}
                           </span>
                           {newAssignOrders.length > 1 && (
                             <button 
                               type="button" 
                               onClick={() => handleRemoveOrder(idx)}
-                              className="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-colors p-1 rounded-md hover:bg-rose-50 dark:hover:bg-rose-500/10"
+                              className="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-colors p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                               Remove
                             </button>
                           )}
                         </div>
 
                         {/* Quick fill catalog select */}
-                        <div className="mb-4">
-                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Auto-Fill Catalog Selector</label>
+                        <div className="mb-5">
+                          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Auto-Fill Catalog</label>
                           <select
                             onChange={(e) => {
                               if (e.target.value !== "") {
@@ -1040,9 +1069,9 @@ export default function OrdersTasking() {
                               }
                             }}
                             defaultValue=""
-                            className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-xs focus:ring-2 focus:ring-indigo-600 outline-none"
+                            className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm font-medium focus:ring-2 focus:ring-indigo-600 outline-none transition-colors appearance-none cursor-pointer"
                           >
-                            <option value="">-- Choose from Catalog to Pre-fill product variables --</option>
+                            <option value="">-- Choose --</option>
                             {products.map((p, pIdx) => (
                               <option key={pIdx} value={pIdx}>
                                 {p.title.length > 60 ? p.title.substring(0, 60) + '...' : p.title} (${p.price})
@@ -1052,65 +1081,74 @@ export default function OrdersTasking() {
                         </div>
 
                         {/* Text fields */}
-                        <div className="flex gap-4 mb-4 items-end">
-                          {order.image && (
-                            <img 
-                              src={order.image} 
-                              alt="Product" 
-                              referrerPolicy="no-referrer"
-                              className="w-12 h-12 object-contain rounded-lg border border-slate-200 dark:border-slate-700 bg-white shadow-sm p-1 flex-shrink-0"
-                            />
-                          )}
-                          <div className="flex-1">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Product Title / Catalog Description</label>
-                            <input 
-                              type="text"
-                              value={order.title}
-                              onChange={(e) => {
-                                const updated = [...newAssignOrders];
-                                updated[idx].title = e.target.value;
-                                setNewAssignOrders(updated);
-                              }}
-                              required
-                              placeholder="e.g. barkTHINS Snacking Chocolate Bundle"
-                              className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none"
-                            />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div className="flex gap-4 items-end">
+                            {order.image && (
+                              <div className="w-14 h-14 rounded-xl border border-slate-200 dark:border-slate-700 bg-white shadow-sm p-1.5 flex-shrink-0 flex items-center justify-center">
+                                <img 
+                                  src={order.image} 
+                                  alt="Product" 
+                                  referrerPolicy="no-referrer"
+                                  className="max-w-full max-h-full object-contain"
+                                />
+                              </div>
+                            )}
+                            <div className="flex-1">
+                              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Product Title</label>
+                              <input 
+                                type="text"
+                                value={order.title}
+                                onChange={(e) => {
+                                  const updated = [...newAssignOrders];
+                                  updated[idx].title = e.target.value;
+                                  setNewAssignOrders(updated);
+                                }}
+                                required
+                                placeholder="e.g. Premium Item"
+                                className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition-colors"
+                              />
+                            </div>
                           </div>
-                        </div>
-
-                        {/* Price and Profit */}
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Assigned Price ($)</label>
-                            <input 
-                              type="number"
-                              step="0.01"
-                              value={order.price}
-                              onChange={(e) => {
-                                const updated = [...newAssignOrders];
-                                updated[idx].price = e.target.value;
-                                setNewAssignOrders(updated);
-                              }}
-                              required
-                              placeholder="0.00"
-                              className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm font-mono focus:ring-2 focus:ring-indigo-600 outline-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Commission Earnings ($)</label>
-                            <input 
-                              type="number"
-                              step="0.01"
-                              value={order.profit}
-                              onChange={(e) => {
-                                const updated = [...newAssignOrders];
-                                updated[idx].profit = e.target.value;
-                                setNewAssignOrders(updated);
-                              }}
-                              required
-                              placeholder="0.00"
-                              className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 text-sm font-mono focus:ring-2 focus:ring-emerald-500 outline-none"
-                            />
+                          
+                          <div className="grid grid-cols-2 gap-5 items-end">
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Price ($)</label>
+                              <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-slate-400">$</span>
+                                <input 
+                                  type="number"
+                                  step="0.01"
+                                  value={order.price}
+                                  onChange={(e) => {
+                                    const updated = [...newAssignOrders];
+                                    updated[idx].price = e.target.value;
+                                    setNewAssignOrders(updated);
+                                  }}
+                                  required
+                                  placeholder="0.00"
+                                  className="w-full h-12 pl-8 pr-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm font-mono focus:ring-2 focus:ring-indigo-600 outline-none transition-colors"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider block mb-2">Commission ($)</label>
+                              <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-emerald-500">$</span>
+                                <input 
+                                  type="number"
+                                  step="0.01"
+                                  value={order.profit}
+                                  onChange={(e) => {
+                                    const updated = [...newAssignOrders];
+                                    updated[idx].profit = e.target.value;
+                                    setNewAssignOrders(updated);
+                                  }}
+                                  required
+                                  placeholder="0.00"
+                                  className="w-full h-12 pl-8 pr-4 rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 text-sm font-mono focus:ring-2 focus:ring-emerald-500 outline-none transition-colors"
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1122,7 +1160,7 @@ export default function OrdersTasking() {
                 <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
                   <h4 className="text-sm font-bold text-slate-900 dark:text-slate-50 flex items-center gap-2 mb-4">
                     <Sparkles className="w-4 h-4 text-amber-500" />
-                    Worksheet Calculations Summary
+                    Worksheet Summary
                   </h4>
                   <div className="grid grid-cols-2 gap-6 text-sm">
                     <div className="flex justify-between border-r border-slate-200 dark:border-slate-800 pr-6">
@@ -1130,20 +1168,20 @@ export default function OrdersTasking() {
                       <b className="text-slate-900 dark:text-slate-50 font-mono">{newAssignOrders.length}</b>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Aggregate Price:</span>
+                      <span className="text-slate-500">Total Price:</span>
                       <b className="text-slate-900 dark:text-slate-50 font-mono">${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.price || 0), 0).toFixed(2)}</b>
                     </div>
                   </div>
                   <div className="h-px bg-slate-200 dark:bg-slate-800 my-4" />
                   <div className="flex justify-between text-sm font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 p-3 rounded-xl">
-                    <span>Aggregate Net Commission Payout:</span>
+                    <span>Total Commission:</span>
                     <span className="font-mono">${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-end gap-3">
+              <div className="flex-shrink-0 px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-end gap-3">
                 <button 
                   type="button" 
                   className="px-5 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-xl transition-colors shadow-sm"

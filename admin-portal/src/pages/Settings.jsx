@@ -216,31 +216,30 @@ export default function Settings() {
                 </div>
                 <div>
                   <h3 className="section-title">Profile Avatar</h3>
-                  <p style={{ fontSize: 12, color: 'var(--text-admin-light)' }}>Set visual identifier URL</p>
+                  <p className="text-xs text-slate-500">Update your avatar image</p>
                 </div>
               </div>
 
               <form onSubmit={handlePhotoUpdate} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Image Address Link</label>
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Image URL</label>
                   <input 
                     type="url" 
-                    placeholder="https://example.com/your-avatar-image.jpg" 
+                    placeholder="https://example.com/avatar.jpg" 
                     value={photoUrl}
                     onChange={(e) => setPhotoUrl(e.target.value)}
                     required
-                    className="search-input"
-                    style={{ width: '100%', height: 36, paddingLeft: 12 }}
+                    className="search-input w-full h-9 pl-3 text-sm"
                   />
                 </div>
 
                 {/* Live Preview Container */}
-                <div style={{ backgroundColor: 'var(--bg-app)', padding: 12, borderRadius: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg flex items-center gap-3 border border-slate-100 dark:border-slate-800">
                   <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden flex-shrink-0 border-2 border-white shadow-sm">
                     {photoUrl ? (
                       <img 
                         src={photoUrl} 
-                        alt="New avatar preview" 
+                        alt="Preview" 
                         onError={(e) => { e.target.src = ''; }}
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover"
@@ -249,25 +248,21 @@ export default function Settings() {
                       <div className="w-full h-full flex items-center justify-center text-slate-400 text-[10px]">No img</div>
                     )}
                   </div>
-                  <div className="space-y-1">
-                    <div className="text-xs font-semibold text-slate-800 dark:text-slate-300">Live Avatar Feed Preview</div>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400">If the image URL is valid and hotlink-enabled, it will render instantly above.</p>
+                  <div className="space-y-0.5">
+                    <div className="text-sm font-medium text-slate-800 dark:text-slate-300">Preview</div>
+                    <p className="text-[11px] text-slate-500">Live preview of your avatar.</p>
                   </div>
                 </div>
 
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded font-bold text-xs flex items-center gap-2 justify-center w-full transition-colors disabled:opacity-50"
+                  className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <Save className="w-3.5 h-3.5" />
-                  {loading ? 'Processing...' : 'Securely Save Avatar'}
+                  <Save className="w-4 h-4" />
+                  {loading ? 'Processing...' : 'Save Avatar'}
                 </button>
               </form>
-            </div>
-            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 text-slate-400" />
-              Ensure URLs are publicly accessible (HTTPS) and hosted securely.
             </div>
           </div>
 
@@ -279,64 +274,58 @@ export default function Settings() {
                   <Lock className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="section-title">Access Authentication</h3>
-                  <p style={{ fontSize: 12, color: 'var(--text-admin-light)' }}>Update operator security passphrase</p>
+                  <h3 className="section-title">Security</h3>
+                  <p className="text-xs text-slate-500">Update your password</p>
                 </div>
               </div>
 
               <form onSubmit={handlePasswordChange} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>New Password</label>
+                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">New Password</label>
                     <input 
                       type="password" 
-                      placeholder="••••••••••••" 
+                      placeholder="••••••••" 
                       value={passwordForm.newPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
                       required
-                      className="search-input"
-                      style={{ width: '100%', height: 36, paddingLeft: 12 }}
+                      className="search-input w-full h-9 pl-3 text-sm"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>Confirm New Password</label>
+                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Confirm Password</label>
                     <input 
                       type="password" 
-                      placeholder="••••••••••••" 
+                      placeholder="••••••••" 
                       value={passwordForm.confirmPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
                       required
-                      className="search-input"
-                      style={{ width: '100%', height: 36, paddingLeft: 12 }}
+                      className="search-input w-full h-9 pl-3 text-sm"
                     />
                   </div>
                 </div>
 
-                <div style={{ backgroundColor: 'var(--bg-app)', padding: 12, borderRadius: 8 }} className="space-y-2">
-                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-slate-500" />
-                    Operator Password Guidelines
+                <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-100 dark:border-slate-800 space-y-1.5">
+                  <div className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-slate-400" />
+                    Guidelines
                   </div>
-                  <ul className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 list-disc list-inside">
-                    <li>Use a strong password that is not reused elsewhere.</li>
-                    <li>Password updates register instantly across authorization firewalls.</li>
-                    <li>Keep this credential confidential to protect admin workspace integrity.</li>
+                  <ul className="text-[11px] text-slate-500 space-y-1 list-disc list-inside">
+                    <li>Use a strong, unique password.</li>
+                    <li>Updates apply immediately across all sessions.</li>
                   </ul>
                 </div>
 
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded font-bold text-xs flex items-center gap-2 justify-center w-full transition-colors disabled:opacity-50"
+                  className="w-full py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <Key className="w-3.5 h-3.5" />
-                  {loading ? 'Processing...' : 'Apply Secure Key Change'}
+                  <Key className="w-4 h-4" />
+                  {loading ? 'Processing...' : 'Update Password'}
                 </button>
               </form>
-            </div>
-            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 flex items-center gap-1.5">
-              Authentication is bound securely with Supabase cryptographic architecture.
             </div>
           </div>
         </div>
@@ -350,13 +339,10 @@ export default function Settings() {
                   <Coins className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="section-title">Crypto Receiving Channels</h3>
-                  <p style={{ fontSize: 12, color: 'var(--text-admin-light)' }}>Configure global deposit wallet destinations displayed to user clients</p>
+                  <h3 className="section-title">Wallet Addresses</h3>
+                  <p className="text-xs text-slate-500">Configure global deposit destinations</p>
                 </div>
               </div>
-              <span style={{ fontSize: 10, fontWeight: 700, padding: '4px 8px', borderRadius: 4, backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-color)' }}>
-                🔒 System Root Access
-              </span>
             </div>
 
             <form onSubmit={handleUsdtUpdate} className="space-y-4">
@@ -373,33 +359,32 @@ export default function Settings() {
                 ].map(({ key, label, badge }) => (
                   <div key={key} className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-admin-light)', textTransform: 'uppercase' }}>{label}</label>
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{label}</label>
                     </div>
                     <input
                       type="text"
-                      placeholder="Not set (hidden)"
+                      placeholder="Not set"
                       value={cryptoAddresses[key]}
                       onChange={e => setCryptoAddresses(prev => ({ ...prev, [key]: e.target.value }))}
                       id={`input-addr-${key}`}
-                      className="search-input"
-                      style={{ width: '100%', height: 32, paddingLeft: 8, fontSize: 11, fontFamily: 'monospace' }}
+                      className="search-input w-full h-9 pl-3 text-sm font-mono"
                     />
                   </div>
                 ))}
               </div>
 
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
                   <AlertTriangle className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                  <span>Only input wallet destinations under your absolute private control. Leaving blank disables it.</span>
+                  <span>Leave blank to disable a receiving channel.</span>
                 </div>
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="px-6 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded font-bold text-xs flex items-center gap-2 justify-center transition-colors disabled:opacity-50"
+                  className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <Save className="w-3.5 h-3.5" />
-                  {loading ? 'Processing...' : 'Save All Gateway Addresses'}
+                  <Save className="w-4 h-4" />
+                  {loading ? 'Processing...' : 'Save Settings'}
                 </button>
               </div>
             </form>

@@ -106,7 +106,9 @@ export default function App() {
     if (username) {
       supabase.from('cb_users').update({ online: 'Online' }).eq('username', username)
         .then(({ error }) => {
-          if (error) console.error("Error setting online status:", error);
+          if (error) {
+             console.error("Error setting online status:", error?.message || JSON.stringify(error));
+          }
         });
     }
   }, [username]);

@@ -426,11 +426,6 @@ export default function UserManagement() {
                           <div className="space-y-0.5">
                             <div className="font-bold text-slate-900 dark:text-slate-50 text-[13px] flex items-center gap-1.5">
                               {u.username}
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                                u.level >= 4 ? 'bg-amber-150 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-500/20' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                              }`}>
-                                VIP {u.level}
-                              </span>
                             </div>
                             <div className="text-[10px] text-slate-400 font-mono tracking-wider">{u.id.substring(0, 12)}…</div>
                             <div className="flex items-center gap-1.5 mt-1">
@@ -684,13 +679,13 @@ export default function UserManagement() {
                   <input type="number" step="0.01" value={editFields.frozen} onChange={e => setEditFields(f => ({ ...f, frozen: e.target.value }))} className="input-sla-field" id="edit-frozen" />
                 </div>
                 <div className="form-group-sla">
-                  <label>VIP Security Level</label>
+                  <label>User Tier Level</label>
                   <select value={editFields.level} onChange={e => setEditFields(f => ({ ...f, level: e.target.value }))} className="input-sla-field" id="edit-level">
-                    <option value="1">VIP Tier 1</option>
-                    <option value="2">VIP Tier 2</option>
-                    <option value="3">VIP Tier 3</option>
-                    <option value="4">VIP Tier 4</option>
-                    <option value="5">VIP Tier 5</option>
+                    <option value="1">Tier 1</option>
+                    <option value="2">Tier 2</option>
+                    <option value="3">Tier 3</option>
+                    <option value="4">Tier 4</option>
+                    <option value="5">Tier 5</option>
                   </select>
                 </div>
                 <div className="form-group-sla">
@@ -781,7 +776,6 @@ export default function UserManagement() {
                 { label: 'Primary Email Address', val: viewUser.email },
                 { label: 'Registered Telephone', val: viewUser.phone, mono: true },
                 { label: 'Operational Password', val: viewUser.password_plain || '(N/A)', badge: true },
-                { label: 'Security VIP Level', val: `VIP Tier ${viewUser.level}` },
                 { label: 'Net Liquid Capital', val: `$${viewUser.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, highlight: 'text-emerald-600 dark:text-emerald-400 font-bold' },
                 { label: 'Escrow Holdings', val: `$${viewUser.frozen.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, highlight: 'text-amber-500 font-bold' },
                 { label: 'Total Deposited Assets', val: `$${viewUser.topup.toLocaleString(undefined, { minimumFractionDigits: 2 })}` },

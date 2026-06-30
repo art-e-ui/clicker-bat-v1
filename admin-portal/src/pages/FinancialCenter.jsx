@@ -380,7 +380,7 @@ export default function FinancialCenter() {
     <div className="w-full space-y-6">
       
       {/* Header and Subtabs */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+      <div className="admin-card">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <h3 className="font-bold text-slate-900 dark:text-slate-50 text-xl tracking-tight flex items-center gap-2">
@@ -453,19 +453,19 @@ export default function FinancialCenter() {
       )}
 
       {activeSubTab === 'deposits' && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
+        <div className="admin-card !p-0 overflow-hidden">
+          <div className="overflow-x-auto" style={{ overflowX: 'auto' }}>
+            <table className="admin-table w-full whitespace-nowrap">
               <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-950/40 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  <th className="px-6 py-4 whitespace-nowrap">Request ID</th>
-                  <th className="px-6 py-4">Client User</th>
-                  <th className="px-6 py-4">Staff Node</th>
-                  <th className="px-6 py-4 text-right">Amount</th>
-                  <th className="px-6 py-4 text-center">Network</th>
-                  <th className="px-6 py-4 text-center">Status</th>
-                  <th className="px-6 py-4">Submitted Date</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Client User</th>
+                  <th>Staff Node</th>
+                  <th>Amount</th>
+                  <th>Network</th>
+                  <th>Status</th>
+                  <th>Submitted Date</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -478,20 +478,29 @@ export default function FinancialCenter() {
                 ) : (
                   filteredDeps.map(dep => (
                     <tr key={dep.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-colors">
-                      <td className="px-6 py-4">
+                      <td>
                         <span className="font-mono text-xs font-semibold text-slate-500">{dep.id.substring(0,8)}...</span>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-50">{dep.username}</td>
-                      <td className="px-6 py-4">
+                      <td className="font-semibold text-slate-900 dark:text-slate-50">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 text-[10px] font-bold">
+                            {dep.username.substring(0,2).toUpperCase()}
+                          </div>
+                          {dep.username}
+                        </div>
+                      </td>
+                      <td>
                         <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-1 rounded text-xs font-semibold">{dep.referred_by_staff_id}</span>
                       </td>
-                      <td className="px-6 py-4 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                        ${dep.amount.toFixed(2)}
+                      <td>
+                        <span className="font-mono text-[13px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded border border-emerald-100 dark:border-emerald-800/50">
+                          ${dep.amount.toFixed(2)}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td>
                         <span className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2 py-1 rounded border border-indigo-100 dark:border-indigo-800 text-[10px] font-bold tracking-wider">{dep.currency}</span>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td>
                         <span className={`inline-flex px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                           dep.status === 'Approved' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 
                           dep.status === 'Rejected' ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400' : 
@@ -500,8 +509,8 @@ export default function FinancialCenter() {
                           {dep.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">{dep.createdAt}</td>
-                      <td className="px-6 py-4 text-right whitespace-nowrap space-x-2">
+                      <td className="text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">{dep.createdAt}</td>
+                      <td className="text-right whitespace-nowrap space-x-2">
                         <div className="flex justify-end gap-2">
                           <button 
                             className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
@@ -537,19 +546,19 @@ export default function FinancialCenter() {
       )}
 
       {activeSubTab === 'withdrawals' && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
+        <div className="admin-card !p-0 overflow-hidden">
+          <div className="overflow-x-auto" style={{ overflowX: 'auto' }}>
+            <table className="admin-table w-full whitespace-nowrap">
               <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-950/40 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  <th className="px-6 py-4 whitespace-nowrap">Request ID</th>
-                  <th className="px-6 py-4">Client User</th>
-                  <th className="px-6 py-4">Staff Node</th>
-                  <th className="px-6 py-4 text-right">Amount</th>
-                  <th className="px-6 py-4">Method & Details</th>
-                  <th className="px-6 py-4 text-center">Status</th>
-                  <th className="px-6 py-4">Submitted Date</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Client User</th>
+                  <th>Staff Node</th>
+                  <th>Amount</th>
+                  <th>Method & Details</th>
+                  <th>Status</th>
+                  <th>Submitted Date</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -562,21 +571,30 @@ export default function FinancialCenter() {
                 ) : (
                   filteredWths.map(wth => (
                     <tr key={wth.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-colors">
-                      <td className="px-6 py-4">
+                      <td>
                         <span className="font-mono text-xs font-semibold text-slate-500">{wth.id.substring(0,8)}...</span>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-50">{wth.username}</td>
-                      <td className="px-6 py-4">
+                      <td className="font-semibold text-slate-900 dark:text-slate-50">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 text-[10px] font-bold">
+                            {wth.username.substring(0,2).toUpperCase()}
+                          </div>
+                          {wth.username}
+                        </div>
+                      </td>
+                      <td>
                         <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-1 rounded text-xs font-semibold">{wth.referred_by_staff_id}</span>
                       </td>
-                      <td className="px-6 py-4 text-right font-mono font-bold text-amber-600 dark:text-amber-400">
-                        ${wth.amount.toFixed(2)}
+                      <td>
+                        <span className="font-mono text-[13px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded border border-amber-100 dark:border-amber-800/50">
+                          ${wth.amount.toFixed(2)}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 space-y-1">
+                      <td className="space-y-1">
                         <div className="text-xs font-bold text-slate-700 dark:text-slate-300">{wth.method}</div>
-                        <div className="font-mono text-[10px] text-slate-500 break-all max-w-[200px]">{wth.account_info}</div>
+                        <div className="font-mono text-[10px] text-slate-500 break-all max-w-[200px] whitespace-normal">{wth.account_info}</div>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td>
                         <div className="flex flex-col items-center gap-1">
                           <span className={`inline-flex px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                             wth.status === 'Approved' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 
@@ -586,14 +604,14 @@ export default function FinancialCenter() {
                             {wth.status}
                           </span>
                           {wth.remark && (
-                            <span className="text-[9px] text-slate-400 max-w-[120px] text-center leading-tight">
+                            <span className="text-[9px] text-slate-400 max-w-[120px] text-center leading-tight whitespace-normal">
                               * {wth.remark}
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">{wth.createdAt}</td>
-                      <td className="px-6 py-4 text-right whitespace-nowrap space-x-2">
+                      <td className="text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">{wth.createdAt}</td>
+                      <td className="text-right whitespace-nowrap space-x-2">
                         <div className="flex justify-end gap-2">
                           {wth.status === 'Pending' ? (
                             <>
@@ -627,7 +645,7 @@ export default function FinancialCenter() {
       )}
 
       {activeSubTab === 'settings' && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 shadow-sm max-w-2xl">
+        <div className="admin-card max-w-2xl">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
               <Briefcase className="w-5 h-5" />
@@ -684,8 +702,8 @@ export default function FinancialCenter() {
 
       {/* Modal overlays */}
       {actionType === 'view_slip' && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="admin-card w-full max-w-2xl !p-0 overflow-hidden flex flex-col shadow-2xl">
             <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 dark:text-slate-50 text-lg flex items-center gap-2">
                 <Eye className="w-5 h-5 text-indigo-500" />
@@ -746,8 +764,8 @@ export default function FinancialCenter() {
       )}
 
       {(actionType === 'reject_deposit' || actionType === 'reject_withdrawal') && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="admin-card w-full max-w-lg !p-0 overflow-hidden flex flex-col shadow-2xl">
             <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 dark:text-slate-50 text-lg flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-rose-500" />

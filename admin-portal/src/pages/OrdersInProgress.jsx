@@ -152,43 +152,6 @@ export default function OrdersInProgress() {
     }
   };
 
-  const handlePurgeTaskData = async () => {
-    const isConfirmed = window.confirm(
-      "⚠️ WARNING: This operation is IRREVERSIBLE!\n\n" +
-      "This will permanently delete all records of assigned tasks and associated orders (completed, pending, in-progress) from the database.\n\n" +
-      "Are you absolutely sure you want to proceed?"
-    );
-    if (!isConfirmed) return;
-
-    try {
-      // Delete all from cb_orders
-      const { error: ordersErr } = await supabase
-        .from('cb_orders')
-        .delete()
-        .neq('id', 0);
-
-      if (ordersErr) {
-        throw ordersErr;
-      }
-
-      // Delete all from cb_assigned_tasks
-      const { error: tasksErr } = await supabase
-        .from('cb_assigned_tasks')
-        .delete()
-        .neq('id', '0');
-
-      if (tasksErr) {
-        throw tasksErr;
-      }
-
-      toast.success("Successfully purged all assigned tasks and associated orders from the database!");
-      fetchTasks();
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to purge database records: " + err.message);
-    }
-  };
-
   const handleOpenEditOrdersModal = (task) => {
     setEditingTask(task);
     setEditingOrders(task.orders.map(o => ({ ...o })));
@@ -251,7 +214,7 @@ export default function OrdersInProgress() {
   return (
     <div className="w-full space-y-6">
       {/* Header & Search */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+      <div className="admin-card">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-slate-900 dark:text-slate-50 text-xl tracking-tight">Orders In Progress</h3>
@@ -276,19 +239,19 @@ export default function OrdersInProgress() {
       </div>
 
       {/* Task Tracker Table */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-sm overflow-hidden flex flex-col">
-        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-            <ClipboardList className="w-4 h-4" />
+      <div className="admin-card !p-0 overflow-hidden flex flex-col">
+        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 bg-slate-50/50 dark:bg-slate-950/50">
+          <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50 shadow-sm">
+            <ClipboardList className="w-5 h-5" />
           </div>
-          <h3 className="font-semibold text-slate-900 dark:text-slate-50 text-base">Worksheet Task Tracker</h3>
+          <h3 className="font-bold text-slate-900 dark:text-slate-50 text-lg tracking-tight">Worksheet Task Tracker</h3>
         </div>
         
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="bg-slate-50/50 dark:bg-slate-950/40 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <th className="px-6 py-4 whitespace-nowrap">Task ID</th>
+          <table className="w-full whitespace-nowrap text-left">
+            <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+              <tr className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4">Task ID</th>
                 <th className="px-6 py-4">Client User</th>
                 <th className="px-6 py-4">Total Sum</th>
                 <th className="px-6 py-4">Orders Count</th>
@@ -302,7 +265,7 @@ export default function OrdersInProgress() {
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {filteredTasks.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                  <td colSpan="9" className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 font-medium text-sm">
                     No active or pending worksheets matching criteria found.
                   </td>
                 </tr>
@@ -313,47 +276,66 @@ export default function OrdersInProgress() {
                   const isInProgress = t.status === 'In Progress';
                   
                   return (
-                    <tr key={t.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-colors">
+                    <tr key={t.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors group">
                       <td className="px-6 py-4">
-                        <span className="font-mono text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-2 py-1 rounded-md">{t.id.substring(0,8)}...</span>
+                        <span className="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-3 py-1.5 rounded-lg border border-indigo-100 dark:border-indigo-800/30">{t.id.substring(0,8)}...</span>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-900 dark:text-slate-50">{t.username}</td>
-                      <td className="px-6 py-4 font-mono font-semibold text-slate-700 dark:text-slate-300">${t.totalAmount.toFixed(2)}</td>
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{t.orderCount} items</td>
-                      <td className="px-6 py-4 font-mono font-semibold text-emerald-600 dark:text-emerald-400">{t.profitPercent}%</td>
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{t.assignedBy}</td>
+                      <td className="px-6 py-4 font-bold text-slate-900 dark:text-slate-50 text-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-700 dark:text-indigo-400 text-xs font-bold border border-indigo-200 dark:border-indigo-800/50">
+                            {t.username.substring(0,2).toUpperCase()}
+                          </div>
+                          {t.username}
+                        </div>
+                      </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase ${
-                          isCompleted ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20' : 
-                          isInProgress ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20' : 
-                          'bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400 border border-sky-200 dark:border-sky-500/20'
+                        <span className="font-mono text-xs font-semibold text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/20 px-2.5 py-1 rounded-md border border-sky-100 dark:border-sky-800/30 inline-block">
+                          ${t.totalAmount.toFixed(2)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                          {t.orderCount} items
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-mono text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2.5 py-1 rounded-md border border-emerald-100 dark:border-emerald-800/30 inline-block">
+                          {t.profitPercent}%
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm font-medium">{t.assignedBy}</td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${
+                          isCompleted ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30' : 
+                          isInProgress ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30' : 
+                          'bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400 border border-sky-200 dark:border-sky-500/30'
                         }`}>
-                          {isCompleted ? <Check className="w-3 h-3" /> : (isInProgress ? <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" /> : null)}
+                          {isCompleted ? <Check className="w-3.5 h-3.5" /> : (isInProgress ? <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" /> : null)}
                           {t.status} ({completedCount}/{t.orderCount})
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">{t.createdAt}</td>
+                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs font-medium whitespace-nowrap">{t.createdAt}</td>
                       <td className="px-6 py-4 text-right whitespace-nowrap space-x-2">
                         {t.status !== 'Completed' ? (
                           <div className="flex items-center justify-end gap-2">
                             <button 
                               onClick={() => handleOpenEditOrdersModal(t)}
-                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
+                              className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5"
                             >
-                              <Edit3 className="w-3.5 h-3.5" />
-                              Edit
+                              <Edit3 className="w-4 h-4" />
+                              Edit Items
                             </button>
                             <button 
                               onClick={() => handleCancelTask(t.id)}
-                              className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
+                              className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 font-semibold text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
-                              Cancel
+                              <Trash2 className="w-4 h-4" />
+                              Cancel Task
                             </button>
                           </div>
                         ) : (
-                          <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
-                            Locked
+                          <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center gap-1.5 inline-flex">
+                            <Check className="w-4 h-4" /> Locked
                           </span>
                         )}
                       </td>
@@ -366,90 +348,67 @@ export default function OrdersInProgress() {
         </div>
       </div>
 
-      {/* Database Maintenance Section */}
-      <div className="bg-rose-50 dark:bg-rose-950/10 border border-rose-200 dark:border-rose-900/50 rounded-3xl p-6 shadow-sm">
-        <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400 flex-shrink-0">
-            <AlertCircle className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-rose-900 dark:text-rose-400 text-base mb-1">
-              Database Maintenance & System Control Center
-            </h3>
-            <p className="text-sm text-rose-700 dark:text-rose-300/80 mb-5 leading-relaxed max-w-3xl">
-              Admin tool for clearing existing records. You can purge all order tasking data and wipe ongoing or pending orders to reset the system. This action is irreversible.
-            </p>
-            <button 
-              type="button"
-              onClick={handlePurgeTaskData}
-              className="px-5 h-11 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center gap-2 active:scale-[0.98]"
-            >
-              <Trash2 className="w-4 h-4" />
-              Wipe All Orders & Assigned Tasks
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Edit Worksheet Orders Modal */}
       {showEditOrdersModal && editingTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-md p-4 sm:p-6 transition-all">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                  <Database className="w-5.5 h-5.5" />
+            <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100 dark:border-indigo-800/30">
+                  <Database className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm md:text-base font-bold text-slate-900 dark:text-slate-50 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                     Modify Worksheet Item Sequence
                   </h3>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                     Editing Task: <span className="font-mono text-indigo-500 font-semibold">{editingTask.id}</span> • Assigned Client: <b>{editingTask.username}</b>
                   </p>
                 </div>
               </div>
               <button 
                 type="button"
-                className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors"
                 onClick={() => { setShowEditOrdersModal(false); setEditingTask(null); }}
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleSaveEditedOrders} className="flex flex-col flex-1 overflow-hidden">
-              <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="flex-1 overflow-y-auto p-8 space-y-6">
                 
                 {/* Information advice banner */}
-                <div className="bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-400 p-3.5 rounded-2xl flex items-start gap-2.5 text-xs leading-relaxed">
-                  <Info className="w-4.5 h-4.5 flex-shrink-0 text-amber-500 mt-0.5" />
+                <div className="bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-400 p-4 rounded-2xl flex items-start gap-3 text-sm leading-relaxed shadow-sm">
+                  <Info className="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5" />
                   <span>
-                    💡 <b>Sequence Editing Guideline:</b> You can customize each individual order in the worksheet sequence. Editing prices and profits here will directly update both the task worksheet and the user's pending order screen. To prevent discrepancy, edit <b>Pending</b> orders only.
+                    <span className="font-bold">Sequence Editing Guideline:</span> You can customize each individual order in the worksheet sequence. Editing prices and profits here will directly update both the task worksheet and the user's pending order screen. To prevent discrepancy, edit <b>Pending</b> orders only.
                   </span>
                 </div>
 
                 {/* Rows block */}
-                <div className="space-y-3.5">
+                <div className="space-y-5">
                   {editingOrders.map((order, idx) => {
                     const isCompleted = order.status === 'Success';
                     return (
                       <div 
                         key={idx} 
-                        className={`border rounded-2xl p-4 space-y-3 relative transition-all ${
+                        className={`border rounded-2xl p-6 relative transition-all ${
                           isCompleted 
                             ? 'bg-slate-50/60 dark:bg-slate-950/20 border-slate-200/50 dark:border-slate-800 opacity-75' 
-                            : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                         }`}
                       >
-                        <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                            <ListOrdered className="w-3.5 h-3.5 text-indigo-500" />
-                            Worksheet Order Row #{idx + 1}
+                        <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800/60 mb-5">
+                          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-mono text-[10px]">
+                              {idx + 1}
+                            </div>
+                            Worksheet Order Row
                           </span>
                           <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status:</span>
+                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Status:</span>
                             <select
                               value={order.status}
                               onChange={(e) => {
@@ -457,7 +416,7 @@ export default function OrdersInProgress() {
                                 newOrders[idx].status = e.target.value;
                                 setEditingOrders(newOrders);
                               }}
-                              className={`px-2 py-1 rounded text-xs font-bold outline-none border ${
+                              className={`px-3 py-1.5 rounded-lg text-xs font-bold outline-none border transition-colors ${
                                 isCompleted 
                                   ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600' 
                                   : 'bg-amber-500/10 border-amber-500/20 text-amber-600'
@@ -469,11 +428,11 @@ export default function OrdersInProgress() {
                           </div>
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-5">
                           {/* Quick fill dropdown from Catalog */}
                           {!isCompleted && products.length > 0 && (
-                            <div className="space-y-1">
-                              <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Quick Fill from Product Catalog</label>
+                            <div className="space-y-2">
+                              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Quick Fill from Product Catalog</label>
                               <select
                                 onChange={(e) => {
                                   if (e.target.value) {
@@ -488,7 +447,7 @@ export default function OrdersInProgress() {
                                     setEditingOrders(newOrders);
                                   }
                                 }}
-                                className="w-full h-8 px-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 text-xs outline-none"
+                                className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 text-sm outline-none transition-colors"
                                 defaultValue=""
                               >
                                 <option value="">-- Choose a product to auto-fill title, image, price & profit --</option>
@@ -501,66 +460,73 @@ export default function OrdersInProgress() {
                             </div>
                           )}
 
-                          {/* Text input */}
-                          <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Product Title</label>
-                            <input 
-                              type="text"
-                              value={order.title}
-                              onChange={(e) => {
-                                const newOrders = [...editingOrders];
-                                newOrders[idx].title = e.target.value;
-                                setEditingOrders(newOrders);
-                              }}
-                              required
-                              disabled={isCompleted}
-                              className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-xs focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none disabled:bg-slate-100 disabled:text-slate-400"
-                            />
-                          </div>
-
-                          {/* Numerical fields */}
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-1">
-                              <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Price ($)</label>
-                              <div className="relative">
-                                <span className="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-400 font-mono text-xs">$</span>
+                          {/* Text input and Numerical fields */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-2">
+                              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Product Title</label>
+                              <div className="flex gap-3">
+                                {order.image && (
+                                  <div className="w-12 h-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white shadow-sm p-1.5 flex-shrink-0 flex items-center justify-center">
+                                    <img src={order.image} alt="" className="max-w-full max-h-full object-contain" referrerPolicy="no-referrer" />
+                                  </div>
+                                )}
                                 <input 
-                                  type="number"
-                                  step="0.01"
-                                  value={order.price}
+                                  type="text"
+                                  value={order.title}
                                   onChange={(e) => {
                                     const newOrders = [...editingOrders];
-                                    newOrders[idx].price = e.target.value;
-                                    // Automatically recalculate profit using the task's profit commission yield percentage
-                                    const pYield = parseFloat(editingTask.profitPercent || '5');
-                                    const val = parseFloat(e.target.value || '0');
-                                    newOrders[idx].profit = parseFloat((val * (pYield / 100)).toFixed(2));
+                                    newOrders[idx].title = e.target.value;
                                     setEditingOrders(newOrders);
                                   }}
                                   required
                                   disabled={isCompleted}
-                                  className="w-full pl-6 pr-2 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-xs font-mono focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none disabled:bg-slate-100"
+                                  className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none disabled:bg-slate-100 disabled:dark:bg-slate-950 disabled:text-slate-400 transition-colors"
                                 />
                               </div>
                             </div>
+                            <div className="grid grid-cols-2 gap-5">
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Price ($)</label>
+                                <div className="relative">
+                                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-slate-400">$</span>
+                                  <input 
+                                    type="number"
+                                    step="0.01"
+                                    value={order.price}
+                                    onChange={(e) => {
+                                      const newOrders = [...editingOrders];
+                                      newOrders[idx].price = e.target.value;
+                                      // Automatically recalculate profit using the task's profit commission yield percentage
+                                      const pYield = parseFloat(editingTask.profitPercent || '5');
+                                      const val = parseFloat(e.target.value || '0');
+                                      newOrders[idx].profit = parseFloat((val * (pYield / 100)).toFixed(2));
+                                      setEditingOrders(newOrders);
+                                    }}
+                                    required
+                                    disabled={isCompleted}
+                                    className="w-full h-12 pl-8 pr-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm font-mono focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none disabled:bg-slate-100 disabled:dark:bg-slate-950 transition-colors"
+                                  />
+                                </div>
+                              </div>
 
-                            <div className="space-y-1">
-                              <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Profit ($)</label>
-                              <div className="relative">
-                                <span className="absolute inset-y-0 left-0 pl-2.5 flex items-center text-emerald-500 font-mono text-xs">$</span>
-                                <input 
-                                  type="number"
-                                  step="0.01"
-                                  value={order.profit}
-                                  onChange={(e) => {
-                                    const newOrders = [...editingOrders];
-                                    newOrders[idx].profit = e.target.value;
-                                    setEditingOrders(newOrders);
-                                  }}
-                                  required
-                                  disabled={isCompleted}
-                                  className="w-full pl-6 pr-2 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-xs font-mono focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none disabled:bg-slate-100"
-                                />
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider block">Commission ($)</label>
+                                <div className="relative">
+                                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-emerald-500">$</span>
+                                  <input 
+                                    type="number"
+                                    step="0.01"
+                                    value={order.profit}
+                                    onChange={(e) => {
+                                      const newOrders = [...editingOrders];
+                                      newOrders[idx].profit = e.target.value;
+                                      setEditingOrders(newOrders);
+                                    }}
+                                    required
+                                    disabled={isCompleted}
+                                    className="w-full h-12 pl-8 pr-4 rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 text-sm font-mono focus:ring-2 focus:ring-emerald-500 outline-none disabled:opacity-70 transition-colors"
+                                  />
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -572,17 +538,17 @@ export default function OrdersInProgress() {
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-end gap-3">
+              <div className="flex-shrink-0 px-8 py-5 border-t border-slate-100 dark:border-slate-800/60 bg-slate-50/80 dark:bg-slate-900/80 flex justify-end gap-3 backdrop-blur-sm">
                 <button 
                   type="button" 
-                  className="px-5 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-xl transition-colors shadow-sm"
+                  className="px-6 h-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-xl transition-colors shadow-sm"
                   onClick={() => { setShowEditOrdersModal(false); setEditingTask(null); }}
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
-                  className="px-6 h-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center gap-2 active:scale-[0.98]"
+                  className="px-6 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 active:scale-95"
                 >
                   <Check className="w-4 h-4" />
                   Save Sequence Changes

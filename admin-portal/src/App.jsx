@@ -154,138 +154,88 @@ export default function App() {
         
       case 'dashboard':
         return (
-          <div className="admin-page-container scale-up">
-            <div className="dashboard-stats-grid">
+          <div className="admin-page-container">
+            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-main)' }}>Dashboard</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
               
-              {/* Card 1: Violet */}
-              <div className="stat-box-card" style={{ backgroundColor: 'var(--bg-violet)', color: '#fff' }}>
-                <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+              {/* Card 1 */}
+              <div className="admin-card !mb-0 !p-6 flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">Total Payouts</p>
+                    <h3 className="text-2xl font-extrabold mt-2 text-slate-800">$ {stats.payoutRequests.toFixed(2)}</h3>
+                  </div>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-indigo-50 text-indigo-500">
                     <DollarSign size={24} />
                   </div>
-                  <span className="stat-label">Total Payouts</span>
                 </div>
-                <div className="stat-val">$ {stats.payoutRequests.toFixed(2)}</div>
               </div>
 
-              {/* Card 2: Light Blue */}
-              <div className="stat-box-card" style={{ backgroundColor: 'var(--bg-lightblue)', color: '#fff' }}>
-                <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+              {/* Card 2 */}
+              <div className="admin-card !mb-0 !p-6 flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">Total Deposits</p>
+                    <h3 className="text-2xl font-extrabold mt-2 text-slate-800">$ {stats.totalDeposits.toFixed(2)}</h3>
+                  </div>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-sky-50 text-sky-500">
                     <TrendingUp size={24} />
                   </div>
-                  <span className="stat-label">Total Deposits</span>
                 </div>
-                <div className="stat-val">$ {stats.totalDeposits.toFixed(2)}</div>
               </div>
 
-              {/* Card 3: Green */}
-              <div className="stat-box-card" style={{ backgroundColor: 'var(--bg-green)', color: '#fff' }}>
-                <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+              {/* Card 3 */}
+              <div className="admin-card !mb-0 !p-6 flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">Client Nodes</p>
+                    <h3 className="text-2xl font-extrabold mt-2 text-slate-800">{stats.newUsers.toLocaleString()}</h3>
+                  </div>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-emerald-50 text-emerald-500">
                     <Users size={24} />
                   </div>
-                  <span className="stat-label">Client Nodes</span>
                 </div>
-                <div className="stat-val">{stats.newUsers.toLocaleString()}</div>
               </div>
 
-              {/* Card 4: Light Green */}
-              <div className="stat-box-card" style={{ backgroundColor: 'var(--bg-lightgreen)', color: '#fff' }}>
-                <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+              {/* Card 4 */}
+              <div className="admin-card !mb-0 !p-6 flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">Matched Tasks</p>
+                    <h3 className="text-2xl font-extrabold mt-2 text-slate-800">{stats.matchedTasks.toLocaleString()}</h3>
+                  </div>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-amber-50 text-amber-500">
                     <Briefcase size={24} />
                   </div>
-                  <span className="stat-label">Matched Tasks</span>
                 </div>
-                <div className="stat-val">{stats.matchedTasks.toLocaleString()}</div>
               </div>
 
-              {/* Card 5: Active Orange */}
-              <div className="stat-box-card" style={{ backgroundColor: '#f0932b', color: '#fff' }}>
-                <div className="stat-header">
-                  <div className="stat-icon-jobie" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+              {/* Card 5 */}
+              <div className="admin-card !mb-0 !p-6 flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">Online Users</p>
+                    <h3 className="text-2xl font-extrabold mt-2 text-slate-800">{stats.onlineUsers.toLocaleString()}</h3>
+                  </div>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-rose-50 text-rose-500">
                     <Activity size={24} />
                   </div>
-                  <span className="stat-label">Online Users</span>
                 </div>
-                <div className="stat-val">{stats.onlineUsers.toLocaleString()}</div>
               </div>
 
             </div>
 
             <div className="admin-card">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                <h3 className="section-title">Platform Earning Velocity</h3>
-                <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>Linear Growth Rate 1.25x</span>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-slate-800">
+                  Platform Earning Velocity
+                </h3>
               </div>
-              <div className="chart-placeholder">
-                <TrendingUp size={48} color="var(--border-color-focus)" strokeWidth={1} style={{ marginBottom: 12 }} />
-                <span>[Matching Activity Metrics Projection]</span>
+              <div className="h-72 flex flex-col items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-400">
+                <TrendingUp size={48} className="mb-4 text-slate-300" strokeWidth={1.5} />
+                <span className="font-medium text-sm">Sales Details Chart Placeholder</span>
               </div>
             </div>
-            
-            <style>{`
-              .dashboard-stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 24px;
-                margin-bottom: 24px;
-              }
-              .stat-box-card {
-                border-radius: var(--radius-md);
-                padding: 24px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                min-height: 140px;
-                box-shadow: var(--shadow-sm);
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-              }
-              .stat-box-card:hover {
-                transform: translateY(-4px);
-                box-shadow: var(--shadow-md);
-              }
-              .stat-header {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-              }
-              .stat-icon-jobie {
-                width: 48px;
-                height: 48px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #ffffff;
-              }
-              .stat-label {
-                font-size: 15px;
-                font-weight: 500;
-                opacity: 0.9;
-              }
-              .stat-val {
-                font-size: 32px;
-                font-weight: 700;
-                margin-top: 16px;
-                align-self: flex-end;
-              }
-              .chart-placeholder {
-                height: 240px;
-                background-color: var(--bg-app);
-                border: 1px dashed var(--border-color-focus);
-                border-radius: var(--radius-md);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                color: var(--text-light);
-                font-size: 14px;
-                font-weight: 500;
-                font-size: 13px;
-              }
-            `}</style>
           </div>
         );
 
