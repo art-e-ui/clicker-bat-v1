@@ -8,11 +8,19 @@ export default function SupportChat() {
   const [messages, setMessages] = useState([]);
   const [inputMsg, setInputMsg] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [session, setSession] = useState(null);
+  const [users, setUsers] = useState([]);
   const chatBottomRef = useRef(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+    const saved = localStorage.getItem('cb_admin_session');
+    if (saved) {
+      setSession(JSON.parse(saved));
+    }
+
     fetchSessions();
+    fetchUsers();
 
     const sub = supabase
       .channel('public:cb_support_sessions')
@@ -21,7 +29,15 @@ export default function SupportChat() {
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(sub); };
+    const interval = setInterval(() => {
+      fetchSessions();
+      fetchUsers();
+    }, 4000);
+
+    return () => { 
+      supabase.removeChannel(sub); 
+      clearInterval(interval);
+    };
   }, []);
 
   const fetchSessions = async () => {
@@ -33,6 +49,37 @@ export default function SupportChat() {
     if (!error && data) {
       setSessions(data);
     }
+  };
+
+  const fetchUsers = async () => {
+    const { data, error } = await supabase
+      .from('cb_users')
+      .select('id, username, online, member_of_admin_id, referred_by_staff_id');
+    
+    if (!error && data) {
+      setUsers(data);
+    }
+  };
+
+  const getFilteredSessions = () => {
+    return sessions.filter(s => {
+      const user = users.find(u => u.username?.toLowerCase() === s.user_username?.toLowerCase() || u.id === s.user_id);
+      if (!user) {
+        return session?.role === 'Owner';
+      }
+      
+      if (session?.role === 'Admin') {
+        return user.member_of_admin_id === session.accountId;
+      } else if (session?.role === 'Staff') {
+        return user.referred_by_staff_id === session.accountId;
+      }
+      return true;
+    });
+  };
+
+  const getUserStatus = (username) => {
+    const user = users.find(u => u.username?.toLowerCase() === username?.toLowerCase());
+    return user?.online || 'Offline';
   };
 
   useEffect(() => {
@@ -141,34 +188,51 @@ export default function SupportChat() {
       <div className="admin-card" style={{ width: 320, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <h3 className="section-title">Support Sessions</h3>
         <div style={{ flex: 1, overflowY: 'auto', marginTop: 12 }}>
-          {sessions.length === 0 ? (
+          {getFilteredSessions().length === 0 ? (
             <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>No active sessions.</p>
           ) : (
-            sessions.map(s => (
-              <div 
-                key={s.id} 
-                onClick={() => setActiveSession(s)}
-                style={{
-                  padding: 12,
-                  marginBottom: 8,
-                  borderRadius: 8,
-                  backgroundColor: activeSession?.id === s.id ? 'var(--bg-app)' : 'transparent',
-                  border: `1px solid ${activeSession?.id === s.id ? 'var(--border-color-focus)' : 'var(--border-color)'}`,
-                  cursor: 'pointer',
-                  position: 'relative'
-                }}
-              >
-                <div style={{ fontWeight: 600, fontSize: 14 }}>{s.user_username}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-light)' }}>
-                  {new Date(s.last_message_at).toLocaleTimeString()}
-                </div>
-                {s.unread_admin_count > 0 && (
-                  <div style={{ position: 'absolute', right: 12, top: 12, background: 'var(--color-danger)', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 'bold' }}>
-                    {s.unread_admin_count}
+            getFilteredSessions().map(s => {
+              const userStatus = getUserStatus(s.user_username);
+              const isOnline = userStatus === 'Online';
+              return (
+                <div 
+                  key={s.id} 
+                  onClick={() => setActiveSession(s)}
+                  style={{
+                    padding: '12px 16px',
+                    marginBottom: 8,
+                    borderRadius: 12,
+                    backgroundColor: activeSession?.id === s.id ? 'var(--bg-app)' : 'transparent',
+                    border: `1px solid ${activeSession?.id === s.id ? 'var(--border-color-focus)' : 'var(--border-color)'}`,
+                    cursor: 'pointer',
+                    position: 'relative'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-main)' }}>{s.user_username}</div>
+                    <span style={{ 
+                      fontSize: 10, 
+                      fontWeight: 700, 
+                      padding: '2px 8px', 
+                      borderRadius: '12px',
+                      backgroundColor: isOnline ? '#d1fae5' : '#fee2e2',
+                      color: isOnline ? '#065f46' : '#991b1b',
+                      textTransform: 'uppercase'
+                    }}>
+                      {userStatus}
+                    </span>
                   </div>
-                )}
-              </div>
-            ))
+                  <div style={{ fontSize: 11, color: 'var(--text-light)' }}>
+                    {new Date(s.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                  {s.unread_admin_count > 0 && (
+                    <div style={{ position: 'absolute', right: 12, bottom: 12, background: 'var(--color-danger)', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 'bold' }}>
+                      {s.unread_admin_count}
+                    </div>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
       </div>

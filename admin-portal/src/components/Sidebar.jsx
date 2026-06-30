@@ -37,14 +37,35 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     { id: 'user-management', label: 'User Management', icon: Users, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'orders-tasking', label: 'Orders Tasking', icon: Briefcase, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'orders-in-progress', label: 'Orders In Progress', icon: LineChart, roles: ['Owner', 'Admin', 'Staff'] },
-    { id: 'financial-center', label: 'Financial Center', icon: DollarSign, roles: ['Owner', 'Admin'] },
-    { id: 'support-chat', label: 'Support & Chat', icon: MessageSquare, roles: ['Owner', 'Admin'] },
+    { id: 'financial-center', label: 'Financial Center', icon: DollarSign, roles: ['Owner', 'Admin', 'Staff'] },
+    { id: 'support-chat', label: 'Support & Chat', icon: MessageSquare, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'settings', label: 'Settings', icon: Settings, roles: ['Owner', 'Admin'] }
   ];
 
-  // Filter items based on active session role
+  // Filter items based on active session role and permissions
   const activeRole = session?.role || 'Owner';
-  const menuItems = allMenuItems.filter(item => item.roles.includes(activeRole));
+  const menuItems = allMenuItems.filter(item => {
+    if (!item.roles.includes(activeRole)) return false;
+    
+    // If staff, apply dynamic permission checks
+    if (activeRole === 'Staff') {
+      const perms = session?.permissions || {
+        userManagement: true,
+        ordersInProgress: true,
+        orderTasking: false,
+        financialCenter: false,
+        supportChat: false
+      };
+      
+      if (item.id === 'user-management' && !perms.userManagement) return false;
+      if (item.id === 'orders-tasking' && !perms.orderTasking) return false;
+      if (item.id === 'orders-in-progress' && !perms.ordersInProgress) return false;
+      if (item.id === 'financial-center' && !perms.financialCenter) return false;
+      if (item.id === 'support-chat' && !perms.supportChat) return false;
+    }
+    
+    return true;
+  });
 
   return (
     <div className="admin-sidebar">

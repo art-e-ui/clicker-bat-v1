@@ -25,7 +25,9 @@ import {
   Info,
   Layers as LayersIcon,
   BadgeAlert,
-  FileText
+  FileText,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 const TEMPLATE_M_1 = [
@@ -387,6 +389,7 @@ export default function OrdersTasking() {
   const [showModal, setShowModal] = useState(false);
   const [newAssignOrders, setNewAssignOrders] = useState([]);
   const [freezeTarget, setFreezeTarget] = useState('');
+  const [presetDropdownOpen, setPresetDropdownOpen] = useState(false);
 
   // Edit Worksheet Orders states
   const [showEditOrdersModal, setShowEditOrdersModal] = useState(false);
@@ -827,293 +830,368 @@ export default function OrdersTasking() {
       </div>
 
       {/* Assign Task Modal */}
-      {showModal && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 sm:p-6 transition-all">
-          <div className="admin-card !p-0 w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
-            {/* Modal Header */}
-            <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100 dark:border-indigo-800/30">
-                  <ClipboardList className="w-6 h-6" />
+      {showModal && selectedUser && (() => {
+        const PRESETS = [
+          { value: 'custom', name: 'Custom Worksheet (Manual)', details: 'Build custom worksheet step-by-step', badge: 'Manual' },
+          { value: 'M-1', name: 'Preset M-1', details: '40 Items • $30,000 Total • $210.00 Comm.', badge: 'Preset' },
+          { value: 'M-2', name: 'Preset M-2', details: '40 Items • $98,000 Total • $496.00 Comm.', badge: 'Preset' },
+          { value: 'M-3', name: 'Preset M-3', details: '40 Items • $353,000 Total • $4.6k Comm.', badge: 'Preset' },
+          { value: 'M-4', name: 'Preset M-4', details: '40 Items • $508,000 Total • $7.6k Comm.', badge: 'Preset' },
+          { value: 'C-1', name: 'Preset C-1', details: '40 Items • $817.00 Total • $2.69 Comm.', badge: 'Preset' },
+          { value: 'C-2', name: 'Preset C-2', details: '40 Items • $3,900 Total • $49.00 Comm.', badge: 'Preset' },
+          { value: 'C-3', name: 'Preset C-3', details: '40 Items • $104,000 Total • $9.2k Comm.', badge: 'Preset' },
+          { value: 'C-4', name: 'Preset C-4', details: '40 Items • $148,000 Total • $14.6k Comm.', badge: 'Preset' },
+        ];
+
+        const handlePresetSelect = (mode) => {
+          setSelectedTemplate(mode);
+          setPresetDropdownOpen(false);
+          if (mode === 'M-1') {
+            setNewAssignOrders(TEMPLATE_M_1.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else if (mode === 'M-2') {
+            setNewAssignOrders(TEMPLATE_M_2.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else if (mode === 'M-3') {
+            setNewAssignOrders(TEMPLATE_M_3.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else if (mode === 'M-4') {
+            setNewAssignOrders(TEMPLATE_M_4.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else if (mode === 'C-1') {
+            setNewAssignOrders(TEMPLATE_C_1.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else if (mode === 'C-2') {
+            setNewAssignOrders(TEMPLATE_C_2.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else if (mode === 'C-3') {
+            setNewAssignOrders(TEMPLATE_C_3.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else if (mode === 'C-4') {
+            setNewAssignOrders(TEMPLATE_C_4.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else {
+            setNewAssignOrders([
+              { title: '', image: '', price: '100', profit: '10', status: 'Pending' }
+            ]);
+          }
+        };
+
+        const currentPreset = PRESETS.find(p => p.value === selectedTemplate) || PRESETS[0];
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 sm:p-6 transition-all">
+            <div className="bg-white dark:bg-slate-950 w-full max-w-5xl overflow-hidden flex flex-col h-[85vh] max-h-[850px] min-h-[650px] shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800">
+              {/* Modal Header */}
+              <div className="border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between flex-shrink-0" style={{ padding: '24px 32px' }}>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100 dark:border-indigo-800/30">
+                    <ClipboardList className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-xl tracking-tight">Allocate Worksheet</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Creating tasking layout for <span className="font-semibold text-slate-700 dark:text-slate-300">{selectedUser.username}</span></p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white text-xl tracking-tight">Allocate Worksheet</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Creating tasking layout for <span className="font-semibold text-slate-700 dark:text-slate-300">{selectedUser.username}</span></p>
-                </div>
+                <button 
+                  type="button"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors"
+                  onClick={() => { setShowModal(false); setSelectedUser(null); }}
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button 
-                type="button"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors"
-                onClick={() => { setShowModal(false); setSelectedUser(null); }}
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            <form onSubmit={handleConfirmAssignment} className="flex flex-col flex-1 overflow-hidden">
-              <div className="flex-1 overflow-y-auto p-8 space-y-8">
-                
-                {/* Worksheet Template Selector */}
-                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3 block flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-indigo-500" />
-                    Select Allocation Method / Preset
-                  </label>
-                  <select
-                    className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm font-medium focus:ring-2 focus:ring-indigo-600 outline-none transition-colors appearance-none cursor-pointer"
-                    value={selectedTemplate}
-                    onChange={(e) => {
-                      const mode = e.target.value;
-                      setSelectedTemplate(mode);
-                      if (mode === 'M-1') {
-                        setNewAssignOrders(TEMPLATE_M_1.map(item => ({
-                          title: item.title,
-                          image: item.image,
-                          price: item.price.toString(),
-                          profit: item.profit.toString(),
-                          status: 'Pending'
-                        })));
-                      } else if (mode === 'M-2') {
-                        setNewAssignOrders(TEMPLATE_M_2.map(item => ({
-                          title: item.title,
-                          image: item.image,
-                          price: item.price.toString(),
-                          profit: item.profit.toString(),
-                          status: 'Pending'
-                        })));
-                      } else if (mode === 'M-3') {
-                        setNewAssignOrders(TEMPLATE_M_3.map(item => ({
-                          title: item.title,
-                          image: item.image,
-                          price: item.price.toString(),
-                          profit: item.profit.toString(),
-                          status: 'Pending'
-                        })));
-                      } else if (mode === 'M-4') {
-                        setNewAssignOrders(TEMPLATE_M_4.map(item => ({
-                          title: item.title,
-                          image: item.image,
-                          price: item.price.toString(),
-                          profit: item.profit.toString(),
-                          status: 'Pending'
-                        })));
-                      } else if (mode === 'C-1') {
-                        setNewAssignOrders(TEMPLATE_C_1.map(item => ({
-                          title: item.title,
-                          image: item.image,
-                          price: item.price.toString(),
-                          profit: item.profit.toString(),
-                          status: 'Pending'
-                        })));
-                      } else if (mode === 'C-2') {
-                        setNewAssignOrders(TEMPLATE_C_2.map(item => ({
-                          title: item.title,
-                          image: item.image,
-                          price: item.price.toString(),
-                          profit: item.profit.toString(),
-                          status: 'Pending'
-                        })));
-                      } else if (mode === 'C-3') {
-                        setNewAssignOrders(TEMPLATE_C_3.map(item => ({
-                          title: item.title,
-                          image: item.image,
-                          price: item.price.toString(),
-                          profit: item.profit.toString(),
-                          status: 'Pending'
-                        })));
-                      } else if (mode === 'C-4') {
-                        setNewAssignOrders(TEMPLATE_C_4.map(item => ({
-                          title: item.title,
-                          image: item.image,
-                          price: item.price.toString(),
-                          profit: item.profit.toString(),
-                          status: 'Pending'
-                        })));
-                      } else {
-                        setNewAssignOrders([
-                          { title: '', image: '', price: '100', profit: '10', status: 'Pending' }
-                        ]);
-                      }
-                    }}
-                  >
-                    <option value="custom">Custom Worksheet (Manual)</option>
-                    <option value="M-1">Preset M-1 (40 Items / $30k / $210)</option>
-                    <option value="M-2">Preset M-2 (40 Items / $98k / $496)</option>
-                    <option value="M-3">Preset M-3 (40 Items / $353k / $4.6k)</option>
-                    <option value="M-4">Preset M-4 (40 Items / $508k / $7.6k)</option>
-                    <option value="C-1">Preset C-1 (40 Items / $817 / $2.69)</option>
-                    <option value="C-2">Preset C-2 (40 Items / $3.9k / $49)</option>
-                    <option value="C-3">Preset C-3 (40 Items / $104k / $9.2k)</option>
-                    <option value="C-4">Preset C-4 (40 Items / $148k / $14.6k)</option>
-                  </select>
-                </div>
-
-                {selectedTemplate === 'custom' && (
-                  /* Custom controls Row */
-                  <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm">
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">Items Count</label>
-                      <input 
-                        type="number"
-                        value={newAssignOrders.length}
-                        onChange={(e) => handleOrderCountChange(e.target.value)}
-                        required
-                        min="1"
-                        max="40"
-                        className="w-32 h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm font-bold focus:ring-2 focus:ring-indigo-600 outline-none transition-colors"
-                      />
-                      <span className="text-[10px] text-slate-400 block mt-2 font-medium">* Maximum 40 items allowed per worksheet.</span>
-                    </div>
-                    <button 
-                      type="button" 
-                      onClick={handleAddOrder}
-                      className="px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add New Row
-                    </button>
-                  </div>
-                )}
-
-                {/* Sequence Preview / Configuration Cards Container */}
-                {selectedTemplate !== 'custom' ? (
-                  <div className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
-                    <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-950/40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      <span className="flex items-center gap-2"><ListOrdered className="w-4 h-4 text-indigo-500" /> Worksheet Sequence Preview</span>
-                      <span className="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full">{newAssignOrders.length} Items</span>
-                    </div>
-                    <div className="max-h-96 overflow-y-auto">
-                      <table className="w-full text-sm text-left">
-                        <thead className="sticky top-0 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md z-10 border-b border-slate-100 dark:border-slate-800">
-                          <tr className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                            <th className="px-6 py-4 w-16 text-center">Sr.</th>
-                            <th className="px-6 py-4">Product Title</th>
-                            <th className="px-6 py-4 text-right">Price</th>
-                            <th className="px-6 py-4 text-right">Commission</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                          {newAssignOrders.map((o, oIdx) => (
-                            <tr key={oIdx} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/30 transition-colors">
-                              <td className="px-4 py-3 text-center text-xs text-slate-500 font-medium">{oIdx + 1}</td>
-                              <td className="px-4 py-3">
-                                <div className="flex items-center gap-3">
-                                  {o.image && (
-                                    <img 
-                                      src={o.image} 
-                                      alt="" 
-                                      referrerPolicy="no-referrer"
-                                      className="w-8 h-8 object-contain rounded border border-slate-200 dark:border-slate-700 bg-white"
-                                    />
-                                  )}
-                                  <span className="font-medium text-slate-700 dark:text-slate-300 max-w-[280px] truncate" title={o.title}>
-                                    {o.title}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-400">$ {parseFloat(o.price || 0).toFixed(2)}</td>
-                              <td className="px-4 py-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">$ {parseFloat(o.profit || 0).toFixed(2)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-5">
-                    {newAssignOrders.map((order, idx) => (
-                      <div 
-                        key={idx} 
-                        className={`bg-white dark:bg-slate-900 border ${freezeTarget === String(idx + 1) ? 'border-rose-400 dark:border-rose-500/50 shadow-rose-500/10' : 'border-slate-200 dark:border-slate-800'} rounded-2xl p-6 shadow-sm relative group transition-all`}
+              <form onSubmit={handleConfirmAssignment} className="flex flex-col flex-1 overflow-hidden min-h-0">
+                <div className="flex-1 overflow-y-auto flex flex-col gap-8 min-h-0" style={{ padding: '32px' }}>
+                  
+                  {/* Worksheet Template Selector */}
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                      Worksheet Template Preset
+                    </label>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setPresetDropdownOpen(!presetDropdownOpen)}
+                        className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-850 border border-slate-200 dark:border-slate-800 rounded-xl text-left transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
                       >
-                        {/* Order Header / Actions */}
-                        <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800/60 mb-5">
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-mono text-[10px]">
-                              {idx + 1}
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100/50 dark:border-indigo-900/20">
+                            <FileText className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
+                              {currentPreset.name}
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300">
+                                {currentPreset.badge}
+                              </span>
                             </div>
-                            Worksheet Order Row
-                            {freezeTarget === String(idx + 1) && (
-                              <span className="ml-2 px-2 py-0.5 rounded text-[10px] bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400">Target Freeze</span>
-                            )}
-                          </span>
-                          {newAssignOrders.length > 1 && (
-                            <button 
-                              type="button" 
-                              onClick={() => handleRemoveOrder(idx)}
-                              className="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-colors p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              Remove
-                            </button>
-                          )}
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">{currentPreset.details}</p>
+                          </div>
                         </div>
+                        <div className="text-slate-400 pr-1">
+                          {presetDropdownOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                        </div>
+                      </button>
 
-                        {/* Quick fill catalog select */}
-                        <div className="mb-5">
-                          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Auto-Fill Catalog</label>
-                          <select
-                            onChange={(e) => {
-                              if (e.target.value !== "") {
-                                const prod = products[parseInt(e.target.value)];
-                                const updated = [...newAssignOrders];
-                                updated[idx] = {
-                                  ...updated[idx],
-                                  title: prod.title,
-                                  image: prod.image,
-                                  price: String(prod.price),
-                                  profit: String(prod.profit || (prod.price * 0.1).toFixed(2))
-                                };
-                                setNewAssignOrders(updated);
-                              }
-                            }}
-                            defaultValue=""
-                            className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm font-medium focus:ring-2 focus:ring-indigo-600 outline-none transition-colors appearance-none cursor-pointer"
-                          >
-                            <option value="">-- Choose --</option>
-                            {products.map((p, pIdx) => (
-                              <option key={pIdx} value={pIdx}>
-                                {p.title.length > 60 ? p.title.substring(0, 60) + '...' : p.title} (${p.price})
-                              </option>
+                      {presetDropdownOpen && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setPresetDropdownOpen(false)} />
+                          <div className="absolute left-0 right-0 mt-2 z-50 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-900">
+                            {PRESETS.map((p) => {
+                              const isSelected = p.value === selectedTemplate;
+                              return (
+                                <button
+                                  key={p.value}
+                                  type="button"
+                                  onClick={() => handlePresetSelect(p.value)}
+                                  className={`w-full flex items-center justify-between px-5 py-3 text-left transition-colors ${
+                                    isSelected 
+                                      ? 'bg-indigo-50/50 dark:bg-indigo-950/25' 
+                                      : 'hover:bg-slate-50 dark:hover:bg-slate-900/60'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold font-mono ${
+                                      isSelected 
+                                        ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' 
+                                        : 'bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400'
+                                    }`}>
+                                      {p.value === 'custom' ? 'M' : p.value}
+                                    </div>
+                                    <div>
+                                      <div className="font-bold text-slate-800 dark:text-slate-200 text-sm">{p.name}</div>
+                                      <div className="text-xs text-slate-400 mt-1.5">{p.details}</div>
+                                    </div>
+                                  </div>
+                                  {isSelected && (
+                                    <div className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center">
+                                      <Check className="w-3 h-3 stroke-[3]" />
+                                    </div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {selectedTemplate === 'custom' && (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                      <div>
+                        <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">Worksheet Row Builder</h4>
+                        <p className="text-xs text-slate-400 mt-1.5">Customize up to 40 items in the user's tasking queue</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-slate-500 font-medium">Rows:</span>
+                          <input 
+                            type="number"
+                            value={newAssignOrders.length}
+                            onChange={(e) => handleOrderCountChange(e.target.value)}
+                            required
+                            min="1"
+                            max="40"
+                            className="w-16 h-10 px-2 text-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-xs font-bold focus:ring-1 focus:ring-indigo-600 outline-none"
+                          />
+                        </div>
+                        <button 
+                          type="button" 
+                          onClick={handleAddOrder}
+                          className="h-10 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Add Row
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Sequence Preview / Configuration Cards Container */}
+                  {selectedTemplate !== 'custom' ? (
+                    <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+                      <div className="px-5 py-3.5 bg-slate-50/50 dark:bg-slate-950/40 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <span className="flex items-center gap-2"><ListOrdered className="w-4 h-4 text-indigo-500" /> Worksheet Sequence Preview</span>
+                        <span className="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full">{newAssignOrders.length} Items</span>
+                      </div>
+                      <div className="max-h-72 overflow-y-auto">
+                        <table className="w-full text-sm text-left">
+                          <thead className="sticky top-0 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md z-10 border-b border-slate-100 dark:border-slate-800">
+                            <tr className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                              <th className="px-5 py-3 w-16 text-center">Sr.</th>
+                              <th className="px-5 py-3">Product Title</th>
+                              <th className="px-5 py-3 text-right">Price</th>
+                              <th className="px-5 py-3 text-right">Commission</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-850">
+                            {newAssignOrders.map((o, oIdx) => (
+                              <tr key={oIdx} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/30 transition-colors">
+                                <td className="px-5 py-2.5 text-center text-xs text-slate-500 font-medium">{oIdx + 1}</td>
+                                <td className="px-5 py-2.5">
+                                  <div className="flex items-center gap-3">
+                                    {o.image && (
+                                      <img 
+                                        src={o.image} 
+                                        alt="" 
+                                        referrerPolicy="no-referrer"
+                                        className="w-8 h-8 object-contain rounded border border-slate-200 dark:border-slate-700 bg-white"
+                                      />
+                                    )}
+                                    <span className="font-medium text-slate-700 dark:text-slate-300 max-w-[280px] truncate text-xs" title={o.title}>
+                                      {o.title}
+                                    </span>
+                                  </div>
+                                </td>
+                                <td className="px-5 py-2.5 text-right font-mono text-xs text-slate-600 dark:text-slate-400">$ {parseFloat(o.price || 0).toFixed(2)}</td>
+                                <td className="px-5 py-2.5 text-right font-mono font-bold text-xs text-emerald-600 dark:text-emerald-400">$ {parseFloat(o.profit || 0).toFixed(2)}</td>
+                              </tr>
                             ))}
-                          </select>
-                        </div>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-6">
+                      {newAssignOrders.map((order, idx) => (
+                        <div 
+                          key={idx} 
+                          className={`bg-white dark:bg-slate-950 border ${freezeTarget === String(idx + 1) ? 'border-rose-400 dark:border-rose-500/50 shadow-rose-500/10' : 'border-slate-200 dark:border-slate-800'} rounded-2xl shadow-md relative group transition-all flex flex-col gap-6`}
+                          style={{ padding: '24px' }}
+                        >
+                          {/* Order Header / Actions */}
+                          <div className="flex justify-between items-center pb-3.5 border-b border-slate-100 dark:border-slate-800/60">
+                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-mono text-[10px] font-bold">
+                                {idx + 1}
+                              </div>
+                              Worksheet Order Row
+                              {freezeTarget === String(idx + 1) && (
+                                <span className="ml-2 px-2 py-0.5 rounded text-[10px] bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400 font-bold">Target Freeze</span>
+                              )}
+                            </span>
+                            {newAssignOrders.length > 1 && (
+                              <button 
+                                type="button" 
+                                onClick={() => handleRemoveOrder(idx)}
+                                className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded transition-colors"
+                                title="Remove row"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
 
-                        {/* Text fields */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                          <div className="flex gap-4 items-end">
-                            {order.image && (
-                              <div className="w-14 h-14 rounded-xl border border-slate-200 dark:border-slate-700 bg-white shadow-sm p-1.5 flex-shrink-0 flex items-center justify-center">
-                                <img 
-                                  src={order.image} 
-                                  alt="Product" 
-                                  referrerPolicy="no-referrer"
-                                  className="max-w-full max-h-full object-contain"
+                          <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
+                            {/* Auto-Fill Catalog */}
+                            <div className="md:col-span-4 flex flex-col gap-2">
+                              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Auto-Fill Catalog</label>
+                              <select
+                                onChange={(e) => {
+                                  if (e.target.value !== "") {
+                                    const prod = products[parseInt(e.target.value)];
+                                    const updated = [...newAssignOrders];
+                                    updated[idx] = {
+                                      ...updated[idx],
+                                      title: prod.title,
+                                      image: prod.image,
+                                      price: String(prod.price),
+                                      profit: String(prod.profit || (prod.price * 0.1).toFixed(2))
+                                    };
+                                    setNewAssignOrders(updated);
+                                  }
+                                }}
+                                defaultValue=""
+                                className="w-full h-11 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-850 dark:text-slate-100 text-xs focus:ring-1 focus:ring-indigo-500 outline-none transition-colors cursor-pointer"
+                              >
+                                <option value="">-- Choose --</option>
+                                {products.map((p, pIdx) => (
+                                  <option key={pIdx} value={pIdx}>
+                                    {p.title.length > 40 ? p.title.substring(0, 40) + '...' : p.title} (${p.price})
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            {/* Product Title */}
+                            <div className="md:col-span-8 flex gap-3 items-end">
+                              {order.image && (
+                                <div className="w-11 h-11 rounded-xl border border-slate-200 dark:border-slate-800 bg-white shadow-sm p-1 flex-shrink-0 flex items-center justify-center">
+                                  <img 
+                                    src={order.image} 
+                                    alt="" 
+                                    referrerPolicy="no-referrer"
+                                    className="max-w-full max-h-full object-contain"
+                                  />
+                                </div>
+                              )}
+                              <div className="flex-1 flex flex-col gap-2">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Product Title</label>
+                                <input 
+                                  type="text"
+                                  value={order.title}
+                                  onChange={(e) => {
+                                    const updated = [...newAssignOrders];
+                                    updated[idx].title = e.target.value;
+                                    setNewAssignOrders(updated);
+                                  }}
+                                  required
+                                  placeholder="e.g. Premium Item Title"
+                                  className="w-full h-11 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-xs focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
                                 />
                               </div>
-                            )}
-                            <div className="flex-1">
-                              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Product Title</label>
-                              <input 
-                                type="text"
-                                value={order.title}
-                                onChange={(e) => {
-                                  const updated = [...newAssignOrders];
-                                  updated[idx].title = e.target.value;
-                                  setNewAssignOrders(updated);
-                                }}
-                                required
-                                placeholder="e.g. Premium Item"
-                                className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition-colors"
-                              />
                             </div>
                           </div>
-                          
-                          <div className="grid grid-cols-2 gap-5 items-end">
-                            <div>
-                              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Price ($)</label>
+
+                          {/* Price & Commission row */}
+                          <div className="pt-5 border-t border-slate-100 dark:border-slate-800/40 grid grid-cols-2 gap-5">
+                            <div className="flex flex-col gap-2">
+                              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Price ($)</label>
                               <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-slate-400">$</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-slate-400">$</span>
                                 <input 
                                   type="number"
                                   step="0.01"
@@ -1125,14 +1203,14 @@ export default function OrdersTasking() {
                                   }}
                                   required
                                   placeholder="0.00"
-                                  className="w-full h-12 pl-8 pr-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 text-sm font-mono focus:ring-2 focus:ring-indigo-600 outline-none transition-colors"
+                                  className="w-full h-11 pl-7 pr-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-xs font-mono focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
                                 />
                               </div>
                             </div>
-                            <div>
-                              <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider block mb-2">Commission ($)</label>
+                            <div className="flex flex-col gap-2">
+                              <label className="text-[10px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider block">Commission ($)</label>
                               <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-emerald-500">$</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-emerald-500">$</span>
                                 <input 
                                   type="number"
                                   step="0.01"
@@ -1144,62 +1222,57 @@ export default function OrdersTasking() {
                                   }}
                                   required
                                   placeholder="0.00"
-                                  className="w-full h-12 pl-8 pr-4 rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 text-sm font-mono focus:ring-2 focus:ring-emerald-500 outline-none transition-colors"
+                                  className="w-full h-11 pl-7 pr-3 rounded-xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/30 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 text-xs font-mono focus:ring-1 focus:ring-emerald-500 outline-none transition-colors"
                                 />
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
 
-                {/* Computation Summary block */}
-                <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-slate-50 flex items-center gap-2 mb-4">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    Worksheet Summary
-                  </h4>
-                  <div className="grid grid-cols-2 gap-6 text-sm">
-                    <div className="flex justify-between border-r border-slate-200 dark:border-slate-800 pr-6">
-                      <span className="text-slate-500">Total Items:</span>
-                      <b className="text-slate-900 dark:text-slate-50 font-mono">{newAssignOrders.length}</b>
+                  {/* Computation Summary block */}
+                  <div className="bg-slate-50 dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-800/80">
+                    <div className="grid grid-cols-3 gap-5 text-center">
+                      <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/80 shadow-sm">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Total Items</span>
+                        <b className="text-slate-900 dark:text-slate-100 text-base font-mono">{newAssignOrders.length}</b>
+                      </div>
+                      <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/80 shadow-sm">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Total Price</span>
+                        <b className="text-slate-900 dark:text-slate-100 text-sm font-mono truncate block">${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.price || 0), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b>
+                      </div>
+                      <div className="bg-emerald-50/50 dark:bg-emerald-950/20 p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 shadow-sm">
+                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-2">Total Commission</span>
+                        <b className="text-emerald-700 dark:text-emerald-400 text-sm font-mono truncate block">${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Total Price:</span>
-                      <b className="text-slate-900 dark:text-slate-50 font-mono">${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.price || 0), 0).toFixed(2)}</b>
-                    </div>
-                  </div>
-                  <div className="h-px bg-slate-200 dark:bg-slate-800 my-4" />
-                  <div className="flex justify-between text-sm font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 p-3 rounded-xl">
-                    <span>Total Commission:</span>
-                    <span className="font-mono">${newAssignOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0).toFixed(2)}</span>
                   </div>
                 </div>
-              </div>
 
-              {/* Footer */}
-              <div className="flex-shrink-0 px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-end gap-3">
-                <button 
-                  type="button" 
-                  className="px-5 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-xl transition-colors shadow-sm"
-                  onClick={() => { setShowModal(false); setSelectedUser(null); }}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="px-6 h-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center gap-2 active:scale-[0.98]"
-                >
-                  <Check className="w-4 h-4" />
-                  Confirm and Allocate
-                </button>
-              </div>
-            </form>
+                {/* Footer */}
+                <div className="flex-shrink-0 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-end gap-3" style={{ padding: '20px 32px' }}>
+                  <button 
+                    type="button" 
+                    className="px-5 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-xl transition-colors shadow-sm"
+                    onClick={() => { setShowModal(false); setSelectedUser(null); }}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="px-6 h-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center gap-2 active:scale-[0.98]"
+                  >
+                    <Check className="w-4 h-4" />
+                    Confirm and Allocate
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
 
 

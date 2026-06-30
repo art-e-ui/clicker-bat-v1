@@ -384,16 +384,16 @@ body {
 .admin-table th {
   background-color: #f8fafc;
   color: var(--text-muted);
-  font-weight: 600;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--border-color);
+  font-weight: 700;
+  padding: 24px 20px;
+  border-bottom: 2px solid var(--border-color);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .admin-table td {
-  padding: 16px 20px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-main);
   font-size: 13px;

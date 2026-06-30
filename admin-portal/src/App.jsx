@@ -28,10 +28,39 @@ export default function App() {
   });
 
   // Load session to guard tabs
-  const loadSession = () => {
+  const loadSession = async () => {
     const saved = localStorage.getItem('cb_admin_session');
     if (saved) {
-      setSession(JSON.parse(saved));
+      const parsed = JSON.parse(saved);
+      if (parsed.role === 'Staff') {
+        const { data, error } = await supabase
+          .from('cb_staff')
+          .select('profile_photo')
+          .eq('staff_id', parsed.accountId)
+          .single();
+        if (!error && data) {
+          let perms = {
+            userManagement: true,
+            ordersInProgress: true,
+            orderTasking: false,
+            financialCenter: false,
+            supportChat: false
+          };
+          if (data.profile_photo) {
+            try {
+              const parsedPerms = JSON.parse(data.profile_photo);
+              if (parsedPerms && typeof parsedPerms === 'object') {
+                perms = { ...perms, ...parsedPerms };
+              }
+            } catch (e) {
+              // Ignore
+            }
+          }
+          parsed.permissions = perms;
+          localStorage.setItem('cb_admin_session', JSON.stringify(parsed));
+        }
+      }
+      setSession(parsed);
     } else {
       setSession(null);
     }
@@ -104,10 +133,32 @@ export default function App() {
   // Set default tab safely if switching roles redirects to an unauthorized tab
   useEffect(() => {
     if (session) {
-      if (session.role === 'Staff' && ['ownership', 'sla-admins', 'orders-in-progress', 'financial-center', 'settings'].includes(activeTab)) {
-        setActiveTab('dashboard');
-      } else if (session.role === 'Admin' && ['ownership'].includes(activeTab)) {
-        setActiveTab('dashboard');
+      if (session.role === 'Staff') {
+        const perms = session.permissions || {
+          userManagement: true,
+          ordersInProgress: true,
+          orderTasking: false,
+          financialCenter: false,
+          supportChat: false
+        };
+        
+        if (['ownership', 'sla-admins', 'settings'].includes(activeTab)) {
+          setActiveTab('dashboard');
+        } else if (activeTab === 'user-management' && !perms.userManagement) {
+          setActiveTab('dashboard');
+        } else if (activeTab === 'orders-tasking' && !perms.orderTasking) {
+          setActiveTab('dashboard');
+        } else if (activeTab === 'orders-in-progress' && !perms.ordersInProgress) {
+          setActiveTab('dashboard');
+        } else if (activeTab === 'financial-center' && !perms.financialCenter) {
+          setActiveTab('dashboard');
+        } else if (activeTab === 'support-chat' && !perms.supportChat) {
+          setActiveTab('dashboard');
+        }
+      } else if (session.role === 'Admin') {
+        if (['ownership'].includes(activeTab)) {
+          setActiveTab('dashboard');
+        }
       }
     }
   }, [session, activeTab]);

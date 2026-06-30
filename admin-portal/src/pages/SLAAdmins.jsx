@@ -236,6 +236,51 @@ export default function SLAAdmins() {
     }
   };
 
+  const getStaffPermissions = (profilePhoto) => {
+    let perms = {
+      userManagement: true,
+      ordersInProgress: true,
+      orderTasking: false,
+      financialCenter: false,
+      supportChat: false
+    };
+    if (profilePhoto) {
+      try {
+        const parsed = JSON.parse(profilePhoto);
+        if (parsed && typeof parsed === 'object') {
+          perms = { ...perms, ...parsed };
+        }
+      } catch (e) {
+        // Ignore
+      }
+    }
+    return perms;
+  };
+
+  const handleTogglePermission = async (staffMember, field) => {
+    const currentPerms = getStaffPermissions(staffMember.profile_photo);
+    const updatedPerms = {
+      ...currentPerms,
+      [field]: !currentPerms[field]
+    };
+    try {
+      const { error } = await supabase
+        .from('cb_staff')
+        .update({ profile_photo: JSON.stringify(updatedPerms) })
+        .eq('id', staffMember.id);
+
+      if (error) {
+        toast.error("Failed to update permission: " + error.message);
+        return;
+      }
+
+      toast.success(`Permission updated for ${staffMember.name}`);
+      fetchAdminsAndStaff();
+    } catch (err) {
+      toast.error("Error updating permission: " + err.message);
+    }
+  };
+
   return (
     <div className="admin-page-container scale-up">
       <div className="flex-row-title-bar">
@@ -298,6 +343,151 @@ export default function SLAAdmins() {
             </div>
           );
         })}
+      </div>
+
+      {/* Staff Permissions Management */}
+      <div className="mt-12 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Staff Account Permissions</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Configure granular access permissions for staff nodes under your management</p>
+        </div>
+        
+        {staff.filter(s => {
+          if (!session) return false;
+          if (session.role === 'Owner') return true;
+          if (session.role === 'Admin') return s.createdByAdminId === session.accountId;
+          return false;
+        }).length === 0 ? (
+          <div className="p-8 text-center text-slate-500">
+            No staff members created yet under your management.
+          </div>
+        ) : (
+          <div className="table-responsive-wrapper border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+            <table className="admin-table w-full">
+              <thead>
+                <tr>
+                  <th className="px-4 py-4 text-left font-bold text-xs uppercase text-slate-500 tracking-wider">Staff ID</th>
+                  <th className="px-4 py-4 text-left font-bold text-xs uppercase text-slate-500 tracking-wider">Name / Email</th>
+                  <th className="px-4 py-4 text-left font-bold text-xs uppercase text-slate-500 tracking-wider">Department</th>
+                  <th className="px-4 py-4 text-center font-bold text-xs uppercase text-slate-500 tracking-wider">User Management</th>
+                  <th className="px-4 py-4 text-center font-bold text-xs uppercase text-slate-500 tracking-wider">Order Tasking</th>
+                  <th className="px-4 py-4 text-center font-bold text-xs uppercase text-slate-500 tracking-wider">Orders In Progress</th>
+                  <th className="px-4 py-4 text-center font-bold text-xs uppercase text-slate-500 tracking-wider">Financial Center</th>
+                  <th className="px-4 py-4 text-center font-bold text-xs uppercase text-slate-500 tracking-wider">Support & Chat</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                {staff.filter(s => {
+                  if (!session) return false;
+                  if (session.role === 'Owner') return true;
+                  if (session.role === 'Admin') return s.createdByAdminId === session.accountId;
+                  return false;
+                }).map(s => {
+                  const perms = getStaffPermissions(s.profile_photo);
+                  return (
+                    <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors">
+                      <td className="px-4 py-4 font-mono font-bold text-sm text-indigo-600 dark:text-indigo-400">{s.staffId}</td>
+                      <td className="px-4 py-4">
+                        <div className="font-semibold text-sm text-slate-900 dark:text-slate-100">{s.name}</div>
+                        <div className="text-xs text-slate-500">{s.email}</div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                          {s.department}
+                        </span>
+                      </td>
+                      
+                      {/* User Management */}
+                      <td className="px-4 py-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePermission(s, 'userManagement')}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            perms.userManagement ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                              perms.userManagement ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                      </td>
+                      
+                      {/* Order Tasking */}
+                      <td className="px-4 py-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePermission(s, 'orderTasking')}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            perms.orderTasking ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                              perms.orderTasking ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                      </td>
+                      
+                      {/* Orders In Progress */}
+                      <td className="px-4 py-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePermission(s, 'ordersInProgress')}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            perms.ordersInProgress ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                              perms.ordersInProgress ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                      </td>
+                      
+                      {/* Financial Center */}
+                      <td className="px-4 py-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePermission(s, 'financialCenter')}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            perms.financialCenter ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                              perms.financialCenter ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                      </td>
+                      
+                      {/* Support & Chat */}
+                      <td className="px-4 py-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePermission(s, 'supportChat')}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            perms.supportChat ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
+                          }`}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                              perms.supportChat ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Create Staff Modal */}
