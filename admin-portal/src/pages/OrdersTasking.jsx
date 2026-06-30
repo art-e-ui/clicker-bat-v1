@@ -767,17 +767,17 @@ export default function OrdersTasking() {
         </div>
       </div>
 
-      <div className="admin-card !p-0 overflow-hidden flex flex-col">
+      <div className="admin-card !p-0 overflow-hidden flex flex-col mt-6">
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap text-left">
             <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-              <tr className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <th className="px-6 py-4 w-40">User ID</th>
-                <th className="px-6 py-4 w-56">Username</th>
-                <th className="px-6 py-4 w-48">Staff Node</th>
-                <th className="px-6 py-4 w-40">Active Balance</th>
-                <th className="px-6 py-4 w-48">Active Task Progress</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+              <tr style={{ height: '81px' }} className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-2 align-middle">User ID</th>
+                <th className="px-6 py-2 align-middle">Username</th>
+                <th className="px-6 py-2 align-middle">Staff Node</th>
+                <th className="px-6 py-2 align-middle">Active Balance</th>
+                <th className="px-6 py-2 align-middle">Active Task Progress</th>
+                <th className="px-6 py-2 text-right align-middle">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -789,11 +789,11 @@ export default function OrdersTasking() {
                 </tr>
               ) : (
                 filteredUsers.map(u => (
-                  <tr key={u.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors group">
-                    <td className="px-6 py-4">
+                  <tr key={u.id} style={{ height: '54px' }} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors group">
+                    <td className="px-6 py-1 align-middle">
                       <span className="font-mono text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">{u.id.substring(0,8)}...</span>
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-slate-50 text-sm">
+                    <td className="px-6 py-1 font-bold text-slate-900 dark:text-slate-50 text-sm align-middle">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-700 dark:text-indigo-400 text-xs font-bold border border-indigo-100 dark:border-indigo-800/30">
                           {u.username.substring(0,2).toUpperCase()}
@@ -801,18 +801,18 @@ export default function OrdersTasking() {
                         {u.username}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-1 align-middle">
                       <span className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 px-2.5 py-1 rounded-lg text-xs font-semibold">{u.referred_by_staff_id}</span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-1 align-middle">
                       <span className="font-mono text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/10 px-2.5 py-1 rounded-md border border-emerald-100 dark:border-emerald-800/30 inline-block">
                         ${parseFloat(u.balance).toFixed(2)}
                       </span>
                     </td>
-                    <td className="px-6 py-4">{getActiveTaskDisplay(u.username)}</td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-1 align-middle">{getActiveTaskDisplay(u.username)}</td>
+                    <td className="px-6 py-1 text-right align-middle">
                       <button 
-                        className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-lg transition-all shadow-sm flex items-center justify-end gap-1.5 ml-auto"
+                        className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl transition-all shadow-sm flex items-center justify-end gap-2 ml-auto"
                         onClick={() => handleOpenAssignModal(u)}
                       >
                         <Plus className="w-4 h-4" /> Assign Task
@@ -829,7 +829,7 @@ export default function OrdersTasking() {
       {/* Assign Task Modal */}
       {showModal && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 sm:p-6 transition-all">
-          <div className="admin-card !p-0 w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
+          <div className="admin-card !p-0 w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
             {/* Modal Header */}
             <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -935,7 +935,6 @@ export default function OrdersTasking() {
                         ]);
                       }
                     }}
-                    className="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition-all shadow-sm"
                   >
                     <option value="custom">Custom Worksheet (Manual)</option>
                     <option value="M-1">Preset M-1 (40 Items / $30k / $210)</option>

@@ -239,7 +239,7 @@ export default function OrdersInProgress() {
       </div>
 
       {/* Task Tracker Table */}
-      <div className="admin-card !p-0 overflow-hidden flex flex-col">
+      <div className="admin-card !p-0 overflow-hidden flex flex-col mt-6">
         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 bg-slate-50/50 dark:bg-slate-950/50">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50 shadow-sm">
             <ClipboardList className="w-5 h-5" />
@@ -250,16 +250,16 @@ export default function OrdersInProgress() {
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap text-left">
             <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-              <tr className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <th className="px-6 py-4">Task ID</th>
-                <th className="px-6 py-4">Client User</th>
-                <th className="px-6 py-4">Total Sum</th>
-                <th className="px-6 py-4">Orders Count</th>
-                <th className="px-6 py-4">Profit Margin</th>
-                <th className="px-6 py-4">Assigned By</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Assigned Date</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+              <tr style={{ height: '81px' }} className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-2 align-middle">Task ID</th>
+                <th className="px-6 py-2 align-middle">Client User</th>
+                <th className="px-6 py-2 align-middle">Total Sum</th>
+                <th className="px-6 py-2 align-middle">Orders Count</th>
+                <th className="px-6 py-2 align-middle">Profit Margin</th>
+                <th className="px-6 py-2 align-middle">Assigned By</th>
+                <th className="px-6 py-2 align-middle">Status</th>
+                <th className="px-6 py-2 align-middle">Assigned Date</th>
+                <th className="px-6 py-2 text-right align-middle">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -276,11 +276,11 @@ export default function OrdersInProgress() {
                   const isInProgress = t.status === 'In Progress';
                   
                   return (
-                    <tr key={t.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors group">
-                      <td className="px-6 py-4">
+                    <tr key={t.id} style={{ height: '54px' }} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors group">
+                      <td className="px-6 py-1 align-middle">
                         <span className="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-3 py-1.5 rounded-lg border border-indigo-100 dark:border-indigo-800/30">{t.id.substring(0,8)}...</span>
                       </td>
-                      <td className="px-6 py-4 font-bold text-slate-900 dark:text-slate-50 text-sm">
+                      <td className="px-6 py-1 font-bold text-slate-900 dark:text-slate-50 text-sm align-middle">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-700 dark:text-indigo-400 text-xs font-bold border border-indigo-200 dark:border-indigo-800/50">
                             {t.username.substring(0,2).toUpperCase()}
@@ -288,23 +288,23 @@ export default function OrdersInProgress() {
                           {t.username}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-1 align-middle">
                         <span className="font-mono text-xs font-semibold text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/20 px-2.5 py-1 rounded-md border border-sky-100 dark:border-sky-800/30 inline-block">
                           ${t.totalAmount.toFixed(2)}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-1 align-middle">
                         <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
                           {t.orderCount} items
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-1 align-middle">
                         <span className="font-mono text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2.5 py-1 rounded-md border border-emerald-100 dark:border-emerald-800/30 inline-block">
                           {t.profitPercent}%
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm font-medium">{t.assignedBy}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-1 text-slate-600 dark:text-slate-400 text-sm font-medium align-middle">{t.assignedBy}</td>
+                      <td className="px-6 py-1 align-middle">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${
                           isCompleted ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30' : 
                           isInProgress ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30' : 
@@ -314,23 +314,23 @@ export default function OrdersInProgress() {
                           {t.status} ({completedCount}/{t.orderCount})
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs font-medium whitespace-nowrap">{t.createdAt}</td>
-                      <td className="px-6 py-4 text-right whitespace-nowrap space-x-2">
+                      <td className="px-6 py-1 text-slate-500 dark:text-slate-400 text-xs font-medium whitespace-nowrap align-middle">{t.createdAt}</td>
+                      <td className="px-6 py-1 text-right whitespace-nowrap space-x-2 align-middle">
                         {t.status !== 'Completed' ? (
                           <div className="flex items-center justify-end gap-2">
                             <button 
                               onClick={() => handleOpenEditOrdersModal(t)}
-                              className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5"
+                              className="px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                             >
                               <Edit3 className="w-4 h-4" />
-                              Edit Items
+                              Edit
                             </button>
                             <button 
                               onClick={() => handleCancelTask(t.id)}
-                              className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 font-semibold text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5"
+                              className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 font-semibold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                             >
                               <Trash2 className="w-4 h-4" />
-                              Cancel Task
+                              Cancel
                             </button>
                           </div>
                         ) : (

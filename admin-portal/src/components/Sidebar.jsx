@@ -50,12 +50,20 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     <div className="admin-sidebar">
       {/* Brand Logo */}
       <div className="sidebar-brand">
-        <div className="walmart-logo">
-          <div className="text-wrap">
-            <span className="wal">Wal</span>
-            <span className="mart">mart</span>
-          </div>
-          <span className="spark">❋</span>
+        <div className="logo-badge-walmart">
+          <span className="logo-text-walmart">Walmart</span>
+          <span className="logo-spark-walmart">
+            <svg viewBox="0 0 100 100" width="14" height="14">
+              <g transform="translate(50,50)" stroke="#FFC220" strokeWidth="15" strokeLinecap="round">
+                <line x1="0" y1="-10" x2="0" y2="-38" />
+                <line x1="0" y1="-10" x2="0" y2="-38" transform="rotate(60)" />
+                <line x1="0" y1="-10" x2="0" y2="-38" transform="rotate(120)" />
+                <line x1="0" y1="-10" x2="0" y2="-38" transform="rotate(180)" />
+                <line x1="0" y1="-10" x2="0" y2="-38" transform="rotate(240)" />
+                <line x1="0" y1="-10" x2="0" y2="-38" transform="rotate(300)" />
+              </g>
+            </svg>
+          </span>
         </div>
       </div>
       <div className="sidebar-menu">
