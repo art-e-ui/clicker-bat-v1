@@ -133,12 +133,12 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
           .from('cb_assigned_tasks')
           .select('*')
           .ilike('username', activeUser)
-          .in('status', ['Pending', 'In Progress']);
+          .order('created_at', { ascending: false });
 
         if (!taskError && tasks && tasks.length > 0) {
           const activeTask = tasks[0];
           setActiveTaskState(activeTask);
-          setTotalTasks(activeTask.order_count);
+          setTotalTasks(activeTask.order_count || 40);
           const completed = activeTask.orders.filter(o => o.status === 'Success').length;
           setOrderCompleteCount(completed);
           
@@ -150,13 +150,9 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
         } else {
           setActiveTaskState(null);
           setTotalTasks(0);
-          const completed = orders.filter(o => o.status === 'Success');
-          setOrderCompleteCount(completed.length);
-          const pending = orders.filter(o => o.status === 'Pending').length;
-          setUndoneCount(pending);
-
-          const comm = completed.reduce((acc, curr) => acc + parseFloat(curr.profit), 0);
-          setTotalCommission(comm.toFixed(2));
+          setOrderCompleteCount(0);
+          setUndoneCount(0);
+          setTotalCommission('0.00');
         }
       } catch (err) {
         console.error("Error syncing stats with database:", err);
