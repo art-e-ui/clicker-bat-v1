@@ -38,8 +38,8 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
   const handleSubmit = async (e) => {
     e.preventDefault();
     const withdrawVal = parseFloat(amount);
-    if (!withdrawVal || withdrawVal < 50) {
-      toast("Minimum payout request amount is $50.00.");
+    if (!withdrawVal || withdrawVal <= 0) {
+      toast("Please enter a valid payout amount.");
       return;
     }
     if (withdrawVal > balance) {
@@ -174,7 +174,7 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
               <input
                 type="number"
                 className="withdraw-amount-input"
-                placeholder="Min $50.00"
+                placeholder="Enter amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 required
