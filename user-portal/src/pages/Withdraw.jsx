@@ -8,6 +8,7 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
   const [amount, setAmount] = useState('');
   const [address, setAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('USDT (TRC20)');
+  const [password, setPassword] = useState('');
   const [savedUsdtAddress, setSavedUsdtAddress] = useState('');
   const [savedBankName, setSavedBankName] = useState('');
   const [savedBankAccount, setSavedBankAccount] = useState('');
@@ -72,6 +73,15 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
       }
 
       const userProfile = users && users[0];
+      if (!userProfile) {
+        toast.error("User profile not found.");
+        return;
+      }
+
+      if (userProfile.password && userProfile.password !== password) {
+        toast("Incorrect secure password. Please enter your correct login password to authorize this payout.");
+        return;
+      }
 
       // 1. Create withdrawal request first
       const newRequest = {
@@ -189,6 +199,22 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
             >
               Withdraw All
             </button>
+          </div>
+
+          <div className="withdraw-card card">
+            <h4 className="card-sec-title">4. Secure Verification</h4>
+            <p style={{ fontSize: '11px', color: 'var(--text-light)', marginBottom: '8px', lineHeight: '1.4' }}>
+              For your financial security, please enter your secure login password to authorize this payout request.
+            </p>
+            <input
+              type="password"
+              className="payout-address-input"
+              placeholder="Enter secure password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              id="txt-withdraw-password"
+            />
           </div>
 
           <div className="warnings-box">

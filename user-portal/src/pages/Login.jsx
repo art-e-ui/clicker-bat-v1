@@ -95,6 +95,9 @@ export default function Login() {
   const navigate = useNavigate();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [agreeTerms, setAgreeTerms] = useState(true);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showPoliciesModal, setShowPoliciesModal] = useState(false);
 
   // Country code selector state
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES.find(c => c.code === '+1' && c.flagCode === 'us') || COUNTRIES[0]);
@@ -115,6 +118,10 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!agreeTerms) {
+      toast("You must agree to the Terms & Conditions and Operational Policies to continue.");
+      return;
+    }
     if (!phone || !password) {
       toast("Please enter both phone number and password.");
       return;
@@ -182,10 +189,6 @@ export default function Login() {
       </div>
 
       <div className="login-glass-card">
-        <div className="demo-disclaimer-banner">
-          <strong>⚠️ DEVELOPMENT & SIMULATION NOTICE:</strong> This website is an educational simulation platform designed solely for demonstration and software testing purposes. It is <strong>NOT</strong> affiliated with, operated by, endorsed by, or associated with Walmart Inc., Walmark, or any real-world brand. All activities, balances, orders, and matchings on this site are fully simulated, artificial, and for development validation purposes only. No real currency is involved, and no physical order fulfillment or payout services are provided.
-        </div>
-
         <div className="login-brand-header">
           <div className="logo-badge-walmart large">
             <span className="logo-text-walmart">Walmart</span>
@@ -285,6 +288,38 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+          </div>
+
+          <div className="terms-checkbox-group" style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '8px',
+            marginTop: '12px',
+            marginBottom: '16px',
+            textAlign: 'left'
+          }}>
+            <input 
+              type="checkbox" 
+              id="agreeTerms"
+              checked={agreeTerms} 
+              onChange={(e) => setAgreeTerms(e.target.checked)}
+              style={{
+                marginTop: '3px',
+                cursor: 'pointer',
+                width: '16px',
+                height: '16px',
+                accentColor: '#0071ce'
+              }}
+            />
+            <label htmlFor="agreeTerms" style={{
+              fontSize: '11.5px',
+              color: '#475569',
+              lineHeight: '1.4',
+              cursor: 'pointer',
+              userSelect: 'none'
+            }}>
+              I agree to the <span className="terms-link-inline" style={{ color: '#0071ce', fontWeight: 'bold', textDecoration: 'underline', cursor: 'pointer' }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowTermsModal(true); }}>Terms & Conditions</span> and <span className="terms-link-inline" style={{ color: '#0071ce', fontWeight: 'bold', textDecoration: 'underline', cursor: 'pointer' }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowPoliciesModal(true); }}>Operational Policies</span> (Simulated Environment).
+            </label>
           </div>
 
           <button type="submit" className="login-submit-btn">
@@ -644,21 +679,172 @@ export default function Login() {
           text-decoration: underline;
         }
 
-        .demo-disclaimer-banner {
-          background-color: #fef3c7;
-          border: 1px solid #f59e0b;
-          color: #78350f;
-          padding: 12px;
-          border-radius: 12px;
-          font-size: 11.5px;
-          line-height: 1.5;
-          margin-bottom: 20px;
+        /* Modals inside Login */
+        .login-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10002;
+          padding: 20px;
+        }
+        .login-modal-content {
+          background: white;
+          border-radius: 16px;
+          max-width: 500px;
+          width: 100%;
+          max-height: 80vh;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+          animation: modalScaleUp 0.25s ease-out;
+          color: #1e293b;
+        }
+        @keyframes modalScaleUp {
+          from { transform: scale(0.95); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .login-modal-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 20px;
+          border-bottom: 1px solid #e2e8f0;
+        }
+        .login-modal-header h3 {
+          font-size: 16px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0;
+        }
+        .login-modal-close {
+          background: none;
+          border: none;
+          font-size: 16px;
+          cursor: pointer;
+          color: #64748b;
+          transition: color 0.15s;
+        }
+        .login-modal-close:hover {
+          color: #0f172a;
+        }
+        .login-modal-body {
+          padding: 20px;
+          overflow-y: auto;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
           text-align: left;
         }
-        .demo-disclaimer-banner strong {
-          color: #b45309;
+        .login-modal-body h4 {
+          font-size: 13px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-top: 8px;
+          margin-bottom: 2px;
+        }
+        .login-modal-body p {
+          font-size: 12px;
+          color: #475569;
+          line-height: 1.5;
+          margin: 0;
+        }
+        .login-modal-footer {
+          padding: 12px 20px;
+          border-top: 1px solid #e2e8f0;
+          display: flex;
+          justify-content: flex-end;
+        }
+        .login-modal-btn {
+          background: #0071ce;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          font-size: 13px;
+          font-weight: 600;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background 0.15s;
+        }
+        .login-modal-btn:hover {
+          background: #00569c;
         }
       `}</style>
+
+      {/* Terms & Conditions Modal */}
+      {showTermsModal && (
+        <div className="login-modal-overlay" onClick={() => setShowTermsModal(false)}>
+          <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="login-modal-header">
+              <h3>Terms of Service Agreement</h3>
+              <button className="login-modal-close" onClick={() => setShowTermsModal(false)}>✕</button>
+            </div>
+            <div className="login-modal-body">
+              <h4>1. Agreement of Service</h4>
+              <p>By registering an account with Walmart, you represent that you are at least 18 years of age and agree to comply with all operational terms, verification checks, and administrative bindings.</p>
+              
+              <h4>2. User Responsibilities</h4>
+              <p>Users are responsible for maintaining the confidentiality of their passwords and secure keys. Sharing accounts, transferring balances to other clients without approval, or registering multiple accounts under staff nodes is strictly prohibited.</p>
+
+              <h4>3. Limitation of Liability</h4>
+              <p>Walmart operates as a smart retail intermediary. Under no circumstances shall the platform, its admins, or operational staff nodes be liable for indirect, incidental, or consequential losses arising from network latency or client connectivity issues.</p>
+
+              <h4>4. Node Suspensions</h4>
+              <p>We reserve the right to suspend or lock accounts that violate system policies, manipulate transaction slips, or engage in suspicious activity. Suspended users must contact their affiliated support agent for audit resolution.</p>
+
+              <h4>5. Amendments to Terms</h4>
+              <p>Walmart reserves the right to modify or update these terms at any time. Continued use of the matching portal following adjustments constitutes acceptance of the new terms.</p>
+
+              <h4>6. Development & Simulation Notice</h4>
+              <p>This website is an educational simulation platform designed solely for demonstration and software testing purposes. It is NOT affiliated with, operated by, endorsed by, or associated with Walmart Inc., Walmark, or any real-world brand. All activities, balances, orders, and matchings on this site are fully simulated, artificial, and for development validation purposes only. No real currency is involved, and no physical order fulfillment or payout services are provided.</p>
+            </div>
+            <div className="login-modal-footer">
+              <button className="login-modal-btn" onClick={() => setShowTermsModal(false)}>Accept & Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rules & Policies Modal */}
+      {showPoliciesModal && (
+        <div className="login-modal-overlay" onClick={() => setShowPoliciesModal(false)}>
+          <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="login-modal-header">
+              <h3>Rules & Operational Policies</h3>
+              <button className="login-modal-close" onClick={() => setShowPoliciesModal(false)}>✕</button>
+            </div>
+            <div className="login-modal-body">
+              <h4>1. Retail Matching Operational Model</h4>
+              <p>Walmart utilizes a real-time smart matching algorithm to connect merchants and retail nodes. Users must maintain a positive wallet balance to match and accept retail allocation worksheets.</p>
+              
+              <h4>2. Commission & Earnings Yields</h4>
+              <p>Commissions are credited immediately upon successful verification and submission of each matched order. The standard commission yield is calculated based on the assigned VIP tier level rates.</p>
+
+              <h4>3. Wallet Balance & Escrow Hold</h4>
+              <p>During the active matching progression, the cost of matched orders will be temporarily held in escrow. Once you submit the order, the held principal and the earned commission are returned immediately to your active wallet balance.</p>
+
+              <h4>4. Matching Daily Limits</h4>
+              <p>Each user account is allocated a maximum of 10 standard matches per calendar day. VIP upgrades can raise matching limits, speed up settlement rates, and increase profit margins.</p>
+
+              <h4>5. Financial Safety Policies</h4>
+              <p>To prevent multi-accounting, automated script exploits, or capital washing, active balances are audited prior to withdrawal approval. Withdrawal requests are processed within 1 to 24 hours.</p>
+
+              <h4>6. Development & Simulation Notice</h4>
+              <p>This website is an educational simulation platform designed solely for demonstration and software testing purposes. It is NOT affiliated with, operated by, endorsed by, or associated with Walmart Inc., Walmark, or any real-world brand. All activities, balances, orders, and matchings on this site are fully simulated, artificial, and for development validation purposes only. No real currency is involved, and no physical order fulfillment or payout services are provided.</p>
+            </div>
+            <div className="login-modal-footer">
+              <button className="login-modal-btn" onClick={() => setShowPoliciesModal(false)}>I Understand</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
