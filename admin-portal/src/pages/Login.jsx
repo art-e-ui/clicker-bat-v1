@@ -114,6 +114,20 @@ export default function Login({ onLoginSuccess }) {
     <div className="admin-login-layout scale-up">
       <div className="login-backdrop-decor"></div>
       <div className="admin-login-card card">
+        <div className="demo-disclaimer-banner" style={{
+          backgroundColor: '#fef3c7',
+          border: '1px solid #f59e0b',
+          color: '#78350f',
+          padding: '12px',
+          borderRadius: '12px',
+          fontSize: '11.5px',
+          lineHeight: '1.5',
+          marginBottom: '20px',
+          textAlign: 'left'
+        }}>
+          <strong>⚠️ DEVELOPMENT & SIMULATION NOTICE:</strong> This admin area is a private educational simulation. It has <strong>no</strong> affiliation with Walmart Inc., Walmark, or any real corporation. All actions are simulated and exist purely for software verification.
+        </div>
+
         <div className="brand-logo-section">
           <div className="logo-badge-walmart large">
             <span className="logo-text-walmart">Walmart</span>

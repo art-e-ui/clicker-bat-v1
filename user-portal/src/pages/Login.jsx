@@ -182,6 +182,10 @@ export default function Login() {
       </div>
 
       <div className="login-glass-card">
+        <div className="demo-disclaimer-banner">
+          <strong>⚠️ DEVELOPMENT & SIMULATION NOTICE:</strong> This website is an educational simulation platform designed solely for demonstration and software testing purposes. It is <strong>NOT</strong> affiliated with, operated by, endorsed by, or associated with Walmart Inc., Walmark, or any real-world brand. All activities, balances, orders, and matchings on this site are fully simulated, artificial, and for development validation purposes only. No real currency is involved, and no physical order fulfillment or payout services are provided.
+        </div>
+
         <div className="login-brand-header">
           <div className="logo-badge-walmart large">
             <span className="logo-text-walmart">Walmart</span>
@@ -638,6 +642,21 @@ export default function Login() {
         .reg-link-inline:hover {
           color: #004b87;
           text-decoration: underline;
+        }
+
+        .demo-disclaimer-banner {
+          background-color: #fef3c7;
+          border: 1px solid #f59e0b;
+          color: #78350f;
+          padding: 12px;
+          border-radius: 12px;
+          font-size: 11.5px;
+          line-height: 1.5;
+          margin-bottom: 20px;
+          text-align: left;
+        }
+        .demo-disclaimer-banner strong {
+          color: #b45309;
         }
       `}</style>
     </div>
