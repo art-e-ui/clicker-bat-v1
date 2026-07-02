@@ -254,8 +254,8 @@ export default function SupportChat() {
                       maxWidth: '70%',
                       padding: m.image_url ? '8px' : '10px 16px',
                       borderRadius: 16,
-                      backgroundColor: isAdmin ? 'var(--color-primary)' : '#f1f5f9',
-                      color: isAdmin ? '#ffffff' : 'var(--text-color)',
+                      backgroundColor: isAdmin ? 'var(--color-primary)' : 'var(--chat-bubble-user-bg, #f1f5f9)',
+                      color: isAdmin ? '#ffffff' : 'var(--chat-bubble-user-text, #181d28)',
                       fontSize: 14
                     }}>
                       {m.image_url ? (
@@ -301,7 +301,15 @@ export default function SupportChat() {
                 value={inputMsg}
                 onChange={(e) => setInputMsg(e.target.value)}
                 placeholder="Type your message..."
-                style={{ flex: 1, padding: '10px 16px', borderRadius: 20, border: '1px solid var(--border-color)', outline: 'none' }}
+                style={{ 
+                  flex: 1, 
+                  padding: '10px 16px', 
+                  borderRadius: 20, 
+                  border: '1px solid var(--border-color)', 
+                  backgroundColor: 'var(--bg-surface)', 
+                  color: 'var(--text-main)', 
+                  outline: 'none' 
+                }}
               />
               <button type="submit" className="btn-admin-primary" style={{ borderRadius: 20, padding: '0 24px' }}>
                 Send

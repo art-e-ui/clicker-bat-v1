@@ -477,7 +477,7 @@ export default function Register() {
               required
               readOnly={!!searchParams.get('ref')}
             />
-            <span style={{ fontSize: 9.5, color: '#475569', marginTop: 2, fontWeight: 500 }}>
+            <span style={{ fontSize: 9.5, color: 'var(--text-muted, #475569)', marginTop: 2, fontWeight: 500 }}>
               * Enter your recruiter's staff code OR a friend's invitation code.
             </span>
           </div>
@@ -488,10 +488,10 @@ export default function Register() {
               id="termsCheckbox" 
               checked={termsAgreed}
               onChange={(e) => setTermsAgreed(e.target.checked)}
-              style={{ width: '16px', height: '16px', margin: '3px 0 0 0', cursor: 'pointer', accentColor: '#0071ce' }}
+              style={{ width: '16px', height: '16px', margin: '3px 0 0 0', cursor: 'pointer', accentColor: 'var(--primary-color, #0071ce)' }}
             />
-            <label htmlFor="termsCheckbox" style={{ margin: 0, fontSize: '11.5px', cursor: 'pointer', color: '#475569', fontWeight: 500, lineHeight: '1.4', textAlign: 'left' }}>
-              I agree to the <span style={{ color: '#0071ce', fontWeight: 'bold', textDecoration: 'underline' }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowTermsModal(true); }}>Terms & Conditions</span> and <span style={{ color: '#0071ce', fontWeight: 'bold', textDecoration: 'underline' }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowPoliciesModal(true); }}>Operational Policies</span> (Simulated Environment).
+            <label htmlFor="termsCheckbox" style={{ margin: 0, fontSize: '11.5px', cursor: 'pointer', color: 'var(--text-muted, #475569)', fontWeight: 500, lineHeight: '1.4', textAlign: 'left' }}>
+              I agree to the <span style={{ color: 'var(--primary-color, #0071ce)', fontWeight: 'bold', textDecoration: 'underline' }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowTermsModal(true); }}>Terms & Conditions</span> and <span style={{ color: 'var(--primary-color, #0071ce)', fontWeight: 'bold', textDecoration: 'underline' }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowPoliciesModal(true); }}>Operational Policies</span> (Simulated Environment).
             </label>
           </div>
 
@@ -968,6 +968,107 @@ export default function Register() {
         }
         .login-modal-btn:hover {
           background: #00569c;
+        }
+
+        /* Dark Mode overrides for Register page */
+        @media (prefers-color-scheme: dark) {
+          .login-glass-card {
+            background: rgba(15, 23, 42, 0.45);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0, 0, 0, 0.5);
+          }
+          .login-brand-header {
+            background: rgba(255, 255, 255, 0.01);
+            border-color: rgba(255, 255, 255, 0.08);
+          }
+          .form-title {
+            color: #f1f5f9;
+          }
+          .login-form-group label {
+            color: #94a3b8;
+          }
+          .login-form-group > input {
+            background-color: rgba(15, 23, 42, 0.35);
+            border-color: rgba(255, 255, 255, 0.12);
+            color: #f8fafc;
+          }
+          .login-form-group > input:focus {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-color: #3b82f6;
+          }
+          .phone-input-wrapper {
+            background-color: rgba(15, 23, 42, 0.35);
+            border-color: rgba(255, 255, 255, 0.12);
+          }
+          .phone-input-wrapper:focus-within {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-color: #3b82f6;
+          }
+          .country-trigger-btn {
+            color: #f8fafc;
+          }
+          .country-code-text {
+            color: #f8fafc;
+          }
+          .country-search-box {
+            background: #1e293b;
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+          }
+          .country-search-input {
+            background: #0f172a;
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #f8fafc;
+          }
+          .country-dropdown-list {
+            background: #1e293b;
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+          }
+          .country-dropdown-item {
+            color: #cbd5e1;
+          }
+          .country-dropdown-item:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+          }
+          .phone-input-field {
+            color: #f8fafc !important;
+          }
+          .register-prompt {
+            color: #94a3b8;
+          }
+          .reg-link-inline {
+            color: #60a5fa;
+          }
+          .reg-link-inline:hover {
+            color: #93c5fd;
+          }
+          .login-modal-content {
+            background: #1e293b;
+            color: #cbd5e1;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          }
+          .login-modal-header {
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+          }
+          .login-modal-header h3 {
+            color: #f1f5f9;
+          }
+          .login-modal-close {
+            color: #94a3b8;
+          }
+          .login-modal-close:hover {
+            color: #f1f5f9;
+          }
+          .login-modal-body h4 {
+            color: #f1f5f9;
+          }
+          .login-modal-body p {
+            color: #94a3b8;
+          }
+          .login-modal-footer {
+            border-top-color: rgba(255, 255, 255, 0.08);
+          }
         }
       `}</style>
 

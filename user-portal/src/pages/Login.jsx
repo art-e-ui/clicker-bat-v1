@@ -776,6 +776,107 @@ export default function Login() {
         .login-modal-btn:hover {
           background: #00569c;
         }
+
+        /* Dark Mode overrides for Login page */
+        @media (prefers-color-scheme: dark) {
+          .login-glass-card {
+            background: rgba(15, 23, 42, 0.45);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0, 0, 0, 0.5);
+          }
+          .login-brand-header {
+            background: rgba(255, 255, 255, 0.01);
+            border-color: rgba(255, 255, 255, 0.08);
+          }
+          .form-title {
+            color: #f1f5f9;
+          }
+          .login-form-group label {
+            color: #94a3b8;
+          }
+          .login-form-group > input {
+            background-color: rgba(15, 23, 42, 0.35);
+            border-color: rgba(255, 255, 255, 0.12);
+            color: #f8fafc;
+          }
+          .login-form-group > input:focus {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-color: #3b82f6;
+          }
+          .phone-input-wrapper {
+            background-color: rgba(15, 23, 42, 0.35);
+            border-color: rgba(255, 255, 255, 0.12);
+          }
+          .phone-input-wrapper:focus-within {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-color: #3b82f6;
+          }
+          .country-trigger-btn {
+            color: #f8fafc;
+          }
+          .country-code-text {
+            color: #f8fafc;
+          }
+          .country-search-box {
+            background: #1e293b;
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+          }
+          .country-search-input {
+            background: #0f172a;
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #f8fafc;
+          }
+          .country-dropdown-list {
+            background: #1e293b;
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+          }
+          .country-dropdown-item {
+            color: #cbd5e1;
+          }
+          .country-dropdown-item:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+          }
+          .phone-input-field {
+            color: #f8fafc !important;
+          }
+          .register-prompt {
+            color: #94a3b8;
+          }
+          .reg-link-inline {
+            color: #60a5fa;
+          }
+          .reg-link-inline:hover {
+            color: #93c5fd;
+          }
+          .login-modal-content {
+            background: #1e293b;
+            color: #cbd5e1;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          }
+          .login-modal-header {
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+          }
+          .login-modal-header h3 {
+            color: #f1f5f9;
+          }
+          .login-modal-close {
+            color: #94a3b8;
+          }
+          .login-modal-close:hover {
+            color: #f1f5f9;
+          }
+          .login-modal-body h4 {
+            color: #f1f5f9;
+          }
+          .login-modal-body p {
+            color: #94a3b8;
+          }
+          .login-modal-footer {
+            border-top-color: rgba(255, 255, 255, 0.08);
+          }
+        }
       `}</style>
 
       {/* Terms & Conditions Modal */}

@@ -6,16 +6,45 @@
   
   --bg-app: #F5F6FA;
   --bg-surface: #ffffff;
+  --bg-admin-card: #ffffff;
+  --bg-surface-hover: #f1f5f9;
+  --bg-table-header: #f8fafc;
   
   --border-color: #E0E0E0;
+  --border-color-focus: #4880FF;
   
   --text-main: #202224;
   --text-muted: #606060;
   --text-light: #9e9e9e;
   
+  --text-admin-main: #202224;
+  --text-admin-muted: #606060;
+  --text-admin-light: #9e9e9e;
+  --text-color: #202224;
+  
+  --chat-bubble-user-bg: #f1f5f9;
+  --chat-bubble-user-text: #181d28;
+  
   --color-primary: #4880FF;
   --color-primary-hover: #3b6bde;
   --color-accent: #FF4C6A;
+  
+  --color-danger: #ef4444;
+  --color-danger-bg: #fee2e2;
+  --color-success: #10b981;
+  --color-success-bg: #d1fae5;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fef3c7;
+  
+  --border-luxury: 1px solid rgba(0, 0, 0, 0.08);
+  --border-glass: 1px solid rgba(0, 0, 0, 0.05);
+  
+  --badge-deposit-bg: #fffbeb;
+  --badge-deposit-text: #b45309;
+  --badge-withdraw-bg: #fef2f2;
+  --badge-withdraw-text: #b91c1c;
+  --badge-online-bg: #f0fdf4;
+  --badge-online-text: #15803d;
   
   --shadow-sm: 0px 4px 20px rgba(238, 238, 238, 0.5);
   --shadow-md: 0px 4px 20px rgba(0, 0, 0, 0.05);
@@ -25,11 +54,41 @@
   :root {
     --bg-app: #1E1E1E;
     --bg-surface: #27292D;
+    --bg-admin-card: #27292D;
+    --bg-surface-hover: #334155;
+    --bg-table-header: #1a1c1e;
+    
     --border-color: #333333;
+    --border-color-focus: #4880FF;
     
     --text-main: #FFFFFF;
     --text-muted: #A0A0A0;
     --text-light: #707070;
+    
+    --text-admin-main: #FFFFFF;
+    --text-admin-muted: #A0A0A0;
+    --text-admin-light: #707070;
+    --text-color: #FFFFFF;
+    
+    --chat-bubble-user-bg: #374151;
+    --chat-bubble-user-text: #f3f4f6;
+    
+    --color-danger: #f87171;
+    --color-danger-bg: rgba(239, 68, 68, 0.15);
+    --color-success: #34d399;
+    --color-success-bg: rgba(16, 185, 129, 0.15);
+    --color-warning: #fbbf24;
+    --color-warning-bg: rgba(245, 158, 11, 0.15);
+    
+    --border-luxury: 1px solid rgba(255, 255, 255, 0.08);
+    --border-glass: 1px solid rgba(255, 255, 255, 0.05);
+    
+    --badge-deposit-bg: rgba(245, 158, 11, 0.15);
+    --badge-deposit-text: #fbbf24;
+    --badge-withdraw-bg: rgba(239, 68, 68, 0.15);
+    --badge-withdraw-text: #f87171;
+    --badge-online-bg: rgba(16, 185, 129, 0.15);
+    --badge-online-text: #34d399;
     
     --shadow-sm: 0px 4px 20px rgba(0, 0, 0, 0.2);
     --shadow-md: 0px 4px 20px rgba(0, 0, 0, 0.3);
@@ -382,7 +441,7 @@ body {
 }
 
 .admin-table th {
-  background-color: #f8fafc;
+  background-color: var(--bg-table-header);
   color: var(--text-muted);
   font-weight: 700;
   padding: 24px 20px;

@@ -101,16 +101,57 @@ export default function App() {
   const addPendingDeposit = () => {};
   const addPendingWithdraw = () => {};
 
-  // Set user online status on session restore
+  // Set user online status on session restore, visibility change, and page unload
   useEffect(() => {
-    if (username) {
-      supabase.from('cb_users').update({ online: 'Online' }).eq('username', username)
+    if (!username) return;
+
+    const setOnlineStatus = (status) => {
+      supabase.from('cb_users').update({ online: status }).eq('username', username)
         .then(({ error }) => {
           if (error) {
-             console.error("Error setting online status:", error?.message || JSON.stringify(error));
+            console.error("Error setting online status:", error?.message || JSON.stringify(error));
           }
         });
-    }
+    };
+
+    const handleVisibilityChange = () => {
+      const status = document.visibilityState === 'visible' ? 'Online' : 'Offline';
+      setOnlineStatus(status);
+    };
+
+    const handleUnload = () => {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      if (supabaseUrl && supabaseKey) {
+        const url = `${supabaseUrl}/rest/v1/cb_users?username=eq.${encodeURIComponent(username)}`;
+        fetch(url, {
+          method: 'PATCH',
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ online: 'Offline' }),
+          keepalive: true
+        }).catch(err => console.error("Keepalive offline fetch error:", err));
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pagehide', handleUnload);
+    window.addEventListener('beforeunload', handleUnload);
+
+    // Initial set to Online when component mounts
+    setOnlineStatus('Online');
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pagehide', handleUnload);
+      window.removeEventListener('beforeunload', handleUnload);
+      // Try to set Offline when unmounting
+      handleUnload();
+    };
   }, [username]);
 
   // Periodically sync user profile and orders from Supabase database
