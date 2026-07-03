@@ -167,7 +167,29 @@ export default function SLAAdmins() {
     const referralCode = generateReferralCode(staffId, staffName);
 
     try {
-      // Create staff member account using the secure database RPC function
+      // 1. First register the user natively in Supabase Auth to ensure login works perfectly
+      const { data: authData, error: authError } = await adminAuthClient.auth.signUp({
+        email: staffEmail,
+        password: staffPassword,
+        options: {
+          data: {
+            name: staffName,
+            email_verified: true
+          }
+        }
+      });
+
+      if (authError) {
+        setFormError("Error creating authentication account: " + authError.message);
+        return;
+      }
+
+      if (!authData?.user) {
+        setFormError("Failed to create authentication credentials natively.");
+        return;
+      }
+
+      // 2. Map and link the user details and role using the secure database RPC function
       const { data: newUserId, error: rpcError } = await supabase.rpc('create_staff_member', {
         p_email: staffEmail,
         p_password: staffPassword,

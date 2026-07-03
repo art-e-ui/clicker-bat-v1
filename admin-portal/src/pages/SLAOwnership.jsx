@@ -65,7 +65,29 @@ export default function SLAOwnership() {
     const accountId = `AD${String(nextNum).padStart(2, '0')}`;
 
     try {
-      // Create administrator account using the secure database RPC function
+      // 1. First register the user natively in Supabase Auth to ensure login works perfectly
+      const { data: authData, error: authError } = await adminAuthClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+            email_verified: true
+          }
+        }
+      });
+
+      if (authError) {
+        setFormError("Error creating authentication account: " + authError.message);
+        return;
+      }
+
+      if (!authData?.user) {
+        setFormError("Failed to create authentication credentials natively.");
+        return;
+      }
+
+      // 2. Map and link the user details and role using the secure database RPC function
       const { data: newUserId, error: rpcError } = await supabase.rpc('create_admin_member', {
         p_email: email,
         p_password: password,
@@ -136,6 +158,58 @@ export default function SLAOwnership() {
     }
   };
 
+  const handleDeleteAdmin = async (admin) => {
+    if (!window.confirm(`⚠️ Permanently delete Administrator "${admin.name}" (${admin.accountId})?\n\nThis will remove their administrative record from cb_admins.`)) {
+      return;
+    }
+
+    try {
+      // Delete the record from cb_admins
+      const { error: deleteErr } = await supabase
+        .from('cb_admins')
+        .delete()
+        .eq('id', admin.id);
+
+      if (deleteErr) {
+        // If there's a foreign key reference error, explain it clearly to the user
+        if (deleteErr.message && deleteErr.message.toLowerCase().includes('foreign key')) {
+          alert(`Could not delete administrator. There are still staff members registered under this administrator (${admin.accountId}).\n\nPlease execute the "fix_admin_auth.sql" SQL patch in your Supabase SQL Editor to automatically support safe NULL-cascade deletion rules, or delete their registered staff members first.`);
+        } else {
+          alert("Error deleting administrator: " + deleteErr.message);
+        }
+        return;
+      }
+
+      // Also clean up their user role from user_roles
+      await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', admin.id);
+
+      // Clean up from auth.users via the secure SECURITY DEFINER helper function
+      await supabase.rpc('delete_auth_user', { p_user_id: admin.id });
+
+      // Track audit logs
+      const auditLog = {
+        id: Date.now().toString(),
+        admin_email: 'owner@wallmark.com',
+        action: 'DELETE_ADMIN',
+        target: admin.accountId,
+        details: { name: admin.name, email: admin.email },
+        timestamp: new Date().toISOString()
+      };
+
+      await supabase
+        .from('cb_audit_logs')
+        .insert([auditLog]);
+
+      alert(`Administrator ${admin.name} deleted successfully.`);
+      fetchAdmins();
+    } catch (err) {
+      alert("Failed to delete administrator: " + err.message);
+    }
+  };
+
   return (
     <div className="admin-page-container scale-up">
       <div className="flex-row-title-bar">
@@ -192,8 +266,15 @@ export default function SLAOwnership() {
                   <button 
                     className={`btn-action-small ${a.status === 'Active' ? 'btn-red' : 'btn-green'}`}
                     onClick={() => toggleStatus(a.id, a.status)}
+                    style={{ marginRight: '6px' }}
                   >
                     {a.status === 'Active' ? 'Suspend' : 'Activate'}
+                  </button>
+                  <button 
+                    className="btn-action-small btn-delete-gray"
+                    onClick={() => handleDeleteAdmin(a)}
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -324,6 +405,12 @@ export default function SLAOwnership() {
         }
         .btn-green {
           background-color: #10b981;
+        }
+        .btn-delete-gray {
+          background-color: #64748b;
+        }
+        .btn-delete-gray:hover {
+          background-color: #475569;
         }
       `}</style>
     </div>

@@ -166,36 +166,56 @@ CREATE OR REPLACE FUNCTION public.create_admin_member(
 ) RETURNS uuid AS $$
 DECLARE
   v_user_id uuid;
+  v_identity_id uuid;
 BEGIN
-  -- Insert into auth.users (Supabase authentication engine)
-  INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, aud, role, created_at, updated_at)
-  VALUES (
-    gen_random_uuid(),
-    p_email,
-    crypt(p_password, gen_salt('bf', 10)),
-    now(),
-    '{"provider":"email","providers":["email"]}'::jsonb,
-    jsonb_build_object('name', p_name, 'email', p_email, 'email_verified', true, 'phone_verified', false, 'sub', v_user_id::text),
-    'authenticated',
-    'authenticated',
-    now(),
-    now()
-  )
-  RETURNING id INTO v_user_id;
+  -- First, check if a user with this email already exists in auth.users
+  SELECT id INTO v_user_id FROM auth.users WHERE email = p_email LIMIT 1;
 
-  -- Create corresponding record in auth.identities
-  INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
-  VALUES (
-    v_user_id,
-    v_user_id,
-    jsonb_build_object('sub', v_user_id::text, 'email', p_email, 'email_verified', true, 'phone_verified', false),
-    'email',
-    v_user_id::text,
-    now(),
-    now(),
-    now()
-  )
-  ON CONFLICT DO NOTHING;
+  IF v_user_id IS NULL THEN
+    -- Pre-generate the user UUID and distinct identity UUID
+    v_user_id := gen_random_uuid();
+    v_identity_id := gen_random_uuid();
+
+    -- Insert into auth.users (Supabase authentication engine)
+    INSERT INTO auth.users (
+      id, email, encrypted_password, email_confirmed_at, 
+      raw_app_meta_data, raw_user_meta_data, aud, role, created_at, updated_at,
+      is_sso_user
+    )
+    VALUES (
+      v_user_id,
+      p_email,
+      crypt(p_password, gen_salt('bf', 10)),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('name', p_name, 'email', p_email, 'email_verified', true, 'phone_verified', false, 'sub', v_user_id::text),
+      'authenticated',
+      'authenticated',
+      now(),
+      now(),
+      false -- is_sso_user MUST be false for email/password users
+    );
+
+    -- Create corresponding record in auth.identities with a separate distinct UUID for 'id'
+    INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+    VALUES (
+      v_identity_id, -- Use distinct UUID
+      v_user_id,
+      jsonb_build_object('sub', v_user_id::text, 'email', p_email, 'email_verified', true, 'phone_verified', false),
+      'email',
+      p_email, -- Must be the email
+      now(),
+      now(),
+      now()
+    )
+    ON CONFLICT DO NOTHING;
+  ELSE
+    -- User already exists natively (signed up via client). Let's make sure they are confirmed just in case.
+    UPDATE auth.users 
+    SET email_confirmed_at = COALESCE(email_confirmed_at, now()),
+        raw_user_meta_data = jsonb_build_object('name', p_name, 'email', p_email, 'email_verified', true, 'phone_verified', false, 'sub', v_user_id::text)
+    WHERE id = v_user_id;
+  END IF;
 
   -- Map permissions to app role 'admin' in user_roles
   INSERT INTO public.user_roles (user_id, role)
@@ -204,7 +224,12 @@ BEGIN
 
   -- Add record in cb_admins linking the new uuid
   INSERT INTO public.cb_admins (id, account_id, name, email, phone, status, created_at)
-  VALUES (v_user_id::text, p_account_id, p_name, p_email, p_phone, 'Active', now());
+  VALUES (v_user_id::text, p_account_id, p_name, p_email, p_phone, 'Active', now())
+  ON CONFLICT (id) DO UPDATE
+  SET account_id = EXCLUDED.account_id,
+      name = EXCLUDED.name,
+      phone = EXCLUDED.phone,
+      status = 'Active';
 
   RETURN v_user_id;
 END;
@@ -223,45 +248,73 @@ CREATE OR REPLACE FUNCTION public.create_staff_member(
 ) RETURNS uuid AS $$
 DECLARE
   v_user_id uuid;
+  v_identity_id uuid;
 BEGIN
-  -- Insert into auth.users
-  INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, aud, role, created_at, updated_at)
-  VALUES (
-    gen_random_uuid(),
-    p_email,
-    crypt(p_password, gen_salt('bf', 10)),
-    now(),
-    '{"provider":"email","providers":["email"]}'::jsonb,
-    jsonb_build_object('name', p_name, 'email', p_email, 'email_verified', true, 'phone_verified', false, 'sub', v_user_id::text),
-    'authenticated',
-    'authenticated',
-    now(),
-    now()
-  )
-  RETURNING id INTO v_user_id;
+  -- First, check if a user with this email already exists in auth.users
+  SELECT id INTO v_user_id FROM auth.users WHERE email = p_email LIMIT 1;
 
-  -- Create corresponding record in auth.identities
-  INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
-  VALUES (
-    v_user_id,
-    v_user_id,
-    jsonb_build_object('sub', v_user_id::text, 'email', p_email, 'email_verified', true, 'phone_verified', false),
-    'email',
-    v_user_id::text,
-    now(),
-    now(),
-    now()
-  )
-  ON CONFLICT DO NOTHING;
+  IF v_user_id IS NULL THEN
+    -- Pre-generate the user UUID and distinct identity UUID
+    v_user_id := gen_random_uuid();
+    v_identity_id := gen_random_uuid();
 
-  -- Map permissions to app role 'admin' in user_roles
+    -- Insert into auth.users (Supabase authentication engine)
+    INSERT INTO auth.users (
+      id, email, encrypted_password, email_confirmed_at, 
+      raw_app_meta_data, raw_user_meta_data, aud, role, created_at, updated_at,
+      is_sso_user
+    )
+    VALUES (
+      v_user_id,
+      p_email,
+      crypt(p_password, gen_salt('bf', 10)),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('name', p_name, 'email', p_email, 'email_verified', true, 'phone_verified', false, 'sub', v_user_id::text),
+      'authenticated',
+      'authenticated',
+      now(),
+      now(),
+      false -- is_sso_user MUST be false
+    );
+
+    -- Create corresponding record in auth.identities with a separate distinct UUID for 'id'
+    INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+    VALUES (
+      v_identity_id, -- Use distinct UUID
+      v_user_id,
+      jsonb_build_object('sub', v_user_id::text, 'email', p_email, 'email_verified', true, 'phone_verified', false),
+      'email',
+      p_email,
+      now(),
+      now(),
+      now()
+    )
+    ON CONFLICT DO NOTHING;
+  ELSE
+    -- User already exists natively (signed up via client). Let's make sure they are confirmed just in case.
+    UPDATE auth.users 
+    SET email_confirmed_at = COALESCE(email_confirmed_at, now()),
+        raw_user_meta_data = jsonb_build_object('name', p_name, 'email', p_email, 'email_verified', true, 'phone_verified', false, 'sub', v_user_id::text)
+    WHERE id = v_user_id;
+  END IF;
+
+  -- Map permissions to app role 'staff' in user_roles
   INSERT INTO public.user_roles (user_id, role)
-  VALUES (v_user_id, 'admin')
+  VALUES (v_user_id, 'staff')
   ON CONFLICT (user_id, role) DO NOTHING;
 
   -- Add record in cb_staff linking the new uuid
   INSERT INTO public.cb_staff (id, staff_id, name, email, phone, status, created_by_admin_id, department, referral_code, created_at)
-  VALUES (v_user_id::text, p_staff_id, p_name, p_email, p_phone, 'Active', p_admin_id, p_department, p_referral_code, now());
+  VALUES (v_user_id::text, p_staff_id, p_name, p_email, p_phone, 'Active', p_admin_id, p_department, p_referral_code, now())
+  ON CONFLICT (id) DO UPDATE
+  SET staff_id = EXCLUDED.staff_id,
+      name = EXCLUDED.name,
+      phone = EXCLUDED.phone,
+      status = 'Active',
+      created_by_admin_id = EXCLUDED.created_by_admin_id,
+      department = EXCLUDED.department,
+      referral_code = EXCLUDED.referral_code;
 
   RETURN v_user_id;
 END;
@@ -481,3 +534,42 @@ AS $$
   FROM auth.identities
   WHERE user_id = p_user_id;
 $$ LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION public.get_user_raw_json(p_email text)
+RETURNS jsonb
+SECURITY DEFINER
+AS $$
+  SELECT row_to_json(u)::jsonb 
+  FROM auth.users u 
+  WHERE email = p_email 
+  LIMIT 1;
+$$ LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION public.get_user_column_value(p_email text, p_column text)
+RETURNS text
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_val text;
+BEGIN
+  EXECUTE format('SELECT %I::text FROM auth.users WHERE email = %L LIMIT 1', p_column, p_email) INTO v_val;
+  RETURN v_val;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.get_identity_raw_json(p_user_id uuid)
+RETURNS jsonb
+SECURITY DEFINER
+AS $$
+  SELECT json_agg(row_to_json(i))::jsonb 
+  FROM auth.identities i 
+  WHERE user_id = p_user_id;
+$$ LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION public.delete_auth_user(p_user_id uuid)
+RETURNS boolean AS $$
+BEGIN
+  DELETE FROM auth.users WHERE id = p_user_id;
+  RETURN true;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
