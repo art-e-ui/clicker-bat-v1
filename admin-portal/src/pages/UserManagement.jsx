@@ -27,7 +27,8 @@ import {
   Globe,
   Database,
   TrendingUp,
-  Briefcase
+  Briefcase,
+  AlertTriangle
 } from 'lucide-react';
 
 export default function UserManagement() {
@@ -133,7 +134,8 @@ export default function UserManagement() {
             bank_name: u.bank_name || '',
             bank_account: u.bank_account || '',
             bank_holder: u.bank_holder || '',
-            withdraw: u.withdraw || 'Enable',
+            withdraw: (u.withdraw === 'Enable' || u.withdraw === 'Enabled') ? 'Enabled' : 'Disabled',
+            password_plain: u.password_plain || '',
             inviteCode: u.invite_code || '',
             inviter: u.inviter || '',
             referred_by_staff_id: u.referred_by_staff_id || '',
@@ -187,18 +189,18 @@ export default function UserManagement() {
   const openEdit = (user) => {
     setEditUser(user);
     setEditFields({
-      username: user.username,
-      email: user.email,
-      phone: user.phone,
-      password_plain: user.password_plain,
-      balance: user.balance.toString(),
-      frozen: user.frozen.toString(),
-      usdt_address: user.usdt_address,
-      bank_name: user.bank_name,
-      bank_account: user.bank_account,
-      bank_holder: user.bank_holder,
-      withdraw: user.withdraw,
-      level: user.level.toString(),
+      username: user.username || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      password_plain: user.password_plain || '',
+      balance: (user.balance ?? 0).toString(),
+      frozen: (user.frozen ?? 0).toString(),
+      usdt_address: user.usdt_address || '',
+      bank_name: user.bank_name || '',
+      bank_account: user.bank_account || '',
+      bank_holder: user.bank_holder || '',
+      withdraw: (user.withdraw === 'Enable' || user.withdraw === 'Enabled') ? 'Enabled' : 'Disabled',
+      level: (user.level ?? 1).toString(),
       invited_by_user_id: user.invited_by_user_id || '',
     });
   };
@@ -207,20 +209,38 @@ export default function UserManagement() {
     if (!editUser) return;
     setSaving(true);
     try {
+      let finalInvitedByUserId = null;
+      if (editFields.invited_by_user_id) {
+        const trimmed = (editFields.invited_by_user_id || '').trim();
+        if (trimmed) {
+          const foundById = users.find(u => u.id === trimmed);
+          if (foundById) {
+            finalInvitedByUserId = trimmed;
+          } else {
+            const foundByName = users.find(u => u.username.toLowerCase() === trimmed.toLowerCase() || (u.nickname && u.nickname.toLowerCase() === trimmed.toLowerCase()));
+            if (foundByName) {
+              finalInvitedByUserId = foundByName.id;
+            } else {
+              finalInvitedByUserId = trimmed;
+            }
+          }
+        }
+      }
+
       const updates = {
-        username: editFields.username.trim(),
-        email: editFields.email.trim(),
-        phone: editFields.phone.trim(),
-        password_plain: editFields.password_plain.trim(),
+        username: (editFields.username || '').trim(),
+        email: (editFields.email || '').trim(),
+        phone: (editFields.phone || '').trim(),
+        password_plain: (editFields.password_plain || '').trim(),
         balance: parseFloat(editFields.balance) || 0,
         frozen: parseFloat(editFields.frozen) || 0,
-        usdt_address: editFields.usdt_address.trim(),
-        bank_name: editFields.bank_name.trim(),
-        bank_account: editFields.bank_account.trim(),
-        bank_holder: editFields.bank_holder.trim(),
-        withdraw: editFields.withdraw,
+        usdt_address: (editFields.usdt_address || '').trim(),
+        bank_name: (editFields.bank_name || '').trim(),
+        bank_account: (editFields.bank_account || '').trim(),
+        bank_holder: (editFields.bank_holder || '').trim(),
+        withdraw: (editFields.withdraw === 'Enable' || editFields.withdraw === 'Enabled') ? 'Enabled' : 'Disabled',
         level: parseInt(editFields.level) || 1,
-        invited_by_user_id: editFields.invited_by_user_id ? editFields.invited_by_user_id.trim() : null,
+        invited_by_user_id: finalInvitedByUserId,
       };
 
       const { error } = await supabase
@@ -265,12 +285,13 @@ export default function UserManagement() {
   };
 
   const handleToggleWithdraw = async (user) => {
-    const newVal = user.withdraw === 'Enable' ? 'Disable' : 'Enable';
+    const isCurrentlyEnabled = user.withdraw === 'Enable' || user.withdraw === 'Enabled';
+    const newVal = isCurrentlyEnabled ? 'Disabled' : 'Enabled';
     const { error } = await supabase.from('cb_users').update({ withdraw: newVal }).eq('id', user.id);
     if (error) {
       toast.error('Action failed: ' + error.message);
     } else {
-      toast.success(`Withdrawal ${newVal}d for ${user.username}.`);
+      toast.success(`Withdrawal ${newVal === 'Enabled' ? 'Enabled' : 'Disabled'} for ${user.username}.`);
       fetchUsers();
     }
   };
@@ -567,13 +588,13 @@ export default function UserManagement() {
                         <button
                           onClick={() => handleToggleWithdraw(u)}
                           className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all active:scale-[0.96] flex items-center justify-center gap-1.5 mx-auto ${
-                            u.withdraw === 'Enable'
+                            (u.withdraw === 'Enable' || u.withdraw === 'Enabled')
                               ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20 dark:text-emerald-400'
                               : 'bg-rose-500/10 text-rose-600 border-rose-500/20 hover:bg-rose-500/20 dark:text-rose-400'
                           }`}
                           id={`btn-toggle-withdraw-${u.id}`}
                         >
-                          {u.withdraw === 'Enable' ? (
+                          {(u.withdraw === 'Enable' || u.withdraw === 'Enabled') ? (
                             <>
                               <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
                               Unlocked
@@ -691,8 +712,8 @@ export default function UserManagement() {
                 <div className="form-group-sla">
                   <label>Withdraw Lock Privilege</label>
                   <select value={editFields.withdraw} onChange={e => setEditFields(f => ({ ...f, withdraw: e.target.value }))} className="input-sla-field" id="edit-withdraw">
-                    <option value="Enable">🔓 Allowed (Enable)</option>
-                    <option value="Disable">🔒 Locked (Disable)</option>
+                    <option value="Enabled">🔓 Allowed (Enable)</option>
+                    <option value="Disabled">🔒 Locked (Disable)</option>
                   </select>
                 </div>
                 <div className="form-group-sla sm:col-span-2">
@@ -791,7 +812,7 @@ export default function UserManagement() {
                 { label: 'Receiving Bank Entity', val: viewUser.bank_name || '—' },
                 { label: 'Receiving Bank Account', val: viewUser.bank_account || '—', mono: true },
                 { label: 'Receiving Holder Name', val: viewUser.bank_holder || '—' },
-                { label: 'payout Status Access', val: viewUser.withdraw === 'Enable' ? '🔓 Enabled (Allowed)' : '🔒 Locked (Restricted)', badge: true },
+                { label: 'payout Status Access', val: (viewUser.withdraw === 'Enable' || viewUser.withdraw === 'Enabled') ? '🔓 Enabled (Allowed)' : '🔒 Locked (Restricted)', badge: true },
               ].map((item, index) => (
                 <div key={index} className="flex justify-between items-start py-2.5 border-b border-slate-100 dark:border-slate-800 last:border-0 gap-4">
                   <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px] min-w-[150px] mt-0.5">{item.label}</span>

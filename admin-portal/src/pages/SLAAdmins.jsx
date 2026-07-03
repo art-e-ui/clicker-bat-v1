@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabase';
 import { createClient } from '@supabase/supabase-js';
 
@@ -14,6 +14,7 @@ export default function SLAAdmins() {
   const [admins, setAdmins] = useState([]);
   const [staff, setStaff] = useState([]);
   const [session, setSession] = useState(null);
+  const updatingStaffIdsRef = useRef(new Set());
 
   // Form states for creating staff
   const [selectedAdminId, setSelectedAdminId] = useState('');
@@ -59,19 +60,25 @@ export default function SLAAdmins() {
         .order('created_at', { ascending: true });
 
       if (!staffError && staffData) {
-        const mappedStaff = staffData.map(s => ({
-          id: s.id,
-          staffId: s.staff_id,
-          name: s.name,
-          email: s.email,
-          phone: s.phone || 'Unassigned',
-          status: s.status,
-          createdByAdminId: s.created_by_admin_id,
-          department: s.department || 'Operations',
-          referralCode: s.referral_code,
-          createdAt: new Date(s.created_at).toLocaleDateString()
-        }));
-        setStaff(mappedStaff);
+        setStaff(prevStaff => {
+          return staffData.map(s => {
+            const isUpdating = updatingStaffIdsRef.current.has(s.id);
+            const existing = prevStaff.find(x => x.id === s.id);
+            return {
+              id: s.id,
+              staffId: s.staff_id,
+              name: s.name,
+              email: s.email,
+              phone: s.phone || 'Unassigned',
+              status: s.status,
+              createdByAdminId: s.created_by_admin_id,
+              department: s.department || 'Operations',
+              referralCode: s.referral_code,
+              profile_photo: (isUpdating && existing) ? existing.profile_photo : s.profile_photo,
+              createdAt: new Date(s.created_at).toLocaleDateString()
+            };
+          });
+        });
       }
     } catch (err) {
       console.error("Error fetching admins and staff:", err);
@@ -94,6 +101,34 @@ export default function SLAAdmins() {
 
   const handleOpenCreateStaff = (admin) => {
     setSelectedAdminId(admin.accountId);
+    setStaffName('');
+    setStaffEmail('');
+    setStaffPhone('');
+    setStaffDept('');
+    setStaffPassword('');
+    setFormError('');
+    setFormSuccess('');
+    setShowModal(true);
+  };
+
+  const handleOpenGeneralCreateStaff = () => {
+    if (session && session.role === 'Owner') {
+      const activeAdmins = admins.filter(a => a.status === 'Active' && a.accountId !== 'OWNER');
+      if (activeAdmins.length > 0) {
+        setSelectedAdminId(activeAdmins[0].accountId);
+      } else {
+        setSelectedAdminId('');
+      }
+    } else if (session) {
+      setSelectedAdminId(session.accountId || '');
+    }
+    setStaffName('');
+    setStaffEmail('');
+    setStaffPhone('');
+    setStaffDept('');
+    setStaffPassword('');
+    setFormError('');
+    setFormSuccess('');
     setShowModal(true);
   };
 
@@ -245,13 +280,17 @@ export default function SLAAdmins() {
       supportChat: false
     };
     if (profilePhoto) {
-      try {
-        const parsed = JSON.parse(profilePhoto);
-        if (parsed && typeof parsed === 'object') {
-          perms = { ...perms, ...parsed };
+      if (typeof profilePhoto === 'object') {
+        perms = { ...perms, ...profilePhoto };
+      } else {
+        try {
+          const parsed = JSON.parse(profilePhoto);
+          if (parsed && typeof parsed === 'object') {
+            perms = { ...perms, ...parsed };
+          }
+        } catch (e) {
+          // Ignore
         }
-      } catch (e) {
-        // Ignore
       }
     }
     return perms;
@@ -263,21 +302,53 @@ export default function SLAAdmins() {
       ...currentPerms,
       [field]: !currentPerms[field]
     };
+
+    const updatedPhotoStr = JSON.stringify(updatedPerms);
+
+    // Track active local update to prevent polling overwrite
+    updatingStaffIdsRef.current.add(staffMember.id);
+
+    // Optimistic UI update
+    setStaff(prevStaff => prevStaff.map(s => {
+      if (s.id === staffMember.id) {
+        return { ...s, profile_photo: updatedPhotoStr };
+      }
+      return s;
+    }));
+
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('cb_staff')
-        .update({ profile_photo: JSON.stringify(updatedPerms) })
-        .eq('id', staffMember.id);
+        .update({ profile_photo: updatedPhotoStr })
+        .eq('id', staffMember.id)
+        .select();
 
       if (error) {
-        toast.error("Failed to update permission: " + error.message);
-        return;
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error("No rows were updated. You might not have administrative permissions to update this staff member.");
       }
 
       toast.success(`Permission updated for ${staffMember.name}`);
+      
+      // Stop tracking updating ID before refetching so that fetch receives the new db state
+      updatingStaffIdsRef.current.delete(staffMember.id);
       fetchAdminsAndStaff();
     } catch (err) {
-      toast.error("Error updating permission: " + err.message);
+      toast.error("Failed to update permission: " + err.message);
+      
+      // Stop tracking on failure so that rollback state is restored properly
+      updatingStaffIdsRef.current.delete(staffMember.id);
+      
+      // Rollback on error
+      setStaff(prevStaff => prevStaff.map(s => {
+        if (s.id === staffMember.id) {
+          return { ...s, profile_photo: staffMember.profile_photo };
+        }
+        return s;
+      }));
     }
   };
 
@@ -288,6 +359,9 @@ export default function SLAAdmins() {
           <h2 className="admin-page-title">Administrator Nodes</h2>
           <p className="admin-page-subtitle">Manage system administrator nodes and operational staff hierarchies</p>
         </div>
+        <button className="btn-create-item" onClick={handleOpenGeneralCreateStaff}>
+          + Create Staff Account
+        </button>
       </div>
 
       <div className="display-admins-grid">
@@ -495,13 +569,44 @@ export default function SLAAdmins() {
         <div className="modal-overlay">
           <div className="modal-content-admin">
             <div className="modal-header-admin">
-              <h3>Create Staff Account under {selectedAdminId}</h3>
+              <h3>Create Staff Account</h3>
               <button onClick={() => { setShowModal(false); setFormError(''); setFormSuccess(''); }} style={{ fontSize: 18, color: '#94a3b8' }}>&times;</button>
             </div>
             <form onSubmit={handleCreateStaff}>
               <div className="modal-body-admin">
                 {formError && <div className="inline-alert-error">{formError}</div>}
                 {formSuccess && <div className="inline-alert-success">{formSuccess}</div>}
+                
+                {session && session.role === 'Owner' ? (
+                  <div className="form-group-admin">
+                    <label>Administrator Node (Belongs To)</label>
+                    <select 
+                      value={selectedAdminId} 
+                      onChange={(e) => setSelectedAdminId(e.target.value)} 
+                      required 
+                      style={{ 
+                        width: '100%', 
+                        padding: '10px', 
+                        borderRadius: '4px', 
+                        border: '1px solid var(--border-color)', 
+                        background: 'var(--bg-surface)', 
+                        color: 'var(--text-color)',
+                        outline: 'none'
+                      }}
+                    >
+                      <option value="">-- Select Admin Node --</option>
+                      {admins.filter(a => a.status === 'Active' && a.accountId !== 'OWNER').map(a => (
+                        <option key={a.id} value={a.accountId}>{a.name} ({a.accountId})</option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="form-group-admin">
+                    <label>Administrator Node</label>
+                    <input type="text" value={selectedAdminId} disabled style={{ background: 'var(--bg-app)', cursor: 'not-allowed', color: 'var(--text-light)' }} />
+                  </div>
+                )}
+
                 <div className="form-group-admin">
                   <label>Staff Member Name</label>
                   <input type="text" value={staffName} onChange={(e) => setStaffName(e.target.value)} required placeholder="e.g. David Staff" />
@@ -538,6 +643,20 @@ export default function SLAAdmins() {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 20px;
+        }
+        .btn-create-item {
+          background-color: var(--color-primary);
+          color: white;
+          padding: 8px 16px;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+          border: none;
+        }
+        .btn-create-item:hover {
+          background-color: var(--color-primary-hover);
         }
         .admin-page-title {
           font-size: 20px;

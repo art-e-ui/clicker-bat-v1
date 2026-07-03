@@ -78,6 +78,11 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
         return;
       }
 
+      if (userProfile.withdraw === 'Disable' || userProfile.withdraw === 'Disabled') {
+        toast.error("Your withdrawal privilege has been restricted by administrative nodes.");
+        return;
+      }
+
       if (userProfile.password && userProfile.password !== password) {
         toast("Incorrect secure password. Please enter your correct login password to authorize this payout.");
         return;
