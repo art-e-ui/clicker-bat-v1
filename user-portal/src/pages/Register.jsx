@@ -177,11 +177,26 @@ export default function Register() {
 
       // Dynamic parse pattern fallback
       if (!matchingStaff && !inviterUser) {
-        const refMatch = codeInput.match(/^WK(AD\d+SI\d+)([A-Z]{3})$/);
-        if (refMatch) {
-          const parsedStaffId = refMatch[1];
-          const parsedAdminId = parsedStaffId.split('SI')[0];
+        let parsedStaffId = null;
+        let parsedAdminId = null;
 
+        const cleanInput = codeInput.trim().toUpperCase();
+        const refMatchRandom = cleanInput.match(/^WK-([A-Z0-9]{6})-(AD\d+|OWNER)$/);
+        const refMatchNew = cleanInput.match(/^WK-STF-(AD\d+)-(SI\d+)-([A-Z]{3})$/);
+        const refMatchOld = cleanInput.match(/^WK(AD\d+SI\d+)([A-Z]{3})$/);
+
+        if (refMatchRandom) {
+          parsedAdminId = refMatchRandom[2];
+          parsedStaffId = `${parsedAdminId}SI1`;
+        } else if (refMatchNew) {
+          parsedAdminId = refMatchNew[1];
+          parsedStaffId = `${parsedAdminId}${refMatchNew[2]}`;
+        } else if (refMatchOld) {
+          parsedStaffId = refMatchOld[1];
+          parsedAdminId = parsedStaffId.split('SI')[0];
+        }
+
+        if (parsedStaffId && parsedAdminId) {
           const newStaffMember = {
             id: 'staff-' + Date.now(),
             staff_id: parsedStaffId,
@@ -262,7 +277,18 @@ export default function Register() {
 
       // 3. Create client registration
       const newUserId = 'ID-' + Math.floor(10000 + Math.random() * 90000);
-      const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const parentAdminId = matchingStaff.created_by_admin_id || matchingStaff.createdByAdminId || 'OWNER';
+      
+      const generateRandomCode = (length) => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Avoid confusing O, 0, I, 1
+        let result = '';
+        for (let i = 0; i < length; i++) {
+          result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+      };
+      
+      const inviteCode = `WK-${generateRandomCode(8)}-${parentAdminId}`;
 
       const newUser = {
         id: newUserId,

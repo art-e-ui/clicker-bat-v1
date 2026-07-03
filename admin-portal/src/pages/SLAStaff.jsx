@@ -101,11 +101,16 @@ export default function SLAStaff() {
     return false;
   });
 
-  const filteredStaff = displayStaff.filter(s => 
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.staffId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.department.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredStaff = displayStaff.filter(s => {
+    const q = searchQuery.toLowerCase();
+    return (
+      s.name.toLowerCase().includes(q) ||
+      s.staffId.toLowerCase().includes(q) ||
+      s.department.toLowerCase().includes(q) ||
+      (s.referralCode && s.referralCode.toLowerCase().includes(q)) ||
+      (s.createdByAdminId && s.createdByAdminId.toLowerCase().includes(q))
+    );
+  });
 
   // Auto-select first staff to display details
   useEffect(() => {

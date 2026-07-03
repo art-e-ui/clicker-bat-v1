@@ -133,16 +133,21 @@ export default function SLAAdmins() {
   };
 
   const generateReferralCode = (staffId, name) => {
-    // Get 3 random upper letters from staff name or fallback
-    const letters = name.replace(/[^a-zA-Z]/g, '').toUpperCase();
-    let randomLetters = "";
-    if (letters.length >= 3) {
-      randomLetters = letters.substring(0, 3);
+    let adminId = 'OWNER';
+    const match = staffId.match(/^(AD\d+)SI(\d+)$/);
+    if (match) {
+      adminId = match[1];
     } else {
-      randomLetters = "ASD"; // Default fallback like WKAD01SI1ASD
+      adminId = selectedAdminId || 'OWNER';
     }
-    // Format: WK + StaffId + randomLetters (no hyphens)
-    return `WK${staffId}${randomLetters}`;
+
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Avoid confusing O, 0, I, 1
+    let randomPart = '';
+    for (let i = 0; i < 6; i++) {
+      randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return `WK-${randomPart}-${adminId}`;
   };
 
   const handleCreateStaff = async (e) => {

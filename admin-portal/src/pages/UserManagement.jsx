@@ -177,7 +177,11 @@ export default function UserManagement() {
         u.username.toLowerCase().includes(q) ||
         u.email.toLowerCase().includes(q) ||
         u.id.toLowerCase().includes(q) ||
-        u.phone.includes(q)
+        u.phone.includes(q) ||
+        (u.invite_code && u.invite_code.toLowerCase().includes(q)) ||
+        (u.referral_id && u.referral_id.toLowerCase().includes(q)) ||
+        (u.referred_by_staff_id && u.referred_by_staff_id.toLowerCase().includes(q)) ||
+        (u.member_of_admin_id && u.member_of_admin_id.toLowerCase().includes(q))
       );
     }
     if (filterOnline !== 'All') {
