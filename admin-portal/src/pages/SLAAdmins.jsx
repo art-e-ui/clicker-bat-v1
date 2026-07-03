@@ -162,59 +162,26 @@ export default function SLAAdmins() {
     const referralCode = generateReferralCode(staffId, staffName);
 
     try {
-      // 1. Direct fetch to avoid corrupting the Supabase JS client session
-      const authResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/signup`, {
-        method: 'POST',
-        headers: {
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email: staffEmail, password: staffPassword })
+      // Create staff member account using the secure database RPC function
+      const { data: newUserId, error: rpcError } = await supabase.rpc('create_staff_member', {
+        p_email: staffEmail,
+        p_password: staffPassword,
+        p_name: staffName,
+        p_phone: staffPhone || 'Unassigned',
+        p_staff_id: staffId,
+        p_admin_id: selectedAdminId,
+        p_department: staffDept || 'Operations',
+        p_referral_code: referralCode
       });
 
-      const authData = await authResponse.json();
-
-      if (!authResponse.ok) {
-        setFormError("Error creating staff auth: " + (authData.msg || authData.message || 'Unknown error'));
+      if (rpcError) {
+        setFormError("Error creating staff account: " + rpcError.message);
         return;
       }
 
-      const newUserId = authData.id || authData.user?.id;
       if (!newUserId) {
         setFormError("Failed to retrieve user ID from authentication system.");
         return;
-      }
-
-      // 2. Insert into cb_staff
-      const { error: staffError } = await supabase
-        .from('cb_staff')
-        .insert([{
-          id: newUserId,
-          staff_id: staffId,
-          created_by_admin_id: selectedAdminId,
-          name: staffName,
-          email: staffEmail,
-          phone: staffPhone || 'Unassigned',
-          department: staffDept || 'Operations',
-          status: 'Active',
-          referral_code: referralCode
-        }]);
-
-      if (staffError) {
-        setFormError("Error creating staff record: " + staffError.message);
-        return;
-      }
-
-      // 3. Insert into user_roles
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert([{
-          user_id: newUserId,
-          role: 'staff'
-        }]);
-
-      if (roleError) {
-        console.error("Role assignment warning:", roleError.message);
       }
 
       // Track Audit Log

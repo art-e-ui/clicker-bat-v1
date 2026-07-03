@@ -65,56 +65,23 @@ export default function SLAOwnership() {
     const accountId = `AD${String(nextNum).padStart(2, '0')}`;
 
     try {
-      // 1. Create auth user with direct fetch to avoid corrupting the Supabase JS client session
-      const authResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/signup`, {
-        method: 'POST',
-        headers: {
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
+      // Create administrator account using the secure database RPC function
+      const { data: newUserId, error: rpcError } = await supabase.rpc('create_admin_member', {
+        p_email: email,
+        p_password: password,
+        p_name: name,
+        p_phone: phone || 'Unassigned',
+        p_account_id: accountId
       });
 
-      const authData = await authResponse.json();
-
-      if (!authResponse.ok) {
-        setFormError("Error creating admin auth: " + (authData.msg || authData.message || 'Unknown error'));
+      if (rpcError) {
+        setFormError("Error creating admin account: " + rpcError.message);
         return;
       }
 
-      const newUserId = authData.id || authData.user?.id;
       if (!newUserId) {
         setFormError("Failed to retrieve user ID from authentication system.");
         return;
-      }
-
-      // 2. Insert into cb_admins
-      const { error: adminError } = await supabase
-        .from('cb_admins')
-        .insert([{
-          id: newUserId,
-          account_id: accountId,
-          name: name,
-          email: email,
-          phone: phone || 'Unassigned',
-          status: 'Active'
-        }]);
-
-      if (adminError) {
-        setFormError("Error creating admin record: " + adminError.message);
-        return;
-      }
-
-      // 3. Insert into user_roles
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert([{
-          user_id: newUserId,
-          role: 'admin'
-        }]);
-
-      if (roleError) {
-        console.error("Role assignment warning:", roleError.message);
       }
 
       // Track audit logs
