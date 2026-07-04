@@ -182,11 +182,15 @@ export default function Register() {
 
         const cleanInput = codeInput.trim().toUpperCase();
         const refMatchRandom = cleanInput.match(/^WK-([A-Z0-9]{6})-(AD\d+|OWNER)$/);
+        const refMatchNoHyphen = cleanInput.match(/^WK([A-Z0-9]{6})(AD\d+|OWNER)$/);
         const refMatchNew = cleanInput.match(/^WK-STF-(AD\d+)-(SI\d+)-([A-Z]{3})$/);
         const refMatchOld = cleanInput.match(/^WK(AD\d+SI\d+)([A-Z]{3})$/);
 
         if (refMatchRandom) {
           parsedAdminId = refMatchRandom[2];
+          parsedStaffId = `${parsedAdminId}SI1`;
+        } else if (refMatchNoHyphen) {
+          parsedAdminId = refMatchNoHyphen[2];
           parsedStaffId = `${parsedAdminId}SI1`;
         } else if (refMatchNew) {
           parsedAdminId = refMatchNew[1];
@@ -288,7 +292,7 @@ export default function Register() {
         return result;
       };
       
-      const inviteCode = `WK-${generateRandomCode(8)}-${parentAdminId}`;
+      const inviteCode = `WK${generateRandomCode(8)}${parentAdminId}`;
 
       const newUser = {
         id: newUserId,

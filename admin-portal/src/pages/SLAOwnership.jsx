@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 import { createClient } from '@supabase/supabase-js';
+import toast from 'react-hot-toast';
 
 // Isolated client to prevent overwriting current session when creating users
 const adminAuthClient = createClient(
@@ -18,6 +19,8 @@ export default function SLAOwnership() {
   const [showModal, setShowModal] = useState(false);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
+  const [adminToDelete, setAdminToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Load admins from Supabase
   const fetchAdmins = async () => {
@@ -158,44 +161,58 @@ export default function SLAOwnership() {
     }
   };
 
-  const handleDeleteAdmin = async (admin) => {
-    if (!window.confirm(`⚠️ Permanently delete Administrator "${admin.name}" (${admin.accountId})?\n\nThis will remove their administrative record from cb_admins.`)) {
-      return;
-    }
+  const handleDeleteAdmin = (admin) => {
+    setAdminToDelete(admin);
+  };
+
+  const confirmDeleteAdmin = async () => {
+    if (!adminToDelete) return;
+    setIsDeleting(true);
 
     try {
       // Delete the record from cb_admins
       const { error: deleteErr } = await supabase
         .from('cb_admins')
         .delete()
-        .eq('id', admin.id);
+        .eq('id', adminToDelete.id);
 
       if (deleteErr) {
-        // If there's a foreign key reference error, explain it clearly to the user
         if (deleteErr.message && deleteErr.message.toLowerCase().includes('foreign key')) {
-          alert(`Could not delete administrator. There are still staff members registered under this administrator (${admin.accountId}).\n\nPlease execute the "fix_admin_auth.sql" SQL patch in your Supabase SQL Editor to automatically support safe NULL-cascade deletion rules, or delete their registered staff members first.`);
+          toast.error(`Could not delete administrator. There are still staff members registered under this administrator (${adminToDelete.accountId}).\n\nPlease delete their registered staff members first or execute the "fix_admin_auth.sql" SQL patch.`);
         } else {
-          alert("Error deleting administrator: " + deleteErr.message);
+          toast.error("Error deleting administrator: " + deleteErr.message);
         }
+        setIsDeleting(false);
+        setAdminToDelete(null);
         return;
       }
 
       // Also clean up their user role from user_roles
-      await supabase
+      const { error: roleDeleteErr } = await supabase
         .from('user_roles')
         .delete()
-        .eq('user_id', admin.id);
+        .eq('user_id', adminToDelete.id);
+
+      if (roleDeleteErr) {
+        console.warn("Non-blocking error deleting user role:", roleDeleteErr.message);
+      }
 
       // Clean up from auth.users via the secure SECURITY DEFINER helper function
-      await supabase.rpc('delete_auth_user', { p_user_id: admin.id });
+      const { error: rpcDeleteErr } = await supabase.rpc('delete_auth_user', { p_user_id: adminToDelete.id });
+      if (rpcDeleteErr) {
+        console.warn("Non-blocking error deleting auth user:", rpcDeleteErr.message);
+        if (rpcDeleteErr.message && rpcDeleteErr.message.includes("does not exist")) {
+          toast(`Notice: Admin was deleted from db, but auth login could not be deleted automatically. Run the updated "fix_admin_auth.sql" patch.`, { duration: 6000 });
+        }
+      }
 
       // Track audit logs
       const auditLog = {
         id: Date.now().toString(),
         admin_email: 'owner@wallmark.com',
         action: 'DELETE_ADMIN',
-        target: admin.accountId,
-        details: { name: admin.name, email: admin.email },
+        target: adminToDelete.accountId,
+        details: { name: adminToDelete.name, email: adminToDelete.email },
         timestamp: new Date().toISOString()
       };
 
@@ -203,10 +220,13 @@ export default function SLAOwnership() {
         .from('cb_audit_logs')
         .insert([auditLog]);
 
-      alert(`Administrator ${admin.name} deleted successfully.`);
+      toast.success(`Administrator ${adminToDelete.name} deleted successfully.`);
       fetchAdmins();
     } catch (err) {
-      alert("Failed to delete administrator: " + err.message);
+      toast.error("Failed to delete administrator: " + err.message);
+    } finally {
+      setIsDeleting(false);
+      setAdminToDelete(null);
     }
   };
 
@@ -317,6 +337,45 @@ export default function SLAOwnership() {
                 <button type="submit" className="btn-modal-submit">Generate Account</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {adminToDelete && (
+        <div className="modal-overlay" style={{ zIndex: 1100 }}>
+          <div className="modal-content-admin" style={{ maxWidth: '400px' }}>
+            <div className="modal-header-admin">
+              <h3 style={{ color: '#ef4444' }}>⚠️ Confirm Deletion</h3>
+              <button onClick={() => setAdminToDelete(null)} style={{ fontSize: 18, color: '#94a3b8' }}>&times;</button>
+            </div>
+            <div className="modal-body-admin" style={{ padding: '20px 0' }}>
+              <p style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--text-admin-main)' }}>
+                Are you sure you want to permanently delete Administrator <strong>{adminToDelete.name}</strong> ({adminToDelete.accountId})?
+              </p>
+              <p style={{ fontSize: '12px', color: '#64748b', marginTop: '12px' }}>
+                This will remove their administrative record from the database and clean up their authentication permissions.
+              </p>
+            </div>
+            <div className="modal-footer-admin" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button 
+                type="button" 
+                className="btn-modal-cancel" 
+                onClick={() => setAdminToDelete(null)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                className="btn-modal-submit" 
+                style={{ backgroundColor: '#ef4444' }}
+                onClick={confirmDeleteAdmin}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Deleting...' : 'Permanently Delete'}
+              </button>
+            </div>
           </div>
         </div>
       )}

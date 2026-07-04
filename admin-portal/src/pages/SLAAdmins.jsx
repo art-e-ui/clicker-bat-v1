@@ -147,7 +147,7 @@ export default function SLAAdmins() {
       randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
-    return `WK-${randomPart}-${adminId}`;
+    return `WK${randomPart}${adminId}`;
   };
 
   const handleCreateStaff = async (e) => {

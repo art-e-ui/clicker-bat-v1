@@ -299,9 +299,9 @@ BEGIN
     WHERE id = v_user_id;
   END IF;
 
-  -- Map permissions to app role 'staff' in user_roles
+  -- Map permissions to app role 'admin' in user_roles
   INSERT INTO public.user_roles (user_id, role)
-  VALUES (v_user_id, 'staff')
+  VALUES (v_user_id, 'admin')
   ON CONFLICT (user_id, role) DO NOTHING;
 
   -- Add record in cb_staff linking the new uuid
