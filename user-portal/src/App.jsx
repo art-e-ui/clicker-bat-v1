@@ -87,13 +87,34 @@ export default function App() {
   const updateBalance = (amount) => {
     setBalance(prev => {
       const nextBalance = parseFloat((prev + amount).toFixed(2));
+      
       supabase
         .from('cb_users')
-        .update({ balance: nextBalance })
+        .select('balance, earnings')
         .eq('username', username)
-        .then(({ error }) => {
-          if (error) console.error("Supabase balance sync error:", error.message);
+        .then(({ data, error }) => {
+          if (!error && data && data[0]) {
+            const currentEarnings = parseFloat(data[0].earnings || 0);
+            const nextEarnings = amount > 0 ? parseFloat((currentEarnings + amount).toFixed(4)) : currentEarnings;
+            
+            supabase
+              .from('cb_users')
+              .update({ 
+                balance: nextBalance,
+                ...(amount > 0 ? { earnings: nextEarnings } : {})
+              })
+              .eq('username', username)
+              .then(({ error: updateErr }) => {
+                if (updateErr) console.error("Supabase balance/earnings sync error:", updateErr.message);
+              });
+          } else {
+            supabase
+              .from('cb_users')
+              .update({ balance: nextBalance })
+              .eq('username', username);
+          }
         });
+
       return nextBalance;
     });
   };
@@ -134,7 +155,7 @@ export default function App() {
           },
           body: JSON.stringify({ online: 'Offline' }),
           keepalive: true
-        }).catch(err => console.error("Keepalive offline fetch error:", err));
+        }).catch(() => {});
       }
     };
 

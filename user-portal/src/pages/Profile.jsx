@@ -312,11 +312,11 @@ export default function Profile({ balance, username, setUsername, setBalance, se
               <span className="asset-lbl">Total Net Assets</span>
             </div>
             <div className="asset-col">
-              <span className="asset-val">$ {clientProfile?.earnings ? parseFloat(clientProfile.earnings).toFixed(2) : '18.56'}</span>
+              <span className="asset-val">$ {clientProfile && clientProfile.earnings !== undefined && clientProfile.earnings !== null ? parseFloat(clientProfile.earnings).toFixed(2) : '0.00'}</span>
               <span className="asset-lbl">Lifetime Earnings</span>
             </div>
             <div className="asset-col">
-              <span className="asset-val">$ 0.00</span>
+              <span className="asset-val">$ {clientProfile && clientProfile.frozen !== undefined && clientProfile.frozen !== null ? parseFloat(clientProfile.frozen).toFixed(2) : '0.00'}</span>
               <span className="asset-lbl">Reserved Balance</span>
             </div>
           </div>
