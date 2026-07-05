@@ -21,9 +21,43 @@ export default function Profile({ balance, username, setUsername, setBalance, se
   const [bankHolder, setBankHolder] = useState('');
   const [savingBanking, setSavingBanking] = useState(false);
 
+  // History states
+  const [deposits, setDeposits] = useState([]);
+  const [withdrawals, setWithdrawals] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [activeHistoryTab, setActiveHistoryTab] = useState('deposits'); // 'deposits' or 'withdrawals'
+
   const handleCopy = (text, label) => {
     navigator.clipboard.writeText(text);
     toast(`${label} copied to clipboard: ${text}`);
+  };
+
+  const fetchHistory = async () => {
+    if (!username) return;
+    try {
+      const { data: depData, error: depErr } = await supabase
+        .from('cb_deposit_requests')
+        .select('*')
+        .eq('username', username)
+        .order('created_at', { ascending: false });
+
+      const { data: withData, error: withErr } = await supabase
+        .from('cb_withdrawal_requests')
+        .select('*')
+        .eq('username', username)
+        .order('created_at', { ascending: false });
+
+      if (!depErr && depData) {
+        setDeposits(depData);
+      }
+      if (!withErr && withData) {
+        setWithdrawals(withData);
+      }
+    } catch (err) {
+      console.error("Error fetching histories:", err);
+    } finally {
+      setLoadingHistory(false);
+    }
   };
 
   const syncProfileData = async () => {
@@ -62,7 +96,11 @@ export default function Profile({ balance, username, setUsername, setBalance, se
 
   useEffect(() => {
     syncProfileData();
-    const interval = setInterval(syncProfileData, 1000);
+    fetchHistory();
+    const interval = setInterval(() => {
+      syncProfileData();
+      fetchHistory();
+    }, 2000);
     return () => clearInterval(interval);
   }, [username]);
 
@@ -342,6 +380,162 @@ export default function Profile({ balance, username, setUsername, setBalance, se
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Dynamic History Section (Deposits & Withdrawals) */}
+        <div className="profile-history-section" style={{ padding: '0 16px 24px 16px' }}>
+          <div className="history-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary-color)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              Transaction History Records
+            </h3>
+          </div>
+          
+          <div className="history-tab-switcher" style={{ display: 'flex', gap: '8px', marginBottom: '12px', background: 'var(--bg-input)', padding: '4px', borderRadius: '8px' }}>
+            <button 
+              className={`history-tab-btn ${activeHistoryTab === 'deposits' ? 'active' : ''}`}
+              onClick={() => setActiveHistoryTab('deposits')}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: '700',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                background: activeHistoryTab === 'deposits' ? 'var(--primary-gradient)' : 'transparent',
+                color: activeHistoryTab === 'deposits' ? 'white' : 'var(--text-muted)'
+              }}
+            >
+              📥 Deposits ({deposits.length})
+            </button>
+            <button 
+              className={`history-tab-btn ${activeHistoryTab === 'withdrawals' ? 'active' : ''}`}
+              onClick={() => setActiveHistoryTab('withdrawals')}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: '700',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                background: activeHistoryTab === 'withdrawals' ? 'var(--primary-gradient)' : 'transparent',
+                color: activeHistoryTab === 'withdrawals' ? 'white' : 'var(--text-muted)'
+              }}
+            >
+              📤 Withdrawals ({withdrawals.length})
+            </button>
+          </div>
+
+          <div className="history-records-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {loadingHistory ? (
+              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '12px' }}>Loading transaction records...</div>
+            ) : activeHistoryTab === 'deposits' ? (
+              deposits.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '24px', backgroundColor: 'var(--bg-card)', borderRadius: '8px', border: 'var(--border-glass)', color: 'var(--text-muted)', fontSize: '12.5px' }}>
+                  No deposit records found.
+                </div>
+              ) : (
+                deposits.map(dep => {
+                  const statusLower = (dep.status || 'pending').toLowerCase();
+                  let statusLabel = dep.status || 'Pending';
+                  if (statusLower === 'approved') statusLabel = 'Finished';
+                  const badgeClass = statusLower === 'approved' ? 'badge-success' : statusLower === 'rejected' ? 'badge-danger' : 'badge-pending';
+                  
+                  return (
+                    <div className="history-item-card" key={dep.id} style={{
+                      backgroundColor: 'var(--bg-card)',
+                      borderRadius: '8px',
+                      padding: '12px 14px',
+                      border: 'var(--border-glass)',
+                      boxShadow: 'var(--shadow-sm)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-light)', fontFamily: 'var(--font-secondary)' }}>
+                          {new Date(dep.created_at || dep.timestamp).toLocaleString()}
+                        </span>
+                        <span className={`badge ${badgeClass}`} style={{ fontSize: '9px', padding: '2px 8px' }}>
+                          {statusLabel}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-main)' }}>
+                            Deposit Request
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', wordBreak: 'break-all' }}>
+                            {dep.method || 'USDT TRC20'} {dep.transaction_hash ? `(${dep.transaction_hash})` : ''}
+                          </div>
+                        </div>
+                        <div style={{ fontSize: '14.5px', fontWeight: '700', color: 'var(--success-color)' }}>
+                          +${parseFloat(dep.amount || 0).toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )
+            ) : (
+              withdrawals.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '24px', backgroundColor: 'var(--bg-card)', borderRadius: '8px', border: 'var(--border-glass)', color: 'var(--text-muted)', fontSize: '12.5px' }}>
+                  No withdrawal records found.
+                </div>
+              ) : (
+                withdrawals.map(wth => {
+                  const statusLower = (wth.status || 'pending').toLowerCase();
+                  let statusLabel = wth.status || 'Pending';
+                  if (statusLower === 'approved') statusLabel = 'Finished';
+                  const badgeClass = statusLower === 'approved' ? 'badge-success' : statusLower === 'rejected' ? 'badge-danger' : 'badge-pending';
+
+                  return (
+                    <div className="history-item-card" key={wth.id} style={{
+                      backgroundColor: 'var(--bg-card)',
+                      borderRadius: '8px',
+                      padding: '12px 14px',
+                      border: 'var(--border-glass)',
+                      boxShadow: 'var(--shadow-sm)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-light)', fontFamily: 'var(--font-secondary)' }}>
+                          {new Date(wth.created_at || wth.timestamp).toLocaleString()}
+                        </span>
+                        <span className={`badge ${badgeClass}`} style={{ fontSize: '9px', padding: '2px 8px' }}>
+                          {statusLabel}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-main)' }}>
+                            Withdrawal Request
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', wordBreak: 'break-all' }}>
+                            {wth.method || 'USDT TRC20'} {wth.wallet_address ? `(${wth.wallet_address})` : ''}
+                          </div>
+                        </div>
+                        <div style={{ fontSize: '14.5px', fontWeight: '700', color: 'var(--text-main)' }}>
+                          -${parseFloat(wth.amount || 0).toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )
+            )}
+          </div>
         </div>
       </div>
 
@@ -896,6 +1090,12 @@ export default function Profile({ balance, username, setUsername, setBalance, se
         .banking-field-input:focus {
           border-color: var(--primary-color);
           box-shadow: 0 0 0 3px rgba(0, 113, 206, 0.08);
+        }
+
+        .badge-danger {
+          background-color: rgba(239, 68, 68, 0.05);
+          border-color: rgba(239, 68, 68, 0.15);
+          color: var(--danger-color);
         }
       `}</style>
     </>

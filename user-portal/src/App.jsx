@@ -130,8 +130,16 @@ export default function App() {
       supabase.from('cb_users').update({ online: status }).eq('username', username)
         .then(({ error }) => {
           if (error) {
-            console.error("Error setting online status:", error?.message || JSON.stringify(error));
+            const errMsg = error?.message || JSON.stringify(error);
+            if (errMsg.includes('Failed to fetch') || errMsg.includes('TypeError')) {
+              console.warn("Offline or transient network warning setting online status:", errMsg);
+            } else {
+              console.error("Error setting online status:", errMsg);
+            }
           }
+        })
+        .catch((err) => {
+          console.warn("Failed to set online status due to network error:", err?.message || err);
         });
     };
 
