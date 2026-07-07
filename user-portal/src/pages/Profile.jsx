@@ -36,22 +36,30 @@ export default function Profile({ balance, username, setUsername, setBalance, se
     if (!username) return;
     try {
       const { data: depData, error: depErr } = await supabase
-        .from('cb_deposit_requests')
+        .from('cb_deposits')
         .select('*')
         .eq('username', username)
         .order('created_at', { ascending: false });
 
       const { data: withData, error: withErr } = await supabase
-        .from('cb_withdrawal_requests')
+        .from('cb_withdrawals')
         .select('*')
         .eq('username', username)
         .order('created_at', { ascending: false });
 
       if (!depErr && depData) {
-        setDeposits(depData);
+        const mappedDeposits = depData.map(d => ({
+          ...d,
+          method: d.method || d.currency || 'USDT TRC20'
+        }));
+        setDeposits(mappedDeposits);
       }
       if (!withErr && withData) {
-        setWithdrawals(withData);
+        const mappedWithdrawals = withData.map(w => ({
+          ...w,
+          wallet_address: w.wallet_address || w.account_info
+        }));
+        setWithdrawals(mappedWithdrawals);
       }
     } catch (err) {
       console.error("Error fetching histories:", err);

@@ -278,6 +278,18 @@ input, select, textarea {
   color: var(--success-color);
 }
 
+.badge-approved {
+  background-color: rgba(16, 185, 129, 0.05);
+  border-color: rgba(16, 185, 129, 0.15);
+  color: var(--success-color);
+}
+
+.badge-danger, .badge-rejected {
+  background-color: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.15);
+  color: var(--danger-color);
+}
+
 .badge-frozen {
   background-color: rgba(59, 130, 246, 0.05);
   border-color: rgba(59, 130, 246, 0.15);

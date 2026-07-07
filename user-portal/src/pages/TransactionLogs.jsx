@@ -15,13 +15,13 @@ export default function TransactionLogs({ username }) {
 
       // Fetch deposits
       const { data: deposits, error: depErr } = await supabase
-        .from('cb_deposit_requests')
+        .from('cb_deposits')
         .select('*')
         .eq('username', username);
 
       // Fetch withdrawals
       const { data: withdrawals, error: withErr } = await supabase
-        .from('cb_withdrawal_requests')
+        .from('cb_withdrawals')
         .select('*')
         .eq('username', username);
 
@@ -29,23 +29,23 @@ export default function TransactionLogs({ username }) {
       if (withErr) console.error(withErr);
 
       const formattedDeposits = (deposits || []).map(d => ({
-        id: `DEP-${d.id}`,
+        id: d.id || `DEP-${Math.floor(Math.random() * 100000)}`,
         type: 'Deposit',
         amount: d.amount,
         status: d.status,
         timestamp: d.created_at || d.timestamp,
-        method: d.method || 'USDT TRC20',
+        method: d.method || d.currency || 'USDT TRC20',
         wallet: d.wallet_address || d.transaction_hash
       }));
 
       const formattedWithdrawals = (withdrawals || []).map(w => ({
-        id: `WIT-${w.id}`,
+        id: w.id || `WIT-${Math.floor(Math.random() * 100000)}`,
         type: 'Withdrawal',
         amount: w.amount,
         status: w.status,
         timestamp: w.created_at || w.timestamp,
         method: w.method || 'USDT TRC20',
-        wallet: w.wallet_address
+        wallet: w.wallet_address || w.account_info
       }));
 
       const combined = [...formattedDeposits, ...formattedWithdrawals].sort((a, b) => {
@@ -102,8 +102,12 @@ export default function TransactionLogs({ username }) {
             <div className="order-item-card" key={log.id}>
               <div className="order-item-header">
                 <span className="order-timestamp">{new Date(log.timestamp).toLocaleString()}</span>
-                <span className={`badge badge-${log.status ? log.status.toLowerCase() : 'pending'}`}>
-                  {log.status || 'Pending'}
+                <span className={`badge badge-${
+                  (log.status || 'pending').toLowerCase() === 'approved' ? 'success' : 
+                  (log.status || 'pending').toLowerCase() === 'rejected' ? 'rejected' : 
+                  'pending'
+                }`}>
+                  {log.status === 'Approved' ? 'Finished' : (log.status || 'Pending')}
                 </span>
               </div>
               <div className="order-item-body" style={{ alignItems: 'center' }}>

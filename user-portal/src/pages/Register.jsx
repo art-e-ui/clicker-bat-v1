@@ -99,6 +99,8 @@ export default function Register() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [withdrawPassword, setWithdrawPassword] = useState('');
+  const [confirmWithdrawPassword, setConfirmWithdrawPassword] = useState('');
   const [referralCode, setReferralCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(true);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -136,8 +138,8 @@ export default function Register() {
     setFormError('');
     setFormSuccess('');
 
-    if (!username || !phone || !password || !confirmPassword || !referralCode) {
-      setFormError('Please fill in all required fields (Username, Phone Number, Passwords, and Invitation Code).');
+    if (!username || !phone || !password || !confirmPassword || !referralCode || !withdrawPassword || !confirmWithdrawPassword) {
+      setFormError('Please fill in all required fields (Username, Phone Number, Passwords, Withdrawal Password, and Invitation Code).');
       return;
     }
 
@@ -148,6 +150,11 @@ export default function Register() {
 
     if (password !== confirmPassword) {
       setFormError('Passwords do not match.');
+      return;
+    }
+
+    if (withdrawPassword !== confirmWithdrawPassword) {
+      setFormError('Withdrawal passwords do not match.');
       return;
     }
 
@@ -332,9 +339,23 @@ export default function Register() {
         password_plain: password,
       };
 
-      const { error: insertUserError } = await supabase
+      let insertUserError;
+      const { error: primaryError } = await supabase
         .from('cb_users')
-        .insert([newUser]);
+        .insert([{ ...newUser, withdraw_password: withdrawPassword }]);
+
+      insertUserError = primaryError;
+
+      if (primaryError && (primaryError.message.includes('withdraw_password') || primaryError.code === 'PGRST204' || primaryError.message.includes('column'))) {
+        console.warn("withdraw_password column missing in database. Retrying fallback insertion...");
+        const { error: fallbackError } = await supabase
+          .from('cb_users')
+          .insert([newUser]);
+        insertUserError = fallbackError;
+        if (!fallbackError) {
+          toast("Warning: 'withdraw_password' column missing. Please run add_withdrawal_password.sql, but registration was successful!", { duration: 5000 });
+        }
+      }
 
       if (insertUserError) {
         setFormError("Error registering user: " + insertUserError.message);
@@ -493,6 +514,30 @@ export default function Register() {
               placeholder="••••••••" 
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="login-form-group">
+            <label>Withdrawal Password (6-digit PIN or Secure Password)</label>
+            <input 
+              id="txt-register-withdraw-password"
+              type="password" 
+              placeholder="••••••••" 
+              value={withdrawPassword}
+              onChange={(e) => setWithdrawPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="login-form-group">
+            <label>Confirm Withdrawal Password</label>
+            <input 
+              id="txt-register-confirm-withdraw-password"
+              type="password" 
+              placeholder="••••••••" 
+              value={confirmWithdrawPassword}
+              onChange={(e) => setConfirmWithdrawPassword(e.target.value)}
               required
             />
           </div>

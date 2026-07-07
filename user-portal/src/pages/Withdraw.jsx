@@ -21,7 +21,7 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
       if (!session) return;
       const { data: users } = await supabase
         .from('cb_users')
-        .select('usdt_address, bank_name, bank_account, bank_holder')
+        .select('usdt_address, bank_name, bank_account, bank_holder, withdraw_password, password')
         .eq('username', session.username);
       if (users && users[0]) {
         const u = users[0];
@@ -83,8 +83,13 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
         return;
       }
 
-      if (userProfile.password && userProfile.password !== password) {
-        toast("Incorrect secure password. Please enter your correct login password to authorize this payout.");
+      const correctWithdrawPassword = userProfile.withdraw_password || userProfile.password;
+      if (correctWithdrawPassword && correctWithdrawPassword !== password) {
+        if (userProfile.withdraw_password) {
+          toast("Incorrect withdrawal password. Please enter your correct withdrawal password to authorize this payout.");
+        } else {
+          toast("Incorrect secure password. Please enter your correct login password to authorize this payout.");
+        }
         return;
       }
 
@@ -209,12 +214,12 @@ export default function Withdraw({ balance, updateBalance, addPendingWithdraw })
           <div className="withdraw-card card">
             <h4 className="card-sec-title">4. Secure Verification</h4>
             <p style={{ fontSize: '11px', color: 'var(--text-light)', marginBottom: '8px', lineHeight: '1.4' }}>
-              For your financial security, please enter your secure login password to authorize this payout request.
+              For your financial security, please enter your secure withdrawal password to authorize this payout request.
             </p>
             <input
               type="password"
               className="payout-address-input"
-              placeholder="Enter secure password"
+              placeholder="Enter withdrawal password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
