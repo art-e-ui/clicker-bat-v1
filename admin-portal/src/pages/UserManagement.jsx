@@ -42,6 +42,14 @@ export default function UserManagement() {
   const [editFields, setEditFields] = useState({});
   const [saving, setSaving] = useState(false);
 
+  // Reset passwords modal
+  const [resetPWUser, setResetPWUser] = useState(null);
+  const [resetPWFields, setResetPWFields] = useState({
+    loginPassword: '',
+    withdrawPassword: ''
+  });
+  const [resettingPW, setResettingPW] = useState(false);
+
   // View details modal
   const [viewUser, setViewUser] = useState(null);
 
@@ -141,6 +149,8 @@ export default function UserManagement() {
             email: u.email,
             phone: u.phone,
             password_plain: u.password_plain || '',
+            password: u.password || '',
+            withdraw_password: u.withdraw_password || '',
             nickname: u.nickname || '',
             level: u.level || 1,
             online: u.online || 'Offline',
@@ -155,7 +165,6 @@ export default function UserManagement() {
             bank_account: u.bank_account || '',
             bank_holder: u.bank_holder || '',
             withdraw: (u.withdraw === 'Enable' || u.withdraw === 'Enabled') ? 'Enabled' : 'Disabled',
-            password_plain: u.password_plain || '',
             inviteCode: u.invite_code || '',
             inviter: u.inviter || '',
             referred_by_staff_id: u.referred_by_staff_id || '',
@@ -217,6 +226,8 @@ export default function UserManagement() {
       email: user.email || '',
       phone: user.phone || '',
       password_plain: user.password_plain || '',
+      password: user.password || '',
+      withdraw_password: user.withdraw_password || '',
       balance: (user.balance ?? 0).toString(),
       frozen: (user.frozen ?? 0).toString(),
       usdt_address: user.usdt_address || '',
@@ -256,6 +267,8 @@ export default function UserManagement() {
         email: (editFields.email || '').trim(),
         phone: (editFields.phone || '').trim(),
         password_plain: (editFields.password_plain || '').trim(),
+        password: (editFields.password || '').trim() || (editFields.password_plain || '').trim(),
+        withdraw_password: (editFields.withdraw_password || '').trim(),
         balance: parseFloat(editFields.balance) || 0,
         frozen: parseFloat(editFields.frozen) || 0,
         usdt_address: (editFields.usdt_address || '').trim(),
@@ -283,6 +296,49 @@ export default function UserManagement() {
       toast.error('Failed: ' + err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const openResetPasswords = (user) => {
+    setResetPWUser(user);
+    setResetPWFields({
+      loginPassword: user.password_plain || user.password || '',
+      withdrawPassword: user.withdraw_password || ''
+    });
+  };
+
+  const handleSaveResetPW = async () => {
+    if (!resetPWUser) return;
+    setResettingPW(true);
+    try {
+      const updates = {
+        password: resetPWFields.loginPassword.trim(),
+        password_plain: resetPWFields.loginPassword.trim(),
+        withdraw_password: resetPWFields.withdrawPassword.trim()
+      };
+
+      if (!updates.password) {
+        toast.error('Login password cannot be empty');
+        setResettingPW(false);
+        return;
+      }
+
+      const { error } = await supabase
+        .from('cb_users')
+        .update(updates)
+        .eq('id', resetPWUser.id);
+
+      if (error) {
+        toast.error('Error resetting passwords: ' + error.message);
+        return;
+      }
+      toast.success(`Security credentials for ${resetPWUser.username} updated successfully!`);
+      setResetPWUser(null);
+      fetchUsers();
+    } catch (err) {
+      toast.error('Reset failed: ' + err.message);
+    } finally {
+      setResettingPW(false);
     }
   };
 
@@ -652,6 +708,14 @@ export default function UserManagement() {
                             <Edit3 className="w-4 h-4" />
                           </button>
                           <button
+                            onClick={() => openResetPasswords(u)}
+                            className="p-2 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 text-amber-600 dark:text-amber-400 rounded-lg transition-colors"
+                            title="Reset Security Passwords"
+                            id={`btn-reset-pw-${u.id}`}
+                          >
+                            <Lock className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => handleDeleteUser(u)}
                             className="p-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 rounded-lg transition-colors"
                             title="Permanently remove"
@@ -712,8 +776,12 @@ export default function UserManagement() {
                   <input type="text" value={editFields.phone} onChange={e => setEditFields(f => ({ ...f, phone: e.target.value }))} className="input-sla-field" id="edit-phone" />
                 </div>
                 <div className="form-group-sla">
-                  <label>Plain-text Access Key</label>
-                  <input type="text" value={editFields.password_plain} onChange={e => setEditFields(f => ({ ...f, password_plain: e.target.value }))} className="input-sla-field" id="edit-password" />
+                  <label>Login Password</label>
+                  <input type="text" value={editFields.password_plain} onChange={e => setEditFields(f => ({ ...f, password_plain: e.target.value, password: e.target.value }))} className="input-sla-field" id="edit-password" />
+                </div>
+                <div className="form-group-sla">
+                  <label>Withdrawal Password</label>
+                  <input type="text" value={editFields.withdraw_password || ''} onChange={e => setEditFields(f => ({ ...f, withdraw_password: e.target.value }))} className="input-sla-field" id="edit-withdraw-password" placeholder="Defaults to Login Password" />
                 </div>
                 <div className="form-group-sla">
                   <label>Current Available Balance ($)</label>
@@ -821,6 +889,7 @@ export default function UserManagement() {
                 { label: 'Primary Email Address', val: viewUser.email },
                 { label: 'Registered Telephone', val: viewUser.phone, mono: true },
                 { label: 'Operational Password', val: viewUser.password_plain || '(N/A)', badge: true },
+                { label: 'Withdrawal Password', val: viewUser.withdraw_password || '(N/A)', badge: true },
                 { label: 'Net Liquid Capital', val: `$${viewUser.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, highlight: 'text-emerald-600 dark:text-emerald-400 font-bold' },
                 { label: 'Escrow Holdings', val: `$${viewUser.frozen.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, highlight: 'text-amber-500 font-bold' },
                 { label: 'Total Deposited Assets', val: `$${viewUser.topup.toLocaleString(undefined, { minimumFractionDigits: 2 })}` },
@@ -867,6 +936,74 @@ export default function UserManagement() {
                 onClick={() => setViewUser(null)}
               >
                 Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Reset Passwords Modal */}
+      {resetPWUser && (
+        <div className="modal-overlay">
+          <div className="modal-content-card" style={{ maxWidth: 440, width: '95%' }}>
+            <div className="modal-header">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 dark:text-slate-50 text-base">Reset Passwords</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">Quickly update security credentials for <b>{resetPWUser.username}</b></p>
+                </div>
+              </div>
+              <button className="modal-close-btn" onClick={() => setResetPWUser(null)}>
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="modal-body py-5 space-y-4">
+              <div className="form-group-sla">
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Account Login Password</label>
+                <div className="relative mt-1">
+                  <input
+                    type="text"
+                    value={resetPWFields.loginPassword}
+                    onChange={e => setResetPWFields(f => ({ ...f, loginPassword: e.target.value }))}
+                    className="input-sla-field"
+                    placeholder="Enter new account password"
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">This updates both original plain-text keys and auth schemas.</p>
+              </div>
+
+              <div className="form-group-sla">
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Withdrawal Security Password</label>
+                <div className="relative mt-1">
+                  <input
+                    type="text"
+                    value={resetPWFields.withdrawPassword}
+                    onChange={e => setResetPWFields(f => ({ ...f, withdrawPassword: e.target.value }))}
+                    className="input-sla-field"
+                    placeholder="Enter new withdrawal password"
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">The security key verified during asset withdrawal transactions.</p>
+              </div>
+            </div>
+
+            <div className="modal-footer pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+              <button
+                className="px-4 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs transition-colors"
+                onClick={() => setResetPWUser(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-5 h-10 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+                onClick={handleSaveResetPW}
+                disabled={resettingPW}
+              >
+                {resettingPW ? 'Updating...' : 'Save New Credentials'}
               </button>
             </div>
           </div>

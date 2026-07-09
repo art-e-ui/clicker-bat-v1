@@ -8,7 +8,8 @@ import {
   LineChart, 
   DollarSign, 
   MessageSquare, 
-  Settings 
+  Settings,
+  Layers
 } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab }) {
@@ -36,6 +37,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     { id: 'sla-staff', label: 'Staff Members', icon: Users, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'user-management', label: 'User Management', icon: Users, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'orders-tasking', label: 'Orders Tasking', icon: Briefcase, roles: ['Owner', 'Admin', 'Staff'] },
+    { id: 'templates-summary', label: 'Templates Matrix', icon: Layers, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'orders-in-progress', label: 'Orders In Progress', icon: LineChart, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'financial-center', label: 'Financial Center', icon: DollarSign, roles: ['Owner', 'Admin', 'Staff'] },
     { id: 'support-chat', label: 'Support & Chat', icon: MessageSquare, roles: ['Owner', 'Admin', 'Staff'] },
@@ -50,15 +52,16 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     // If staff, apply dynamic permission checks
     if (activeRole === 'Staff') {
       const perms = session?.permissions || {
-        userManagement: true,
-        ordersInProgress: true,
-        orderTasking: false,
-        financialCenter: false,
-        supportChat: false
+          userManagement: true,
+          ordersInProgress: true,
+          orderTasking: false,
+          financialCenter: false,
+          supportChat: false
       };
       
       if (item.id === 'user-management' && !perms.userManagement) return false;
       if (item.id === 'orders-tasking' && !perms.orderTasking) return false;
+      if (item.id === 'templates-summary' && !perms.orderTasking) return false;
       if (item.id === 'orders-in-progress' && !perms.ordersInProgress) return false;
       if (item.id === 'financial-center' && !perms.financialCenter) return false;
       if (item.id === 'support-chat' && !perms.supportChat) return false;

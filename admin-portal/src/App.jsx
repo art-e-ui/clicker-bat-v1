@@ -8,6 +8,7 @@ import SLAAdmins from './pages/SLAAdmins';
 import SLAStaff from './pages/SLAStaff';
 import FinancialCenter from './pages/FinancialCenter';
 import OrdersTasking from './pages/OrdersTasking';
+import TemplatesSummary from './pages/TemplatesSummary';
 import OrdersInProgress from './pages/OrdersInProgress';
 import Settings from './pages/Settings';
 import SupportChat from './pages/SupportChat';
@@ -148,6 +149,8 @@ export default function App() {
           setActiveTab('dashboard');
         } else if (activeTab === 'orders-tasking' && !perms.orderTasking) {
           setActiveTab('dashboard');
+        } else if (activeTab === 'templates-summary' && !perms.orderTasking) {
+          setActiveTab('dashboard');
         } else if (activeTab === 'orders-in-progress' && !perms.ordersInProgress) {
           setActiveTab('dashboard');
         } else if (activeTab === 'financial-center' && !perms.financialCenter) {
@@ -171,6 +174,7 @@ export default function App() {
       case 'sla-staff': return 'SLA Staff Members';
       case 'user-management': return 'User Management';
       case 'orders-tasking': return 'Orders Tasking & Allocations';
+      case 'templates-summary': return 'Presets Matrix & Verification';
       case 'orders-in-progress': return 'Orders In Progress';
       case 'financial-center': return 'Financial Center';
       case 'support-chat': return 'Support & Chat Inbox';
@@ -187,6 +191,9 @@ export default function App() {
 
       case 'orders-tasking':
         return <OrdersTasking />;
+        
+      case 'templates-summary':
+        return <TemplatesSummary />;
         
       case 'orders-in-progress':
         return <OrdersInProgress />;

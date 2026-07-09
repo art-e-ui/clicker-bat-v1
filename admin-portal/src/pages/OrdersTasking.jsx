@@ -30,7 +30,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 
-const TEMPLATE_M_1 = [
+export const TEMPLATE_M_1 = [
   { sr: 1, price: 498.06, profit: 1.10, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 2, price: 476.07, profit: 0.80, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 3, price: 500.10, profit: 1.00, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
@@ -73,7 +73,7 @@ const TEMPLATE_M_1 = [
   { sr: 40, price: 1147.74, profit: 1.90, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" }
 ];
 
-const TEMPLATE_C_1 = [
+export const TEMPLATE_C_1 = [
   { sr: 1, price: 21.01, profit: 0.07, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 2, price: 20.12, profit: 0.06, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 3, price: 19.45, profit: 0.04, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
@@ -116,7 +116,7 @@ const TEMPLATE_C_1 = [
   { sr: 40, price: 19.88, profit: 0.06, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" }
 ];
 
-const TEMPLATE_C_2 = [
+export const TEMPLATE_C_2 = [
   { sr: 1, price: 40.2, profit: 0.12, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 2, price: 43.8, profit: 0.11, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 3, price: 46.8, profit: 0.15, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
@@ -159,7 +159,7 @@ const TEMPLATE_C_2 = [
   { sr: 40, price: 164.88, profit: 0.4, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" }
 ];
 
-const TEMPLATE_C_3 = [
+export const TEMPLATE_C_3 = [
   { sr: 1, price: 460.44, profit: 4.6, title: "GrandPad Senior Tablet (Renewed) with Phone", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
   { sr: 2, price: 421.88, profit: 4.3, title: "Woeoe Thick Warm Winter Hat Yellow", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
   { sr: 3, price: 450.99, profit: 5.1, title: "Photozyme DNA Repair Enzymes Probiotic P291", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
@@ -202,7 +202,7 @@ const TEMPLATE_C_3 = [
   { sr: 40, price: 18791.105, profit: 2852.77, title: "CARTMAN 3 Pack Warning Triangle DOT", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" }
 ];
 
-const TEMPLATE_C_4 = [
+export const TEMPLATE_C_4 = [
   { sr: 1, price: 750.55, profit: 6.44, title: "GrandPad Senior Tablet (Renewed) with Phone", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
   { sr: 2, price: 711.76, profit: 6.9, title: "Woeoe Thick Warm Winter Hat Yellow", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
   { sr: 3, price: 743.77, profit: 7.9, title: "Photozyme DNA Repair Enzymes Probiotic P291", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
@@ -245,7 +245,50 @@ const TEMPLATE_C_4 = [
   { sr: 40, price: 30718.573, profit: 5927.51, title: "CARTMAN 3 Pack Warning Triangle DOT", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" }
 ];
 
-const TEMPLATE_M_2 = [
+export const TEMPLATE_C_5 = [
+  { sr: 1, price: 750.55, profit: 6.44, title: "GrandPad Senior Tablet (Renewed) with Phone", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 2, price: 711.76, profit: 6.9, title: "Woeoe Thick Warm Winter Hat Yellow", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
+  { sr: 3, price: 743.77, profit: 7.9, title: "Photozyme DNA Repair Enzymes Probiotic P291", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
+  { sr: 4, price: 769.33, profit: 7.43, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
+  { sr: 5, price: 721.77, profit: 6.9, title: "Tommy Hilfiger Men’s Oxford Ribb Stripe", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
+  { sr: 6, price: 777.81, profit: 8, title: "Scales Of Justice Blue Navy Blue", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
+  { sr: 7, price: 801.22, profit: 9.5, title: "AUTOGEN 12V & 24V Jump Starter", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
+  { sr: 8, price: 799.43, profit: 8.3, title: "Autel Maxisys CV MS908CV", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
+  { sr: 9, price: 800.3, profit: 8.6, title: "Tyrell Chenergy 1800/900 Peak Amp 12V/24V", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
+  { sr: 10, price: 751.7, profit: 7.4, title: "NOCO Boost HD GB70 2000 Amp", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
+  { sr: 11, price: 811.7, profit: 9.1, title: "Garmin DriveSmart 86", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
+  { sr: 12, price: 729.11, profit: 6.4, title: "CARTMAN 3 Pack Warning Triangle DOT", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" },
+  { sr: 13, price: 831.55, profit: 10.2, title: "Schumacher DSR115 DSR ProSeries Rechargeable Pro", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
+  { sr: 14, price: 791.54, profit: 7.8, title: "Touch Screen Android Head Unit for", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-14.png" },
+  { sr: 15, price: 870.33, profit: 11.5, title: "ProFormX Velocity 14 Golf Cart Wheels", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-15.png" },
+  { sr: 16, price: 1329.643, profit: 256.1, title: "Mob Armor Mob Mount Switch Magnetic", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
+  { sr: 17, price: 1500.22, profit: 56.87, title: "1 New ROAD CREW 11L-16 12", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
+  { sr: 18, price: 1600.34, profit: 60.4, title: "Walker Products 350-64080 Oxygen Sensor", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
+  { sr: 19, price: 1476.65, profit: 40.5, title: "Walker Products 350-34643 Oxygen Sensor", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
+  { sr: 20, price: 1621.87, profit: 50.6, title: "Inteset 12ft 40amp J1772 EV Extension", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
+  { sr: 21, price: 1438.91, profit: 39.4, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 22, price: 1830.43, profit: 70.52, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 23, price: 1654.98, profit: 50.22, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 24, price: 1794.88, profit: 60.12, title: "Nike Air Max 270 Sneakers Athletic Outdoor Sports Running Shoes", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 25, price: 1887.53, profit: 70.33, title: "Stanley Quencher H2.0 FlowState Tumbler 40oz Vacuum Insulated Mug", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 26, price: 1997.55, profit: 90.5, title: "BLEU DE CHANEL Eau de Parfum Spray for Men 3.4 Fl. Oz.", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 27, price: 1876.87, profit: 76.9, title: "L'Oreal Paris Revitalift Pure Hyaluronic Acid Face Serum", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 28, price: 2100.63, profit: 100.57, title: "Dyson V8 Absolute Cordless Vacuum Cleaner with HEPA Filtration", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 29, price: 3591.553, profit: 605.32, title: "GrandPad Senior Tablet (Renewed) with Phone", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 30, price: 4111.34, profit: 200.67, title: "Woeoe Thick Warm Winter Hat Yellow", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
+  { sr: 31, price: 3999.76, profit: 197.55, title: "Photozyme DNA Repair Enzymes Probiotic P291", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
+  { sr: 32, price: 4288.56, profit: 230.91, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
+  { sr: 33, price: 7498.913, profit: 1299.99, title: "Tommy Hilfiger Men’s Oxford Ribb Stripe", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
+  { sr: 34, price: 8722.23, profit: 362.66, title: "Scales Of Justice Blue Navy Blue", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-6.png" },
+  { sr: 35, price: 8112.98, profit: 310.55, title: "AUTOGEN 12V & 24V Jump Starter", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-7.png" },
+  { sr: 36, price: 9200.56, profit: 450.57, title: "Autel Maxisys CV MS908CV", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
+  { sr: 37, price: 9771.84, profit: 560.44, title: "Tyrell Chenergy 1800/900 Peak Amp 12V/24V", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-9.png" },
+  { sr: 38, price: 8176.93, profit: 432.98, title: "NOCO Boost HD GB70 2000 Amp", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-10.png" },
+  { sr: 39, price: 16558.883, profit: 2912.93, title: "Garmin DriveSmart 86", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cj-11.png" },
+  { sr: 40, price: 30718.573, profit: 5927.51, title: "CARTMAN 3 Pack Warning Triangle DOT", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" }
+];
+
+export const TEMPLATE_M_2 = [
   { sr: 1, price: 1936.33, profit: 2.10, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 2, price: 1999.64, profit: 1.98, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 3, price: 1821.75, profit: 1.77, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
@@ -288,7 +331,7 @@ const TEMPLATE_M_2 = [
   { sr: 40, price: 3380.70, profit: 6.40, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" }
 ];
 
-const TEMPLATE_M_3 = [
+export const TEMPLATE_M_3 = [
   { sr: 1, price: 5997.87, profit: 29.50, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 2, price: 5624.00, profit: 28.70, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 3, price: 5999.89, profit: 30.10, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
@@ -331,7 +374,50 @@ const TEMPLATE_M_3 = [
   { sr: 40, price: 14521.52, profit: 130.73, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" }
 ];
 
-const TEMPLATE_M_4 = [
+export const TEMPLATE_M_4 = [
+  { sr: 1, price: 7998.88, profit: 45.99, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 2, price: 7689.23, profit: 40.69, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 3, price: 8000.2, profit: 50.22, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 4, price: 7946.81, profit: 47.1, title: "Nike Air Max 270 Sneakers Athletic Outdoor Sports Running Shoes", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 5, price: 7140.6, profit: 42.6, title: "Stanley Quencher H2.0 FlowState Tumbler 40oz Vacuum Insulated Mug", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 6, price: 7994.98, profit: 45.77, title: "BLEU DE CHANEL Eau de Parfum Spray for Men 3.4 Fl. Oz.", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 7, price: 8152.16, profit: 58.99, title: "L'Oreal Paris Revitalift Pure Hyaluronic Acid Face Serum", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 8, price: 7863.91, profit: 43.9, title: "Dyson V8 Absolute Cordless Vacuum Cleaner with HEPA Filtration", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 9, price: 7891.61, profit: 45.22, title: "GrandPad Senior Tablet (Renewed) with Phone", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 10, price: 8235.71, profit: 60.1, title: "Woeoe Thick Warm Winter Hat Yellow", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
+  { sr: 11, price: 7812.73, profit: 50.44, title: "Photozyme DNA Repair Enzymes Probiotic P291", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
+  { sr: 12, price: 7912.8, profit: 55.9, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" },
+  { sr: 13, price: 10710.91, profit: 1384.81, title: "Tommy Hilfiger Men’s Oxford Ribb Stripe", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-5.png" },
+  { sr: 14, price: 12007.91, profit: 65.66, title: "Scales Of Justice Blue Navy Blue", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-6.png" },
+  { sr: 15, price: 11854.88, profit: 60.7, title: "AUTOGEN 12V & 24V Jump Starter", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-7.png" },
+  { sr: 16, price: 11678.91, profit: 70.4, title: "Autel Maxisys CV MS908CV", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-8.png" },
+  { sr: 17, price: 12115.6, profit: 75.8, title: "Tyrell Chenergy 1800/900 Peak Amp 12V/24V", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-9.png" },
+  { sr: 18, price: 11765.81, profit: 60.44, title: "NOCO Boost HD GB70 2000 Amp", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-10.png" },
+  { sr: 19, price: 11623.66, profit: 60.41, title: "Garmin DriveSmart 86", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-11.png" },
+  { sr: 20, price: 12118.4, profit: 70.1, title: "CARTMAN 3 Pack Warning Triangle DOT", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-12.png" },
+  { sr: 21, price: 11862.88, profit: 70.4, title: "Schumacher DSR115 DSR ProSeries Rechargeable Pro", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-13.png" },
+  { sr: 22, price: 12178.66, profit: 75.8, title: "Touch Screen Android Head Unit for", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-14.png" },
+  { sr: 23, price: 11854.88, profit: 60.44, title: "ProFormX Velocity 14 Golf Cart Wheels", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-15.png" },
+  { sr: 24, price: 11678.91, profit: 60.41, title: "Mob Armor Mob Mount Switch Magnetic", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
+  { sr: 25, price: 12115.6, profit: 70.1, title: "1 New ROAD CREW 11L-16 12", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
+  { sr: 26, price: 11765.81, profit: 60.59, title: "Walker Products 350-64080 Oxygen Sensor", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
+  { sr: 27, price: 11149.79, profit: 68.2, title: "Walker Products 350-34643 Oxygen Sensor", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
+  { sr: 28, price: 16267.95, profit: 2616.51, title: "Inteset 12ft 40amp J1772 EV Extension", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
+  { sr: 29, price: 17654.76, profit: 120.67, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
+  { sr: 30, price: 17231.99, profit: 126.88, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
+  { sr: 31, price: 17983.66, profit: 130.11, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
+  { sr: 32, price: 16984.88, profit: 110.26, title: "Nike Air Max 270 Sneakers Athletic Outdoor Sports Running Shoes", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-4.png" },
+  { sr: 33, price: 19112.66, profit: 180.67, title: "Stanley Quencher H2.0 FlowState Tumbler 40oz Vacuum Insulated Mug", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-5.png" },
+  { sr: 34, price: 17883.9, profit: 150.66, title: "BLEU DE CHANEL Eau de Parfum Spray for Men 3.4 Fl. Oz.", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-6.png" },
+  { sr: 35, price: 15832.91, profit: 130.22, title: "L'Oreal Paris Revitalift Pure Hyaluronic Acid Face Serum", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-7.png" },
+  { sr: 36, price: 19700.43, profit: 200.32, title: "Dyson V8 Absolute Cordless Vacuum Cleaner with HEPA Filtration", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-8.png" },
+  { sr: 37, price: 18943.81, profit: 197.44, title: "GrandPad Senior Tablet (Renewed) with Phone", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-1.png" },
+  { sr: 38, price: 19432.61, profit: 199.9, title: "Woeoe Thick Warm Winter Hat Yellow", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-2.png" },
+  { sr: 39, price: 19842.64, profit: 200.4, title: "Photozyme DNA Repair Enzymes Probiotic P291", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-3.png" },
+  { sr: 40, price: 20007.67, profit: 382.8, title: "Elfeves Lot 4 PCS Classic Men’s", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-4.png" }
+];
+
+export const TEMPLATE_M_5 = [
   { sr: 1, price: 7998.88, profit: 45.99, title: "RÉNERGIE LIFT MULTI-ACTION ULTRA FACE CREAM WITH SPF 30 1.0 Fl. Oz. (30 mL)", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-1.png" },
   { sr: 2, price: 7689.23, profit: 40.69, title: "Apple Watch Series 9 GPS 41mm Smartwatch with Midnight Aluminum Case", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-2.png" },
   { sr: 3, price: 8000.20, profit: 50.22, title: "Sony WH-1000XM4 Wireless Noise Canceling Overhead Headphones", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/prod-3.png" },
@@ -356,7 +442,7 @@ const TEMPLATE_M_4 = [
   { sr: 22, price: 12178.66, profit: 75.80, title: "Touch Screen Android Head Unit for", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-14.png" },
   { sr: 23, price: 11854.88, profit: 60.44, title: "ProFormX Velocity 14 Golf Cart Wheels", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-15.png" },
   { sr: 24, price: 11678.91, profit: 60.41, title: "Mob Armor Mob Mount Switch Magnetic", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-16.png" },
-  { sr: 25, price: 12115.60, profit: 70.10, title: "1 New ROAD CREW 11L-16 12", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
+  { sr: 25, price: 12115.60, profit: 70.11, title: "1 New ROAD CREW 11L-16 12", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-17.png" },
   { sr: 26, price: 11765.81, profit: 60.59, title: "Walker Products 350-64080 Oxygen Sensor", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-18.png" },
   { sr: 27, price: 11149.79, profit: 68.20, title: "Walker Products 350-34643 Oxygen Sensor", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-19.png" },
   { sr: 28, price: 16267.95, profit: 2616.51, title: "Inteset 12ft 40amp J1772 EV Extension", image: "https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/products/cj-20.png" },
@@ -382,7 +468,7 @@ export default function OrdersTasking() {
 
   // Form assignment states
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedTemplate, setSelectedTemplate] = useState('custom'); // 'custom', 'M-1', 'M-2', 'M-3', 'M-4', 'C-1', 'C-2', 'C-3', 'C-4'
+  const [selectedTemplate, setSelectedTemplate] = useState('custom'); // 'custom', 'M-1', 'M-2', 'M-3', 'M-4', 'M-5', 'C-1', 'C-2', 'C-3', 'C-4', 'C-5'
   const [totalAmount, setTotalAmount] = useState('1000');
   const [orderCount, setOrderCount] = useState('5');
   const [profitPercent, setProfitPercent] = useState('5');
@@ -837,10 +923,12 @@ export default function OrdersTasking() {
           { value: 'M-2', name: 'Preset M-2', details: '40 Items • $98,000 Total • $496.00 Comm.', badge: 'Preset' },
           { value: 'M-3', name: 'Preset M-3', details: '40 Items • $353,000 Total • $4.6k Comm.', badge: 'Preset' },
           { value: 'M-4', name: 'Preset M-4', details: '40 Items • $508,000 Total • $7.6k Comm.', badge: 'Preset' },
+          { value: 'M-5', name: 'Preset M-5', details: '40 Items • $508k Total • $7.6k Comm.', badge: 'Preset' },
           { value: 'C-1', name: 'Preset C-1', details: '40 Items • $817.00 Total • $2.69 Comm.', badge: 'Preset' },
           { value: 'C-2', name: 'Preset C-2', details: '40 Items • $3,900 Total • $49.00 Comm.', badge: 'Preset' },
           { value: 'C-3', name: 'Preset C-3', details: '40 Items • $104,000 Total • $9.2k Comm.', badge: 'Preset' },
           { value: 'C-4', name: 'Preset C-4', details: '40 Items • $148,000 Total • $14.6k Comm.', badge: 'Preset' },
+          { value: 'C-5', name: 'Preset C-5', details: '40 Items • $148k Total • $14.6k Comm.', badge: 'Preset' },
         ];
 
         const handlePresetSelect = (mode) => {
@@ -872,6 +960,14 @@ export default function OrdersTasking() {
             })));
           } else if (mode === 'M-4') {
             setNewAssignOrders(TEMPLATE_M_4.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+          } else if (mode === 'M-5') {
+            setNewAssignOrders(TEMPLATE_M_5.map(item => ({
               title: item.title,
               image: item.image,
               price: item.price.toString(),
@@ -910,6 +1006,15 @@ export default function OrdersTasking() {
               profit: item.profit.toString(),
               status: 'Pending'
             })));
+          } else if (mode === 'C-5') {
+            setNewAssignOrders(TEMPLATE_C_5.map(item => ({
+              title: item.title,
+              image: item.image,
+              price: item.price.toString(),
+              profit: item.profit.toString(),
+              status: 'Pending'
+            })));
+
           } else {
             setNewAssignOrders([
               { title: '', image: '', price: '100', profit: '10', status: 'Pending' }
