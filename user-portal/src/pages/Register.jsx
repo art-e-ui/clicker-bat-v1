@@ -100,7 +100,6 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [withdrawPassword, setWithdrawPassword] = useState('');
-  const [confirmWithdrawPassword, setConfirmWithdrawPassword] = useState('');
   const [referralCode, setReferralCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(true);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -138,7 +137,7 @@ export default function Register() {
     setFormError('');
     setFormSuccess('');
 
-    if (!username || !phone || !password || !confirmPassword || !referralCode || !withdrawPassword || !confirmWithdrawPassword) {
+    if (!username || !phone || !password || !confirmPassword || !referralCode || !withdrawPassword) {
       setFormError('Please fill in all required fields (Username, Phone Number, Passwords, Withdrawal Password, and Invitation Code).');
       return;
     }
@@ -150,11 +149,6 @@ export default function Register() {
 
     if (password !== confirmPassword) {
       setFormError('Passwords do not match.');
-      return;
-    }
-
-    if (withdrawPassword !== confirmWithdrawPassword) {
-      setFormError('Withdrawal passwords do not match.');
       return;
     }
 
@@ -526,18 +520,6 @@ export default function Register() {
               placeholder="••••••••" 
               value={withdrawPassword}
               onChange={(e) => setWithdrawPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="login-form-group">
-            <label>Confirm Withdrawal Password</label>
-            <input 
-              id="txt-register-confirm-withdraw-password"
-              type="password" 
-              placeholder="••••••••" 
-              value={confirmWithdrawPassword}
-              onChange={(e) => setConfirmWithdrawPassword(e.target.value)}
               required
             />
           </div>
