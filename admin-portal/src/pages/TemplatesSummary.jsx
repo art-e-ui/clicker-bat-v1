@@ -250,7 +250,13 @@ export default function TemplatesSummary() {
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-sm">
                   {displayStats.map((item) => {
-                    const isM4M5Overlap = (item.id === 'M-4' || item.id === 'M-5');
+                    const otherTemplates = templateNames.filter(col => col !== item.id);
+                    const maxOverlap = otherTemplates.length > 0 
+                      ? Math.max(...otherTemplates.map(col => overlapMatrix[item.id][col]?.count || 0)) 
+                      : 0;
+                    const maxOverlapCol = maxOverlap > 0 
+                      ? otherTemplates.find(col => (overlapMatrix[item.id][col]?.count || 0) === maxOverlap) 
+                      : '';
                     return (
                       <tr 
                         key={item.id} 
@@ -291,10 +297,14 @@ export default function TemplatesSummary() {
                           ${item.minPrice.toFixed(0)} - ${item.maxPrice.toFixed(0)}
                         </td>
                         <td className="py-4 px-6 text-center">
-                          {isM4M5Overlap ? (
-                            <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-amber-50 text-amber-700 text-xs border border-amber-100 font-medium">
+                          {maxOverlap > 0 ? (
+                            <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs border font-medium ${
+                              maxOverlap > 30 
+                                ? 'bg-rose-50 text-rose-700 border-rose-100' 
+                                : 'bg-amber-50 text-amber-700 border-amber-100'
+                            }`}>
                               <AlertTriangle size={13} />
-                              39/40 Overlap with {item.id === 'M-4' ? 'M-5' : 'M-4'}
+                              {maxOverlap}/40 Overlap with {maxOverlapCol}
                             </div>
                           ) : (
                             <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-xs border border-emerald-100 font-medium">
