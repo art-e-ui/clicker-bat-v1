@@ -23,13 +23,13 @@ export default defineConfig(() => {
           display: 'standalone',
           icons: [
             {
-              src: 'https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/app_icon.png',
+              src: '/icon-192.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any maskable'
             },
             {
-              src: 'https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/app_icon.png',
+              src: '/icon-512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'

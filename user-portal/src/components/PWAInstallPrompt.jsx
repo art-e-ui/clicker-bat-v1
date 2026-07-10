@@ -93,7 +93,7 @@ export default function PWAInstallPrompt() {
           <div className="pwa-header">
             <div className="pwa-icon-container">
               <img 
-                src="https://zxamlpfvggvoynhssbzd.supabase.co/storage/v1/object/public/cb_storage/app_icon.png" 
+                src="/icon-192.png" 
                 alt="Walmart App Icon" 
                 className="pwa-app-icon"
                 referrerPolicy="no-referrer"
