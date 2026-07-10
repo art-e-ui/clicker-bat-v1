@@ -75,7 +75,8 @@ export default function UserManagement() {
       if (Math.abs(amt - 817.17) < 10) return 'Order Template C-1';
       if (Math.abs(amt - 3920.24) < 50) return 'Order Template C-2';
       if (Math.abs(amt - 104951.13) < 500) return 'Order Template C-3';
-      if (Math.abs(amt - 148524.49) < 500) return 'Order Template C-4';
+      if (Math.abs(amt - 75852.5) < 500) return 'Order Template C-4';
+      if (Math.abs(amt - 148524.49) < 500) return 'Order Template C-5';
     }
     
     let ordersList = [];
@@ -94,7 +95,8 @@ export default function UserManagement() {
     if (Math.abs(sumPrices - 817.17) < 10) return 'Order Template C-1';
     if (Math.abs(sumPrices - 3920.24) < 50) return 'Order Template C-2';
     if (Math.abs(sumPrices - 104951.13) < 500) return 'Order Template C-3';
-    if (Math.abs(sumPrices - 148524.49) < 500) return 'Order Template C-4';
+    if (Math.abs(sumPrices - 75852.5) < 500) return 'Order Template C-4';
+    if (Math.abs(sumPrices - 148524.49) < 500) return 'Order Template C-5';
     
     if (firstTitle.includes("Saint Laurent") || firstTitle.includes("RÉNERGIE LIFT")) {
       if (Math.abs(sumPrices - 30718.07) < 1000) return 'Order Template M-1';
@@ -108,7 +110,10 @@ export default function UserManagement() {
     if (firstTitle.includes("Premium Gel Ink")) return 'Order Template C-1';
     if (firstTitle.includes("Premium Noise-Cancelling") || firstTitle.includes("GrandPad Senior")) {
       if (Math.abs(sumPrices - 104951.13) < 5000) return 'Order Template C-3';
-      if (Math.abs(sumPrices - 148524.49) < 5000) return 'Order Template C-4';
+    }
+    if (firstTitle.includes("Ted Baker") || firstTitle.includes("Powder Canister")) {
+      if (Math.abs(sumPrices - 75852.5) < 5000) return 'Order Template C-4';
+      if (Math.abs(sumPrices - 148524.49) < 5000) return 'Order Template C-5';
     }
     
     return `Custom Task (${count} items)`;
