@@ -21,6 +21,12 @@ export default function Profile({ balance, username, setUsername, setBalance, se
   const [bankHolder, setBankHolder] = useState('');
   const [savingBanking, setSavingBanking] = useState(false);
 
+  // Ref to track modal open state to avoid stale closure overwrites
+  const showBankingModalRef = useRef(false);
+  useEffect(() => {
+    showBankingModalRef.current = showBankingModal;
+  }, [showBankingModal]);
+
   // History states
   const [deposits, setDeposits] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
@@ -91,11 +97,13 @@ export default function Profile({ balance, username, setUsername, setBalance, se
         }
 
         setClientProfile(u);
-        // Sync banking fields
-        setUsdtAddress(u.usdt_address || '');
-        setBankName(u.bank_name || '');
-        setBankAccount(u.bank_account || '');
-        setBankHolder(u.bank_holder || '');
+        // Sync banking fields only if the user is not currently editing them in the modal
+        if (!showBankingModalRef.current) {
+          setUsdtAddress(u.usdt_address || '');
+          setBankName(u.bank_name || '');
+          setBankAccount(u.bank_account || '');
+          setBankHolder(u.bank_holder || '');
+        }
       }
     } catch (err) {
       console.error("Profile sync error:", err);
