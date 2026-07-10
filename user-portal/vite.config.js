@@ -14,11 +14,11 @@ export default defineConfig({
         enabled: true
       },
       manifest: {
-        name: 'Wallmark Portal',
-        short_name: 'Wallmark',
-        description: 'Wallmark User Portal',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
+        name: 'Walmart',
+        short_name: 'Walmart',
+        description: 'Walmart Premium Earning Platform',
+        theme_color: '#0071ce',
+        background_color: '#f3f4f6',
         display: 'standalone',
         icons: [
           {

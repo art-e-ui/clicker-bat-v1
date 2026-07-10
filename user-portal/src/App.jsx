@@ -18,6 +18,7 @@ import { supabase } from './supabase';
 import { Toaster } from 'react-hot-toast';
 import PortalSwitcher from './components/PortalSwitcher';
 import { LoadingProvider } from './components/GlobalLoader';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 
 // Route guards
@@ -65,6 +66,18 @@ export default function App() {
     document.body.className = theme === 'red' ? 'theme-red' : '';
     localStorage.setItem('cb_theme', theme);
   }, [theme]);
+
+  // Capture PWA install prompt globally
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      window.deferredPrompt = e;
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
 
   // Sync state changes with localStorage
   useEffect(() => {
@@ -322,6 +335,9 @@ export default function App() {
 
                   {/* Show Bottom Nav bar on main navigation routes */}
                   <ConditionalBottomNav />
+
+                  {/* PWA custom prompt installer */}
+                  <PWAInstallPrompt />
                 </div>
               </ProtectedRoute>
             }
