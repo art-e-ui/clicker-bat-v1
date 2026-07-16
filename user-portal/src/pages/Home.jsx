@@ -54,159 +54,165 @@ export default function Home({ currentTheme, balance, username }) {
   return (
     <>
       <div className="home-container scale-up">
-        {/* ── Professional E-Commerce Banner Carousel ── */}
-        <div className="ec-banner-carousel">
-          {BANNERS.map((b, i) => (
-            <div
-              key={b.id}
-              className={`ec-slide ${i === slide ? 'ec-slide-active' : ''}`}
-              style={{ backgroundImage: `url(${b.img})` }}
-            >
-              {/* Dark gradient overlay */}
-              <div className="ec-slide-overlay" style={{ '--accent': b.accent }} />
+        <div className="home-grid-layout">
+          <div className="home-left-col">
+            {/* ── Professional E-Commerce Banner Carousel ── */}
+            <div className="ec-banner-carousel">
+              {BANNERS.map((b, i) => (
+                <div
+                  key={b.id}
+                  className={`ec-slide ${i === slide ? 'ec-slide-active' : ''}`}
+                  style={{ backgroundImage: `url(${b.img})` }}
+                >
+                  {/* Dark gradient overlay */}
+                  <div className="ec-slide-overlay" style={{ '--accent': b.accent }} />
 
-              <div className="ec-slide-content">
-                <span className="ec-tag" style={{ background: b.accent }}>{b.tag}</span>
-                <h2 className="ec-title">{b.title}</h2>
-                <p className="ec-sub">{b.sub}</p>
+                  <div className="ec-slide-content">
+                    <span className="ec-tag" style={{ background: b.accent }}>{b.tag}</span>
+                    <h2 className="ec-title">{b.title}</h2>
+                    <p className="ec-sub">{b.sub}</p>
+                  </div>
+                </div>
+              ))}
+
+              {/* Dot indicators */}
+              <div className="ec-dots">
+                {BANNERS.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`ec-dot ${i === slide ? 'ec-dot-active' : ''}`}
+                    onClick={() => setSlide(i)}
+                    style={i === slide ? { background: BANNERS[slide].accent, width: 20 } : {}}
+                  />
+                ))}
+              </div>
+
+              {/* Progress bar */}
+              <div className="ec-progress">
+                <div
+                  key={slide}
+                  className="ec-progress-bar"
+                  style={{ background: BANNERS[slide].accent }}
+                />
               </div>
             </div>
-          ))}
 
-          {/* Dot indicators */}
-          <div className="ec-dots">
-            {BANNERS.map((_, i) => (
-              <button
-                key={i}
-                className={`ec-dot ${i === slide ? 'ec-dot-active' : ''}`}
-                onClick={() => setSlide(i)}
-                style={i === slide ? { background: BANNERS[slide].accent, width: 20 } : {}}
-              />
-            ))}
-          </div>
-
-          {/* Progress bar */}
-          <div className="ec-progress">
-            <div
-              key={slide}
-              className="ec-progress-bar"
-              style={{ background: BANNERS[slide].accent }}
-            />
-          </div>
-        </div>
-
-        {/* Balance Card */}
-        <div className="balance-card">
-          <div className="balance-user-row">
-            <span className="username-text" id="lbl-username">{username}</span>
-          </div>
-          <div className="balance-amount-row">
-            <span className="balance-currency">$</span>
-            <span className="balance-value" id="lbl-balance">{formattedBalance}</span>
-          </div>
-          <div className="balance-label-row">
-            <span className="balance-label">
-              {currentTheme === 'orange' ? 'Balance' : 'Account Balance'}
-            </span>
-          </div>
-        </div>
-
-        {/* Action Button: Earn / Start Earning */}
-        <button 
-          className="earn-action-btn"
-          onClick={() => navigate('/match')}
-          id="btn-start-earning"
-        >
-          {currentTheme === 'orange' ? 'Earn' : 'Start Earning'}
-        </button>
-
-        {/* Circular Icon Grid */}
-        <div className="icon-grid">
-          <div className="grid-item-container" onClick={() => navigate('/support')} id="btn-quick-notification">
-            <div className="icon-circle">
-              {/* Notification bubble icon */}
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                <path d="M8 10h8" />
-                <path d="M8 14h6" />
-              </svg>
+            {/* Balance Card */}
+            <div className="balance-card">
+              <div className="balance-user-row">
+                <span className="username-text" id="lbl-username">{username}</span>
+              </div>
+              <div className="balance-amount-row">
+                <span className="balance-currency">$</span>
+                <span className="balance-value" id="lbl-balance">{formattedBalance}</span>
+              </div>
+              <div className="balance-label-row">
+                <span className="balance-label">
+                  {currentTheme === 'orange' ? 'Balance' : 'Account Balance'}
+                </span>
+              </div>
             </div>
-            <span className="grid-label">
-              {currentTheme === 'orange' ? 'Notification' : 'Notifications'}
-            </span>
+
+            {/* Action Button: Earn / Start Earning */}
+            <button 
+              className="earn-action-btn"
+              onClick={() => navigate('/match')}
+              id="btn-start-earning"
+            >
+              {currentTheme === 'orange' ? 'Earn' : 'Start Earning'}
+            </button>
           </div>
 
-          <div className="grid-item-container" onClick={() => navigate('/deposit')} id="btn-quick-deposit">
-            <div className="icon-circle">
-              {/* Box with B letter */}
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-                <path d="M7 10h4a2 2 0 0 1 0 4H7z" />
-                <path d="M7 14h4a2 2 0 0 1 0 4H7z" />
-                <path d="M9 8v12" />
-              </svg>
+          <div className="home-right-col">
+            {/* Circular Icon Grid */}
+            <div className="icon-grid">
+              <div className="grid-item-container" onClick={() => navigate('/support')} id="btn-quick-notification">
+                <div className="icon-circle">
+                  {/* Notification bubble icon */}
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    <path d="M8 10h8" />
+                    <path d="M8 14h6" />
+                  </svg>
+                </div>
+                <span className="grid-label">
+                  {currentTheme === 'orange' ? 'Notification' : 'Notifications'}
+                </span>
+              </div>
+
+              <div className="grid-item-container" onClick={() => navigate('/deposit')} id="btn-quick-deposit">
+                <div className="icon-circle">
+                  {/* Box with B letter */}
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <path d="M7 10h4a2 2 0 0 1 0 4H7z" />
+                    <path d="M7 14h4a2 2 0 0 1 0 4H7z" />
+                    <path d="M9 8v12" />
+                  </svg>
+                </div>
+                <span className="grid-label">Deposit</span>
+              </div>
+
+              <div className="grid-item-container" onClick={() => navigate('/withdraw')} id="btn-quick-withdraw">
+                <div className="icon-circle">
+                  {/* Hand holding coin/B */}
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v3" />
+                    <path d="M14 10V5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5" />
+                    <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8.5a4 4 0 0 0 4 4h2a5 5 0 0 0 5-5" />
+                  </svg>
+                </div>
+                <span className="grid-label">Withdraw</span>
+              </div>
+
+              <div className="grid-item-container" onClick={() => navigate('/affiliate')} id="btn-quick-invite">
+                <div className="icon-circle">
+                  {/* Gift Icon */}
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 12 20 22 4 22 4 12" />
+                    <rect x="2" y="7" width="20" height="5" />
+                    <line x1="12" y1="22" x2="12" y2="7" />
+                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+                  </svg>
+                </div>
+                <span className="grid-label">
+                  {currentTheme === 'orange' ? 'Invite' : 'Invite Friends'}
+                </span>
+              </div>
             </div>
-            <span className="grid-label">Deposit</span>
-          </div>
 
-          <div className="grid-item-container" onClick={() => navigate('/withdraw')} id="btn-quick-withdraw">
-            <div className="icon-circle">
-              {/* Hand holding coin/B */}
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v3" />
-                <path d="M14 10V5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5" />
-                <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8.5a4 4 0 0 0 4 4h2a5 5 0 0 0 5-5" />
-              </svg>
+            {/* Total Profits / Earnings */}
+            <div className="earnings-section">
+              <div className="section-title-row">
+                <span className="title-indicator"></span>
+                <h3 className="section-title">
+                  {currentTheme === 'orange' ? 'Total Earnings' : 'Total Profits'}
+                </h3>
+              </div>
+
+              <div className="earnings-grid">
+                <div className="earnings-card">
+                  <span className="earning-value">$ 0.00</span>
+                  <span className="earning-label">Today's Profit</span>
+                </div>
+                <div className="earnings-card">
+                  <span className="earning-value">$ 0.00</span>
+                  <span className="earning-label">Yesterday's Profit</span>
+                </div>
+              </div>
             </div>
-            <span className="grid-label">Withdraw</span>
-          </div>
 
-          <div className="grid-item-container" onClick={() => navigate('/affiliate')} id="btn-quick-invite">
-            <div className="icon-circle">
-              {/* Gift Icon */}
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 12 20 22 4 22 4 12" />
-                <rect x="2" y="7" width="20" height="5" />
-                <line x1="12" y1="22" x2="12" y2="7" />
-                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
-                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
-              </svg>
+            {/* Simulated Live Feed Scroll */}
+            <div className="live-feed-card">
+              <div className="feed-header">
+                <span className="pulse-indicator"></span>
+                <span className="feed-title">Recent Commission Allocations</span>
+              </div>
+              <div className="feed-content">
+                <div className="feed-item">User yoo*** just completed matching task for <b>$194.33</b> (+$0.97 profit)</div>
+              </div>
             </div>
-            <span className="grid-label">
-              {currentTheme === 'orange' ? 'Invite' : 'Invite Friends'}
-            </span>
-          </div>
-        </div>
-
-        {/* Total Profits / Earnings */}
-        <div className="earnings-section">
-          <div className="section-title-row">
-            <span className="title-indicator"></span>
-            <h3 className="section-title">
-              {currentTheme === 'orange' ? 'Total Earnings' : 'Total Profits'}
-            </h3>
-          </div>
-
-          <div className="earnings-grid">
-            <div className="earnings-card">
-              <span className="earning-value">$ 0.00</span>
-              <span className="earning-label">Today's Profit</span>
-            </div>
-            <div className="earnings-card">
-              <span className="earning-value">$ 0.00</span>
-              <span className="earning-label">Yesterday's Profit</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Simulated Live Feed Scroll */}
-        <div className="live-feed-card">
-          <div className="feed-header">
-            <span className="pulse-indicator"></span>
-            <span className="feed-title">Recent Commission Allocations</span>
-          </div>
-          <div className="feed-content">
-            <div className="feed-item">User yoo*** just completed matching task for <b>$194.33</b> (+$0.97 profit)</div>
           </div>
         </div>
       </div>
@@ -216,6 +222,21 @@ export default function Home({ currentTheme, balance, username }) {
           display: flex;
           flex-direction: column;
           padding: 16px;
+        }
+
+        .home-grid-layout {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+          .home-grid-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            align-items: start;
+          }
         }
 
         /* ─── E-Commerce Banner Carousel ─── */

@@ -143,7 +143,7 @@ body {
 
 #root {
   width: 100%;
-  max-width: 480px; /* Force mobile emulator style */
+  max-width: 100%;
   min-height: 100vh;
   background-color: var(--bg-app);
   box-shadow: 0 0 30px rgba(0,0,0,0.03);
@@ -151,8 +151,15 @@ body {
   flex-direction: column;
   position: relative;
   padding-bottom: 74px; /* Space for tab bar */
-  border-left: 1px solid rgba(0, 0, 0, 0.03);
-  border-right: 1px solid rgba(0, 0, 0, 0.03);
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  #root {
+    max-width: 1024px;
+    border-left: 1px solid rgba(0, 0, 0, 0.03);
+    border-right: 1px solid rgba(0, 0, 0, 0.03);
+  }
 }
 
 /* Custom Scrollbar */

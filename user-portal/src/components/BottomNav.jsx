@@ -116,7 +116,7 @@ export default function BottomNav() {
           left: 50%;
           transform: translateX(-50%);
           width: 100%;
-          max-width: 480px;
+          max-width: 100%;
           height: 68px;
           background-color: var(--bg-card);
           display: flex;
@@ -126,6 +126,12 @@ export default function BottomNav() {
           z-index: 1000;
           padding: 0 10px;
           box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        @media (min-width: 768px) {
+          .bottom-nav-container {
+            max-width: 1024px;
+          }
         }
 
         .nav-btn {

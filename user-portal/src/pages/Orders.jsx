@@ -351,6 +351,19 @@ export default function Orders({ balance, orders, setOrders, updateBalance }) {
           gap: 16px;
         }
 
+        @media (min-width: 640px) {
+          .orders-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .orders-list {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
         .empty-orders {
           padding: 60px 20px;
           display: flex;

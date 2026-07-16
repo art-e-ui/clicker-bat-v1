@@ -335,113 +335,119 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
 
         {/* Content body */}
         <div className="shop-content">
-          {/* Balance card with "+" button */}
-          <div className="shop-balance-card">
-            <div className="balance-info-col">
-              <span className="balance-amount-title">$ {parseFloat(balance).toFixed(2)}</span>
-              <span className="balance-sub-label">Balance</span>
-            </div>
-            <button className="add-balance-btn" onClick={() => navigate('/deposit')} id="btn-add-balance">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Standalone daily task stats card */}
-          <div className="matching-stats-card">
-            <h4 className="stats-card-title">Daily Task Statistics</h4>
-            <div className="stats-card-grid">
-              <div className="stats-card-col">
-                <span className="stats-card-num">{orderCompleteCount} / {totalTasks}</span>
-                <span className="stats-card-lbl">Completed</span>
+          <div className="shop-grid-layout">
+            <div className="shop-left-col">
+              {/* Balance card with "+" button */}
+              <div className="shop-balance-card">
+                <div className="balance-info-col">
+                  <span className="balance-amount-title">$ {parseFloat(balance).toFixed(2)}</span>
+                  <span className="balance-sub-label">Balance</span>
+                </div>
+                <button className="add-balance-btn" onClick={() => navigate('/deposit')} id="btn-add-balance">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </button>
               </div>
-              <div className="stats-card-col">
-                <span className="stats-card-num">{remainingCount}</span>
-                <span className="stats-card-lbl">Remaining</span>
-              </div>
-            </div>
-          </div>
 
-          {/* Slot Machine / Matching Visual Module */}
-          <div className="matching-visual-box">
-            {spinning ? (
-              <div className="slot-container">
-                <div className="slot-track spinning">
-                  {mockMatchPool.concat(mockMatchPool).map((item, idx) => (
-                    <div className="slot-item" key={idx}>
-                      <div className="slot-item-img-placeholder" style={{ marginBottom: 6 }}>
-                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="var(--primary-color)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6L18 2H6z"/>
-                          <path d="M3 6h18"/>
-                          <path d="M16 10a4 4 0 0 1-8 0"/>
+              {/* Standalone daily task stats card */}
+              <div className="matching-stats-card">
+                <h4 className="stats-card-title">Daily Task Statistics</h4>
+                <div className="stats-card-grid">
+                  <div className="stats-card-col">
+                    <span className="stats-card-num">{orderCompleteCount} / {totalTasks}</span>
+                    <span className="stats-card-lbl">Completed</span>
+                  </div>
+                  <div className="stats-card-col">
+                    <span className="stats-card-num">{remainingCount}</span>
+                    <span className="stats-card-lbl">Remaining</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slot Machine / Matching Visual Module */}
+              <div className="matching-visual-box">
+                {spinning ? (
+                  <div className="slot-container">
+                    <div className="slot-track spinning">
+                      {mockMatchPool.concat(mockMatchPool).map((item, idx) => (
+                        <div className="slot-item" key={idx}>
+                          <div className="slot-item-img-placeholder" style={{ marginBottom: 6 }}>
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="var(--primary-color)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6L18 2H6z"/>
+                              <path d="M3 6h18"/>
+                              <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                          </div>
+                          <span>{item.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="slot-container static" style={{ border: 'var(--border-luxury)' }}>
+                    <div className="slot-item">
+                      <div className="radar-circle bounce-slow" style={{ marginBottom: 10 }}>
+                        <div className="radar-sweep-line"></div>
+                        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--primary-color)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" />
+                          <line x1="12" y1="2" x2="12" y2="22" />
+                          <line x1="2" y1="8.5" x2="22" y2="15.5" />
+                          <line x1="2" y1="15.5" x2="22" y2="8.5" />
                         </svg>
                       </div>
-                      <span>{item.title}</span>
+                      <span className="slot-prompt-text" style={{ color: 'var(--text-main)', fontSize: 13, fontWeight: 500 }}>
+                        Initiate Smart Allocation Node
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="slot-container static" style={{ border: 'var(--border-luxury)' }}>
-                <div className="slot-item">
-                  <div className="radar-circle bounce-slow" style={{ marginBottom: 10 }}>
-                    <div className="radar-sweep-line"></div>
-                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--primary-color)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" />
-                      <line x1="12" y1="2" x2="12" y2="22" />
-                      <line x1="2" y1="8.5" x2="22" y2="15.5" />
-                      <line x1="2" y1="15.5" x2="22" y2="8.5" />
-                    </svg>
                   </div>
-                  <span className="slot-prompt-text" style={{ color: 'var(--text-main)', fontSize: 13, fontWeight: 500 }}>
-                    Initiate Smart Allocation Node
-                  </span>
+                )}
+              </div>
+
+              {/* Begin Picking Button */}
+              <button 
+                className={`begin-match-btn ${spinning ? 'disabled' : 'pulse-glow-blue'}`}
+                onClick={handleBeginPicking}
+                disabled={spinning}
+                id="btn-begin-matching"
+              >
+                {spinning ? 'Picking order...' : 'Begin Picking'}
+              </button>
+            </div>
+
+            <div className="shop-right-col">
+              {/* Stats grid block below (white card) */}
+              <div className="stats-report-card">
+                <div className="report-grid">
+                  <div className="report-item">
+                    <span className="report-val">$ {totalCommission}</span>
+                    <span className="report-lbl">Total Commission</span>
+                  </div>
+                  <div className="report-item">
+                    <span className="report-val">$ {freezeBalance}</span>
+                    <span className="report-lbl">Freeze Balance</span>
+                  </div>
+                  <div className="report-item">
+                    <span className="report-val">{orderCompleteCount}</span>
+                    <span className="report-lbl">Order number</span>
+                  </div>
+                  <div className="report-item">
+                    <span className="report-val">$ {parseFloat(balance).toFixed(2)}</span>
+                    <span className="report-lbl">My balance</span>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Begin Picking Button */}
-          <button 
-            className={`begin-match-btn ${spinning ? 'disabled' : 'pulse-glow-blue'}`}
-            onClick={handleBeginPicking}
-            disabled={spinning}
-            id="btn-begin-matching"
-          >
-            {spinning ? 'Picking order...' : 'Begin Picking'}
-          </button>
-
-          {/* Stats grid block below (white card) */}
-          <div className="stats-report-card">
-            <div className="report-grid">
-              <div className="report-item">
-                <span className="report-val">$ {totalCommission}</span>
-                <span className="report-lbl">Total Commission</span>
-              </div>
-              <div className="report-item">
-                <span className="report-val">$ {freezeBalance}</span>
-                <span className="report-lbl">Freeze Balance</span>
-              </div>
-              <div className="report-item">
-                <span className="report-val">{orderCompleteCount}</span>
-                <span className="report-lbl">Order number</span>
-              </div>
-              <div className="report-item">
-                <span className="report-val">$ {parseFloat(balance).toFixed(2)}</span>
-                <span className="report-lbl">My balance</span>
+              {/* Store rules */}
+              <div className="store-rules-container">
+                <h4 className="rules-title">Take a closer look at the store rules:</h4>
+                <ol className="rules-list">
+                  <li>Every order in our store will be randomly assigned to customers. Prevent illegal post-shipment activities such as money laundering and withdrawals for malicious purposes. The user must complete the work after the worksheet is launched. And the job cannot be canceled midway, otherwise the system will not allow withdrawals.</li>
+                  <li>The commission for each order will be randomly distributed.</li>
+                </ol>
               </div>
             </div>
-          </div>
-
-          {/* Store rules */}
-          <div className="store-rules-container">
-            <h4 className="rules-title">Take a closer look at the store rules:</h4>
-            <ol className="rules-list">
-              <li>Every order in our store will be randomly assigned to customers. Prevent illegal post-shipment activities such as money laundering and withdrawals for malicious purposes. The user must complete the work after the worksheet is launched. And the job cannot be canceled midway, otherwise the system will not allow withdrawals.</li>
-              <li>The commission for each order will be randomly distributed.</li>
-            </ol>
           </div>
         </div>
       </div>
@@ -490,9 +496,27 @@ export default function ShopOrder({ balance, updateBalance, orders, setOrders })
 
         .shop-content {
           padding: 16px;
+        }
+
+        .shop-grid-layout {
           display: flex;
           flex-direction: column;
           gap: 16px;
+        }
+
+        .shop-left-col, .shop-right-col {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+          .shop-grid-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            align-items: start;
+          }
         }
 
          /* Balance card */
